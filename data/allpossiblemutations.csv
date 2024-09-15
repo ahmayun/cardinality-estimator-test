@@ -1,0 +1,47 @@
+Operation,Mutation
+Inner Join,Left Join
+Inner Join,Right Join
+Inner Join,Full Outer Join
+Left Join,Inner Join
+Left Join,Right Join
+Left Join,Full Join
+Right Join,Left Join
+Right Join,Inner Join
+Right Join,Full Outer Join
+Full Outer Join,Left Join
+Full Outer Join,Right Join
+Full Outer Join,Inner Join
+<,<=
+<,>=
+<,=
+<,<>
+<,>
+>,<=
+>,>=
+>,=
+>,<>
+>,<
+<=,<
+<=,>=
+<=,=
+<=,<>
+<=,>
+>=,<=
+>=,<
+>=,=
+>=,<>
+>=,>
+=,<=
+=,>=
+=,<
+=,<>
+=,>
+<>,<=
+<>,>=
+<>,=
+<>,<
+<>,>
+OR,AND
+AND,OR
+ALL,DISTINCT
+DISTINCT,ALL
