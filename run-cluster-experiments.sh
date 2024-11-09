@@ -15,8 +15,8 @@ function main() {
     local diff_est_dir="$results_dir/queries/PASS/DIFFERENT_ESTIMATES"
     local max_time_diff_file="$results_dir/time-experiments/max-diff"
     local class="misc.Test" # TODO: provide as arg
-    local master="spark://ahmad-vmware-091524:7077" # TODO: provide as arg
-    local jar=/home/ahmad/Documents/project/cardinality-estimator-test/target/scala-2.12/CardinalityEstimatorTest-assembly-0.1.0-SNAPSHOT.jar # TODO: provide as arg
+    local master=$1 # TODO: provide as arg
+    local jar=target/scala-2.12/CardinalityEstimatorTest-assembly-0.1.0-SNAPSHOT.jar # TODO: provide as arg
     local args="$results_dir $master" # TODO: provide as arg
 
 
@@ -33,4 +33,5 @@ function main() {
     echo "Max time difference: $max_time_diff"
 }
 
-main
+MASTER=$1
+main $MASTER
