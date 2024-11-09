@@ -1,0 +1,52 @@
+
+============================STATS========================================
+Actual Count: 5
+Estimated Count: 5
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.w_street_name as c0, 
+  ref_0.w_country as c1, 
+  ref_0.w_warehouse_id as c2, 
+  ref_0.w_warehouse_sq_ft as c3, 
+  ref_0.w_warehouse_id as c4, 
+  ref_0.w_street_type as c5
+from 
+  main.warehouse as ref_0
+where ref_0.w_warehouse_sk is not NULL
+limit 117
+============================OUTPUT========================================
+[c0: string, c1: string ... 4 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 117
++- 'LocalLimit 117
+   +- 'Project ['ref_0.w_street_name AS c0#5826, 'ref_0.w_country AS c1#5827, 'ref_0.w_warehouse_id AS c2#5828, 'ref_0.w_warehouse_sq_ft AS c3#5829, 'ref_0.w_warehouse_id AS c4#5830, 'ref_0.w_street_type AS c5#5831]
+      +- 'Filter isnotnull('ref_0.w_warehouse_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, warehouse]
+
+== Analyzed Logical Plan ==
+c0: string, c1: string, c2: string, c3: int, c4: string, c5: string
+GlobalLimit 117
++- LocalLimit 117
+   +- Project [w_street_name#1165 AS c0#5826, w_country#1172 AS c1#5827, w_warehouse_id#1161 AS c2#5828, w_warehouse_sq_ft#1163 AS c3#5829, w_warehouse_id#1161 AS c4#5830, w_street_type#1166 AS c5#5831]
+      +- Filter isnotnull(w_warehouse_sk#1160)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.warehouse
+               +- Relation[w_warehouse_sk#1160,w_warehouse_id#1161,w_warehouse_name#1162,w_warehouse_sq_ft#1163,w_street_number#1164,w_street_name#1165,w_street_type#1166,w_suite_number#1167,w_city#1168,w_county#1169,w_state#1170,w_zip#1171,w_country#1172,w_gmt_offset#1173] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 117
++- LocalLimit 117
+   +- Project [w_street_name#1165 AS c0#5826, w_country#1172 AS c1#5827, w_warehouse_id#1161 AS c2#5828, w_warehouse_sq_ft#1163 AS c3#5829, w_warehouse_id#1161 AS c4#5830, w_street_type#1166 AS c5#5831]
+      +- Filter isnotnull(w_warehouse_sk#1160)
+         +- Relation[w_warehouse_sk#1160,w_warehouse_id#1161,w_warehouse_name#1162,w_warehouse_sq_ft#1163,w_street_number#1164,w_street_name#1165,w_street_type#1166,w_suite_number#1167,w_city#1168,w_county#1169,w_state#1170,w_zip#1171,w_country#1172,w_gmt_offset#1173] parquet
+
+== Physical Plan ==
+CollectLimit 117
++- *(1) Project [w_street_name#1165 AS c0#5826, w_country#1172 AS c1#5827, w_warehouse_id#1161 AS c2#5828, w_warehouse_sq_ft#1163 AS c3#5829, w_warehouse_id#1161 AS c4#5830, w_street_type#1166 AS c5#5831]
+   +- *(1) Filter isnotnull(w_warehouse_sk#1160)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.warehouse[w_warehouse_sk#1160,w_warehouse_id#1161,w_warehouse_sq_ft#1163,w_street_name#1165,w_street_type#1166,w_country#1172] Batched: true, DataFilters: [isnotnull(w_warehouse_sk#1160)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(w_warehouse_sk)], ReadSchema: struct<w_warehouse_sk:int,w_warehouse_id:string,w_warehouse_sq_ft:int,w_street_name:string,w_stre...
+

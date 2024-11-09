@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 60
+Estimated Count: 60
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.wp_web_page_id as c0
+from 
+  main.web_page as ref_0
+where ref_0.wp_creation_date_sk is not NULL
+limit 88
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 88
++- 'LocalLimit 88
+   +- 'Project ['ref_0.wp_web_page_id AS c0#3571]
+      +- 'Filter isnotnull('ref_0.wp_creation_date_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, web_page]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 88
++- LocalLimit 88
+   +- Project [wp_web_page_id#1208 AS c0#3571]
+      +- Filter isnotnull(wp_creation_date_sk#1211)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.web_page
+               +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 88
++- LocalLimit 88
+   +- Project [wp_web_page_id#1208 AS c0#3571]
+      +- Filter isnotnull(wp_creation_date_sk#1211)
+         +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Physical Plan ==
+CollectLimit 88
++- *(1) Project [wp_web_page_id#1208 AS c0#3571]
+   +- *(1) Filter isnotnull(wp_creation_date_sk#1211)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.web_page[wp_web_page_id#1208,wp_creation_date_sk#1211] Batched: true, DataFilters: [isnotnull(wp_creation_date_sk#1211)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(wp_creation_date_sk)], ReadSchema: struct<wp_web_page_id:string,wp_creation_date_sk:int>
+

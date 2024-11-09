@@ -1,0 +1,49 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 88
+Abs diff: 88
+============================QUERY========================================
+select  
+  7 as c0, 
+  ref_0.cd_marital_status as c1, 
+  ref_0.cd_purchase_estimate as c2
+from 
+  main.customer_demographics as ref_0
+where ref_0.cd_dep_employed_count is NULL
+limit 88
+============================OUTPUT========================================
+[c0: int, c1: string ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 88
++- 'LocalLimit 88
+   +- 'Project [7 AS c0#6739, 'ref_0.cd_marital_status AS c1#6740, 'ref_0.cd_purchase_estimate AS c2#6741]
+      +- 'Filter isnull('ref_0.cd_dep_employed_count)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, customer_demographics]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string, c2: int
+GlobalLimit 88
++- LocalLimit 88
+   +- Project [7 AS c0#6739, cd_marital_status#502 AS c1#6740, cd_purchase_estimate#504 AS c2#6741]
+      +- Filter isnull(cd_dep_employed_count#507)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.customer_demographics
+               +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 88
++- LocalLimit 88
+   +- Project [7 AS c0#6739, cd_marital_status#502 AS c1#6740, cd_purchase_estimate#504 AS c2#6741]
+      +- Filter isnull(cd_dep_employed_count#507)
+         +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Physical Plan ==
+CollectLimit 88
++- *(1) Project [7 AS c0#6739, cd_marital_status#502 AS c1#6740, cd_purchase_estimate#504 AS c2#6741]
+   +- *(1) Filter isnull(cd_dep_employed_count#507)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.customer_demographics[cd_marital_status#502,cd_purchase_estimate#504,cd_dep_employed_count#507] Batched: true, DataFilters: [isnull(cd_dep_employed_count#507)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(cd_dep_employed_count)], ReadSchema: struct<cd_marital_status:string,cd_purchase_estimate:int,cd_dep_employed_count:int>
+

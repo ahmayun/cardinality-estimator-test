@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 20
+Abs diff: 20
+============================QUERY========================================
+select  
+  ref_0.sm_ship_mode_id as c0
+from 
+  main.ship_mode as ref_0
+where ref_0.sm_ship_mode_sk is NULL
+limit 29
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 29
++- 'LocalLimit 29
+   +- 'Project ['ref_0.sm_ship_mode_id AS c0#2090]
+      +- 'Filter isnull('ref_0.sm_ship_mode_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, ship_mode]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 29
++- LocalLimit 29
+   +- Project [sm_ship_mode_id#849 AS c0#2090]
+      +- Filter isnull(sm_ship_mode_sk#848)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.ship_mode
+               +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 29
++- LocalLimit 29
+   +- Project [sm_ship_mode_id#849 AS c0#2090]
+      +- Filter isnull(sm_ship_mode_sk#848)
+         +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+
+== Physical Plan ==
+CollectLimit 29
++- *(1) Project [sm_ship_mode_id#849 AS c0#2090]
+   +- *(1) Filter isnull(sm_ship_mode_sk#848)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.ship_mode[sm_ship_mode_sk#848,sm_ship_mode_id#849] Batched: true, DataFilters: [isnull(sm_ship_mode_sk#848)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(sm_ship_mode_sk)], ReadSchema: struct<sm_ship_mode_sk:int,sm_ship_mode_id:string>
+

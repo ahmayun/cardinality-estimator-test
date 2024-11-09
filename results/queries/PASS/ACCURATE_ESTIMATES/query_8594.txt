@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 20
+Estimated Count: 20
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.sm_code as c0
+from 
+  main.ship_mode as ref_0
+where ref_0.sm_contract is not NULL
+limit 167
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 167
++- 'LocalLimit 167
+   +- 'Project ['ref_0.sm_code AS c0#6764]
+      +- 'Filter isnotnull('ref_0.sm_contract)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, ship_mode]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 167
++- LocalLimit 167
+   +- Project [sm_code#851 AS c0#6764]
+      +- Filter isnotnull(sm_contract#853)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.ship_mode
+               +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 167
++- LocalLimit 167
+   +- Project [sm_code#851 AS c0#6764]
+      +- Filter isnotnull(sm_contract#853)
+         +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+
+== Physical Plan ==
+CollectLimit 167
++- *(1) Project [sm_code#851 AS c0#6764]
+   +- *(1) Filter isnotnull(sm_contract#853)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.ship_mode[sm_code#851,sm_contract#853] Batched: true, DataFilters: [isnotnull(sm_contract#853)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(sm_contract)], ReadSchema: struct<sm_code:string,sm_contract:string>
+

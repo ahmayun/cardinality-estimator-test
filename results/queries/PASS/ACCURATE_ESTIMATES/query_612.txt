@@ -1,0 +1,48 @@
+
+============================STATS========================================
+Actual Count: 147
+Estimated Count: 147
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.sr_return_amt_inc_tax as c0, 
+  ref_0.sr_fee as c1
+from 
+  main.store_returns as ref_0
+where ref_0.sr_cdemo_sk is not NULL
+limit 147
+============================OUTPUT========================================
+[c0: decimal(7,2), c1: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 147
++- 'LocalLimit 147
+   +- 'Project ['ref_0.sr_return_amt_inc_tax AS c0#2448, 'ref_0.sr_fee AS c1#2449]
+      +- 'Filter isnotnull('ref_0.sr_cdemo_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, store_returns]
+
+== Analyzed Logical Plan ==
+c0: decimal(7,2), c1: decimal(7,2)
+GlobalLimit 147
++- LocalLimit 147
+   +- Project [sr_return_amt_inc_tax#1842 AS c0#2448, sr_fee#1843 AS c1#2449]
+      +- Filter isnotnull(sr_cdemo_sk#1833)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.store_returns
+               +- Relation[sr_return_time_sk#1830,sr_item_sk#1831,sr_customer_sk#1832,sr_cdemo_sk#1833,sr_hdemo_sk#1834,sr_addr_sk#1835,sr_store_sk#1836,sr_reason_sk#1837,sr_ticket_number#1838L,sr_return_quantity#1839,sr_return_amt#1840,sr_return_tax#1841,sr_return_amt_inc_tax#1842,sr_fee#1843,sr_return_ship_cost#1844,sr_refunded_cash#1845,sr_reversed_charge#1846,sr_store_credit#1847,sr_net_loss#1848,sr_returned_date_sk#1849] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 147
++- LocalLimit 147
+   +- Project [sr_return_amt_inc_tax#1842 AS c0#2448, sr_fee#1843 AS c1#2449]
+      +- Filter isnotnull(sr_cdemo_sk#1833)
+         +- Relation[sr_return_time_sk#1830,sr_item_sk#1831,sr_customer_sk#1832,sr_cdemo_sk#1833,sr_hdemo_sk#1834,sr_addr_sk#1835,sr_store_sk#1836,sr_reason_sk#1837,sr_ticket_number#1838L,sr_return_quantity#1839,sr_return_amt#1840,sr_return_tax#1841,sr_return_amt_inc_tax#1842,sr_fee#1843,sr_return_ship_cost#1844,sr_refunded_cash#1845,sr_reversed_charge#1846,sr_store_credit#1847,sr_net_loss#1848,sr_returned_date_sk#1849] parquet
+
+== Physical Plan ==
+CollectLimit 147
++- *(1) Project [sr_return_amt_inc_tax#1842 AS c0#2448, sr_fee#1843 AS c1#2449]
+   +- *(1) Filter isnotnull(sr_cdemo_sk#1833)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.store_returns[sr_cdemo_sk#1833,sr_return_amt_inc_tax#1842,sr_fee#1843,sr_returned_date_sk#1849] Batched: true, DataFilters: [isnotnull(sr_cdemo_sk#1833)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNotNull(sr_cdemo_sk)], ReadSchema: struct<sr_cdemo_sk:int,sr_return_amt_inc_tax:decimal(7,2),sr_fee:decimal(7,2)>
+

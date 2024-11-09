@@ -1,0 +1,215 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: No Estimate
+Abs diff: 1
+============================QUERY========================================
+insert into main.catalog_sales values (
+43, 
+67, 
+47, 
+97, 
+31, 
+11, 
+5, 
+96, 
+68, 
+49, 
+41, 
+78, 
+97, 
+38, 
+49, 
+85, 
+19, 
+86, 
+72, 
+76, 
+91, 
+87, 
+33, 
+85, 
+76, 
+6, 
+89, 
+87, 
+77, 
+10, 
+17, 
+40, 
+65, 
+54)
+============================OUTPUT========================================
+[]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'InsertIntoStatement 'UnresolvedRelation [main, catalog_sales], false, false
++- 'UnresolvedInlineTable [col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13, col14, col15, col16, col17, col18, col19, col20, col21, col22, col23, col24, ... 10 more fields], [List(43, 67, 47, 97, 31, 11, 5, 96, 68, 49, 41, 78, 97, 38, 49, 85, 19, 86, 72, 76, 91, 87, 33, 85, 76, 6, 89, 87, 77, 10, 17, 40, 65, 54)]
+
+== Analyzed Logical Plan ==
+
+InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales, false, [cs_sold_date_sk#5357], Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales), Append, CatalogTable(
+Database: main
+Table: catalog_sales
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:16 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 129371761 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Partition Provider: Catalog
+Partition Columns: [`cs_sold_date_sk`]
+Schema: root
+-- cs_sold_time_sk: integer (nullable = true)
+-- cs_ship_date_sk: integer (nullable = true)
+-- cs_bill_customer_sk: integer (nullable = true)
+-- cs_bill_cdemo_sk: integer (nullable = true)
+-- cs_bill_hdemo_sk: integer (nullable = true)
+-- cs_bill_addr_sk: integer (nullable = true)
+-- cs_ship_customer_sk: integer (nullable = true)
+-- cs_ship_cdemo_sk: integer (nullable = true)
+-- cs_ship_hdemo_sk: integer (nullable = true)
+-- cs_ship_addr_sk: integer (nullable = true)
+-- cs_call_center_sk: integer (nullable = true)
+-- cs_catalog_page_sk: integer (nullable = true)
+-- cs_ship_mode_sk: integer (nullable = true)
+-- cs_warehouse_sk: integer (nullable = true)
+-- cs_item_sk: integer (nullable = true)
+-- cs_promo_sk: integer (nullable = true)
+-- cs_order_number: long (nullable = true)
+-- cs_quantity: integer (nullable = true)
+-- cs_wholesale_cost: decimal(7,2) (nullable = true)
+-- cs_list_price: decimal(7,2) (nullable = true)
+-- cs_sales_price: decimal(7,2) (nullable = true)
+-- cs_ext_discount_amt: decimal(7,2) (nullable = true)
+-- cs_ext_sales_price: decimal(7,2) (nullable = true)
+-- cs_ext_wholesale_cost: decimal(7,2) (nullable = true)
+-- cs_ext_list_price: decimal(7,2) (nullable = true)
+-- cs_ext_tax: decimal(7,2) (nullable = true)
+-- cs_coupon_amt: decimal(7,2) (nullable = true)
+-- cs_ext_ship_cost: decimal(7,2) (nullable = true)
+-- cs_net_paid: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_tax: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_ship: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_ship_tax: decimal(7,2) (nullable = true)
+-- cs_net_profit: decimal(7,2) (nullable = true)
+-- cs_sold_date_sk: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.CatalogFileIndex@e5221d5b, [cs_sold_time_sk, cs_ship_date_sk, cs_bill_customer_sk, cs_bill_cdemo_sk, cs_bill_hdemo_sk, cs_bill_addr_sk, cs_ship_customer_sk, cs_ship_cdemo_sk, cs_ship_hdemo_sk, cs_ship_addr_sk, cs_call_center_sk, cs_catalog_page_sk, cs_ship_mode_sk, cs_warehouse_sk, cs_item_sk, cs_promo_sk, cs_order_number, cs_quantity, cs_wholesale_cost, cs_list_price, cs_sales_price, cs_ext_discount_amt, cs_ext_sales_price, cs_ext_wholesale_cost, ... 10 more fields]
++- Project [ansi_cast(col1#5256 as int) AS cs_sold_time_sk#5324, ansi_cast(col2#5257 as int) AS cs_ship_date_sk#5325, ansi_cast(col3#5258 as int) AS cs_bill_customer_sk#5326, ansi_cast(col4#5259 as int) AS cs_bill_cdemo_sk#5327, ansi_cast(col5#5260 as int) AS cs_bill_hdemo_sk#5328, ansi_cast(col6#5261 as int) AS cs_bill_addr_sk#5329, ansi_cast(col7#5262 as int) AS cs_ship_customer_sk#5330, ansi_cast(col8#5263 as int) AS cs_ship_cdemo_sk#5331, ansi_cast(col9#5264 as int) AS cs_ship_hdemo_sk#5332, ansi_cast(col10#5265 as int) AS cs_ship_addr_sk#5333, ansi_cast(col11#5266 as int) AS cs_call_center_sk#5334, ansi_cast(col12#5267 as int) AS cs_catalog_page_sk#5335, ansi_cast(col13#5268 as int) AS cs_ship_mode_sk#5336, ansi_cast(col14#5269 as int) AS cs_warehouse_sk#5337, ansi_cast(col15#5270 as int) AS cs_item_sk#5338, ansi_cast(col16#5271 as int) AS cs_promo_sk#5339, ansi_cast(col17#5272 as bigint) AS cs_order_number#5340L, ansi_cast(col18#5273 as int) AS cs_quantity#5341, ansi_cast(col19#5274 as decimal(7,2)) AS cs_wholesale_cost#5342, ansi_cast(col20#5275 as decimal(7,2)) AS cs_list_price#5343, ansi_cast(col21#5276 as decimal(7,2)) AS cs_sales_price#5344, ansi_cast(col22#5277 as decimal(7,2)) AS cs_ext_discount_amt#5345, ansi_cast(col23#5278 as decimal(7,2)) AS cs_ext_sales_price#5346, ansi_cast(col24#5279 as decimal(7,2)) AS cs_ext_wholesale_cost#5347, ... 10 more fields]
+   +- LocalRelation [col1#5256, col2#5257, col3#5258, col4#5259, col5#5260, col6#5261, col7#5262, col8#5263, col9#5264, col10#5265, col11#5266, col12#5267, col13#5268, col14#5269, col15#5270, col16#5271, col17#5272, col18#5273, col19#5274, col20#5275, col21#5276, col22#5277, col23#5278, col24#5279, ... 10 more fields]
+
+== Optimized Logical Plan ==
+InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales, false, [cs_sold_date_sk#5357], Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales), Append, CatalogTable(
+Database: main
+Table: catalog_sales
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:16 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 129371761 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Partition Provider: Catalog
+Partition Columns: [`cs_sold_date_sk`]
+Schema: root
+-- cs_sold_time_sk: integer (nullable = true)
+-- cs_ship_date_sk: integer (nullable = true)
+-- cs_bill_customer_sk: integer (nullable = true)
+-- cs_bill_cdemo_sk: integer (nullable = true)
+-- cs_bill_hdemo_sk: integer (nullable = true)
+-- cs_bill_addr_sk: integer (nullable = true)
+-- cs_ship_customer_sk: integer (nullable = true)
+-- cs_ship_cdemo_sk: integer (nullable = true)
+-- cs_ship_hdemo_sk: integer (nullable = true)
+-- cs_ship_addr_sk: integer (nullable = true)
+-- cs_call_center_sk: integer (nullable = true)
+-- cs_catalog_page_sk: integer (nullable = true)
+-- cs_ship_mode_sk: integer (nullable = true)
+-- cs_warehouse_sk: integer (nullable = true)
+-- cs_item_sk: integer (nullable = true)
+-- cs_promo_sk: integer (nullable = true)
+-- cs_order_number: long (nullable = true)
+-- cs_quantity: integer (nullable = true)
+-- cs_wholesale_cost: decimal(7,2) (nullable = true)
+-- cs_list_price: decimal(7,2) (nullable = true)
+-- cs_sales_price: decimal(7,2) (nullable = true)
+-- cs_ext_discount_amt: decimal(7,2) (nullable = true)
+-- cs_ext_sales_price: decimal(7,2) (nullable = true)
+-- cs_ext_wholesale_cost: decimal(7,2) (nullable = true)
+-- cs_ext_list_price: decimal(7,2) (nullable = true)
+-- cs_ext_tax: decimal(7,2) (nullable = true)
+-- cs_coupon_amt: decimal(7,2) (nullable = true)
+-- cs_ext_ship_cost: decimal(7,2) (nullable = true)
+-- cs_net_paid: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_tax: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_ship: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_ship_tax: decimal(7,2) (nullable = true)
+-- cs_net_profit: decimal(7,2) (nullable = true)
+-- cs_sold_date_sk: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.CatalogFileIndex@e5221d5b, [cs_sold_time_sk, cs_ship_date_sk, cs_bill_customer_sk, cs_bill_cdemo_sk, cs_bill_hdemo_sk, cs_bill_addr_sk, cs_ship_customer_sk, cs_ship_cdemo_sk, cs_ship_hdemo_sk, cs_ship_addr_sk, cs_call_center_sk, cs_catalog_page_sk, cs_ship_mode_sk, cs_warehouse_sk, cs_item_sk, cs_promo_sk, cs_order_number, cs_quantity, cs_wholesale_cost, cs_list_price, cs_sales_price, cs_ext_discount_amt, cs_ext_sales_price, cs_ext_wholesale_cost, ... 10 more fields]
++- LocalRelation [cs_sold_time_sk#5324, cs_ship_date_sk#5325, cs_bill_customer_sk#5326, cs_bill_cdemo_sk#5327, cs_bill_hdemo_sk#5328, cs_bill_addr_sk#5329, cs_ship_customer_sk#5330, cs_ship_cdemo_sk#5331, cs_ship_hdemo_sk#5332, cs_ship_addr_sk#5333, cs_call_center_sk#5334, cs_catalog_page_sk#5335, cs_ship_mode_sk#5336, cs_warehouse_sk#5337, cs_item_sk#5338, cs_promo_sk#5339, cs_order_number#5340L, cs_quantity#5341, cs_wholesale_cost#5342, cs_list_price#5343, cs_sales_price#5344, cs_ext_discount_amt#5345, cs_ext_sales_price#5346, cs_ext_wholesale_cost#5347, ... 10 more fields]
+
+== Physical Plan ==
+Execute InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales, false, [cs_sold_date_sk#5357], Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales), Append, CatalogTable(
+Database: main
+Table: catalog_sales
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:16 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 129371761 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/catalog_sales
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Partition Provider: Catalog
+Partition Columns: [`cs_sold_date_sk`]
+Schema: root
+-- cs_sold_time_sk: integer (nullable = true)
+-- cs_ship_date_sk: integer (nullable = true)
+-- cs_bill_customer_sk: integer (nullable = true)
+-- cs_bill_cdemo_sk: integer (nullable = true)
+-- cs_bill_hdemo_sk: integer (nullable = true)
+-- cs_bill_addr_sk: integer (nullable = true)
+-- cs_ship_customer_sk: integer (nullable = true)
+-- cs_ship_cdemo_sk: integer (nullable = true)
+-- cs_ship_hdemo_sk: integer (nullable = true)
+-- cs_ship_addr_sk: integer (nullable = true)
+-- cs_call_center_sk: integer (nullable = true)
+-- cs_catalog_page_sk: integer (nullable = true)
+-- cs_ship_mode_sk: integer (nullable = true)
+-- cs_warehouse_sk: integer (nullable = true)
+-- cs_item_sk: integer (nullable = true)
+-- cs_promo_sk: integer (nullable = true)
+-- cs_order_number: long (nullable = true)
+-- cs_quantity: integer (nullable = true)
+-- cs_wholesale_cost: decimal(7,2) (nullable = true)
+-- cs_list_price: decimal(7,2) (nullable = true)
+-- cs_sales_price: decimal(7,2) (nullable = true)
+-- cs_ext_discount_amt: decimal(7,2) (nullable = true)
+-- cs_ext_sales_price: decimal(7,2) (nullable = true)
+-- cs_ext_wholesale_cost: decimal(7,2) (nullable = true)
+-- cs_ext_list_price: decimal(7,2) (nullable = true)
+-- cs_ext_tax: decimal(7,2) (nullable = true)
+-- cs_coupon_amt: decimal(7,2) (nullable = true)
+-- cs_ext_ship_cost: decimal(7,2) (nullable = true)
+-- cs_net_paid: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_tax: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_ship: decimal(7,2) (nullable = true)
+-- cs_net_paid_inc_ship_tax: decimal(7,2) (nullable = true)
+-- cs_net_profit: decimal(7,2) (nullable = true)
+-- cs_sold_date_sk: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.CatalogFileIndex@e5221d5b, [cs_sold_time_sk, cs_ship_date_sk, cs_bill_customer_sk, cs_bill_cdemo_sk, cs_bill_hdemo_sk, cs_bill_addr_sk, cs_ship_customer_sk, cs_ship_cdemo_sk, cs_ship_hdemo_sk, cs_ship_addr_sk, cs_call_center_sk, cs_catalog_page_sk, cs_ship_mode_sk, cs_warehouse_sk, cs_item_sk, cs_promo_sk, cs_order_number, cs_quantity, cs_wholesale_cost, cs_list_price, cs_sales_price, cs_ext_discount_amt, cs_ext_sales_price, cs_ext_wholesale_cost, ... 10 more fields]
++- LocalTableScan [cs_sold_time_sk#5324, cs_ship_date_sk#5325, cs_bill_customer_sk#5326, cs_bill_cdemo_sk#5327, cs_bill_hdemo_sk#5328, cs_bill_addr_sk#5329, cs_ship_customer_sk#5330, cs_ship_cdemo_sk#5331, cs_ship_hdemo_sk#5332, cs_ship_addr_sk#5333, cs_call_center_sk#5334, cs_catalog_page_sk#5335, cs_ship_mode_sk#5336, cs_warehouse_sk#5337, cs_item_sk#5338, cs_promo_sk#5339, cs_order_number#5340L, cs_quantity#5341, cs_wholesale_cost#5342, cs_list_price#5343, cs_sales_price#5344, cs_ext_discount_amt#5345, cs_ext_sales_price#5346, cs_ext_wholesale_cost#5347, ... 10 more fields]
+

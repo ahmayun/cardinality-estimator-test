@@ -1,0 +1,45 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 60
+Abs diff: 60
+============================QUERY========================================
+select  
+  ref_0.wp_link_count as c0, 
+  ref_0.wp_web_page_id as c1, 
+  cast(coalesce(ref_0.wp_customer_sk,
+    ref_0.wp_creation_date_sk) as INTEGER) as c2, 
+  ref_0.wp_access_date_sk as c3, 
+  ref_0.wp_image_count as c4, 
+  ref_0.wp_url as c5
+from 
+  main.web_page as ref_0
+where ref_0.wp_type is NULL
+============================OUTPUT========================================
+[c0: int, c1: string ... 4 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.wp_link_count AS c0#6491, 'ref_0.wp_web_page_id AS c1#6492, cast('coalesce('ref_0.wp_customer_sk, 'ref_0.wp_creation_date_sk) as int) AS c2#6493, 'ref_0.wp_access_date_sk AS c3#6494, 'ref_0.wp_image_count AS c4#6495, 'ref_0.wp_url AS c5#6496]
++- 'Filter isnull('ref_0.wp_type)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, web_page]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string, c2: int, c3: int, c4: int, c5: string
+Project [wp_link_count#1218 AS c0#6491, wp_web_page_id#1208 AS c1#6492, cast(coalesce(wp_customer_sk#1214, wp_creation_date_sk#1211) as int) AS c2#6493, wp_access_date_sk#1212 AS c3#6494, wp_image_count#1219 AS c4#6495, wp_url#1215 AS c5#6496]
++- Filter isnull(wp_type#1216)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.web_page
+         +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Optimized Logical Plan ==
+Project [wp_link_count#1218 AS c0#6491, wp_web_page_id#1208 AS c1#6492, coalesce(wp_customer_sk#1214, wp_creation_date_sk#1211) AS c2#6493, wp_access_date_sk#1212 AS c3#6494, wp_image_count#1219 AS c4#6495, wp_url#1215 AS c5#6496]
++- Filter isnull(wp_type#1216)
+   +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Physical Plan ==
+*(1) Project [wp_link_count#1218 AS c0#6491, wp_web_page_id#1208 AS c1#6492, coalesce(wp_customer_sk#1214, wp_creation_date_sk#1211) AS c2#6493, wp_access_date_sk#1212 AS c3#6494, wp_image_count#1219 AS c4#6495, wp_url#1215 AS c5#6496]
++- *(1) Filter isnull(wp_type#1216)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.web_page[wp_web_page_id#1208,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_link_count#1218,wp_image_count#1219] Batched: true, DataFilters: [isnull(wp_type#1216)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(wp_type)], ReadSchema: struct<wp_web_page_id:string,wp_creation_date_sk:int,wp_access_date_sk:int,wp_customer_sk:int,wp_...
+

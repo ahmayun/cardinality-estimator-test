@@ -1,0 +1,64 @@
+
+============================STATS========================================
+Actual Count: 27
+Estimated Count: 27
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.i_manufact as c0, 
+  ref_0.i_manufact as c1, 
+  ref_0.i_product_name as c2, 
+  ref_0.i_class as c3, 
+  cast(coalesce(ref_0.i_wholesale_cost,
+    26) as INTEGER) as c4, 
+  ref_0.i_product_name as c5, 
+  ref_0.i_container as c6, 
+  ref_0.i_class as c7, 
+  ref_0.i_wholesale_cost as c8, 
+  ref_0.i_units as c9, 
+  ref_0.i_formulation as c10, 
+  ref_0.i_category as c11, 
+  ref_0.i_brand as c12, 
+  ref_0.i_product_name as c13, 
+  ref_0.i_color as c14, 
+  ref_0.i_container as c15, 
+  ref_0.i_category_id as c16
+from 
+  main.item as ref_0
+where ref_0.i_manager_id is not NULL
+limit 27
+============================OUTPUT========================================
+[c0: string, c1: string ... 15 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 27
++- 'LocalLimit 27
+   +- 'Project ['ref_0.i_manufact AS c0#2192, 'ref_0.i_manufact AS c1#2193, 'ref_0.i_product_name AS c2#2194, 'ref_0.i_class AS c3#2195, cast('coalesce('ref_0.i_wholesale_cost, 26) as int) AS c4#2196, 'ref_0.i_product_name AS c5#2197, 'ref_0.i_container AS c6#2198, 'ref_0.i_class AS c7#2199, 'ref_0.i_wholesale_cost AS c8#2200, 'ref_0.i_units AS c9#2201, 'ref_0.i_formulation AS c10#2202, 'ref_0.i_category AS c11#2203, 'ref_0.i_brand AS c12#2204, 'ref_0.i_product_name AS c13#2205, 'ref_0.i_color AS c14#2206, 'ref_0.i_container AS c15#2207, 'ref_0.i_category_id AS c16#2208]
+      +- 'Filter isnotnull('ref_0.i_manager_id)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, item]
+
+== Analyzed Logical Plan ==
+c0: string, c1: string, c2: string, c3: string, c4: int, c5: string, c6: string, c7: string, c8: decimal(7,2), c9: string, c10: string, c11: string, c12: string, c13: string, c14: string, c15: string, c16: int
+GlobalLimit 27
++- LocalLimit 27
+   +- Project [i_manufact#686 AS c0#2192, i_manufact#686 AS c1#2193, i_product_name#693 AS c2#2194, i_class#682 AS c3#2195, cast(coalesce(cast(i_wholesale_cost#678 as decimal(12,2)), cast(26 as decimal(12,2))) as int) AS c4#2196, i_product_name#693 AS c5#2197, i_container#691 AS c6#2198, i_class#682 AS c7#2199, i_wholesale_cost#678 AS c8#2200, i_units#690 AS c9#2201, i_formulation#688 AS c10#2202, i_category#684 AS c11#2203, i_brand#680 AS c12#2204, i_product_name#693 AS c13#2205, i_color#689 AS c14#2206, i_container#691 AS c15#2207, i_category_id#683 AS c16#2208]
+      +- Filter isnotnull(i_manager_id#692)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.item
+               +- Relation[i_item_sk#672,i_item_id#673,i_rec_start_date#674,i_rec_end_date#675,i_item_desc#676,i_current_price#677,i_wholesale_cost#678,i_brand_id#679,i_brand#680,i_class_id#681,i_class#682,i_category_id#683,i_category#684,i_manufact_id#685,i_manufact#686,i_size#687,i_formulation#688,i_color#689,i_units#690,i_container#691,i_manager_id#692,i_product_name#693] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 27
++- LocalLimit 27
+   +- Project [i_manufact#686 AS c0#2192, i_manufact#686 AS c1#2193, i_product_name#693 AS c2#2194, i_class#682 AS c3#2195, cast(coalesce(cast(i_wholesale_cost#678 as decimal(12,2)), 26.00) as int) AS c4#2196, i_product_name#693 AS c5#2197, i_container#691 AS c6#2198, i_class#682 AS c7#2199, i_wholesale_cost#678 AS c8#2200, i_units#690 AS c9#2201, i_formulation#688 AS c10#2202, i_category#684 AS c11#2203, i_brand#680 AS c12#2204, i_product_name#693 AS c13#2205, i_color#689 AS c14#2206, i_container#691 AS c15#2207, i_category_id#683 AS c16#2208]
+      +- Filter isnotnull(i_manager_id#692)
+         +- Relation[i_item_sk#672,i_item_id#673,i_rec_start_date#674,i_rec_end_date#675,i_item_desc#676,i_current_price#677,i_wholesale_cost#678,i_brand_id#679,i_brand#680,i_class_id#681,i_class#682,i_category_id#683,i_category#684,i_manufact_id#685,i_manufact#686,i_size#687,i_formulation#688,i_color#689,i_units#690,i_container#691,i_manager_id#692,i_product_name#693] parquet
+
+== Physical Plan ==
+CollectLimit 27
++- *(1) Project [i_manufact#686 AS c0#2192, i_manufact#686 AS c1#2193, i_product_name#693 AS c2#2194, i_class#682 AS c3#2195, cast(coalesce(cast(i_wholesale_cost#678 as decimal(12,2)), 26.00) as int) AS c4#2196, i_product_name#693 AS c5#2197, i_container#691 AS c6#2198, i_class#682 AS c7#2199, i_wholesale_cost#678 AS c8#2200, i_units#690 AS c9#2201, i_formulation#688 AS c10#2202, i_category#684 AS c11#2203, i_brand#680 AS c12#2204, i_product_name#693 AS c13#2205, i_color#689 AS c14#2206, i_container#691 AS c15#2207, i_category_id#683 AS c16#2208]
+   +- *(1) Filter isnotnull(i_manager_id#692)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.item[i_wholesale_cost#678,i_brand#680,i_class#682,i_category_id#683,i_category#684,i_manufact#686,i_formulation#688,i_color#689,i_units#690,i_container#691,i_manager_id#692,i_product_name#693] Batched: true, DataFilters: [isnotnull(i_manager_id#692)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(i_manager_id)], ReadSchema: struct<i_wholesale_cost:decimal(7,2),i_brand:string,i_class:string,i_category_id:int,i_category:s...
+

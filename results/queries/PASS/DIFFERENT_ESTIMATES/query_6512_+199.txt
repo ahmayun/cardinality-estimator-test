@@ -1,0 +1,56 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 199
+Abs diff: 199
+============================QUERY========================================
+select  
+  ref_0.hd_demo_sk as c0, 
+  ref_0.hd_vehicle_count as c1, 
+  ref_0.hd_income_band_sk as c2, 
+  cast(nullif(ref_0.hd_vehicle_count,
+    ref_0.hd_dep_count) as INTEGER) as c3, 
+  ref_0.hd_demo_sk as c4, 
+  ref_0.hd_dep_count as c5, 
+  ref_0.hd_demo_sk as c6, 
+  ref_0.hd_demo_sk as c7
+from 
+  main.household_demographics as ref_0
+where (ref_0.hd_demo_sk is NULL) 
+  and (ref_0.hd_dep_count is not NULL)
+limit 199
+============================OUTPUT========================================
+[c0: int, c1: int ... 6 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 199
++- 'LocalLimit 199
+   +- 'Project ['ref_0.hd_demo_sk AS c0#5867, 'ref_0.hd_vehicle_count AS c1#5868, 'ref_0.hd_income_band_sk AS c2#5869, cast('nullif('ref_0.hd_vehicle_count, 'ref_0.hd_dep_count) as int) AS c3#5870, 'ref_0.hd_demo_sk AS c4#5871, 'ref_0.hd_dep_count AS c5#5872, 'ref_0.hd_demo_sk AS c6#5873, 'ref_0.hd_demo_sk AS c7#5874]
+      +- 'Filter (isnull('ref_0.hd_demo_sk) AND isnotnull('ref_0.hd_dep_count))
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, household_demographics]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int, c2: int, c3: int, c4: int, c5: int, c6: int, c7: int
+GlobalLimit 199
++- LocalLimit 199
+   +- Project [hd_demo_sk#621 AS c0#5867, hd_vehicle_count#625 AS c1#5868, hd_income_band_sk#622 AS c2#5869, cast(nullif(hd_vehicle_count#625, hd_dep_count#624) as int) AS c3#5870, hd_demo_sk#621 AS c4#5871, hd_dep_count#624 AS c5#5872, hd_demo_sk#621 AS c6#5873, hd_demo_sk#621 AS c7#5874]
+      +- Filter (isnull(hd_demo_sk#621) AND isnotnull(hd_dep_count#624))
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.household_demographics
+               +- Relation[hd_demo_sk#621,hd_income_band_sk#622,hd_buy_potential#623,hd_dep_count#624,hd_vehicle_count#625] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 199
++- LocalLimit 199
+   +- Project [hd_demo_sk#621 AS c0#5867, hd_vehicle_count#625 AS c1#5868, hd_income_band_sk#622 AS c2#5869, if ((hd_vehicle_count#625 = hd_dep_count#624)) null else hd_vehicle_count#625 AS c3#5870, hd_demo_sk#621 AS c4#5871, hd_dep_count#624 AS c5#5872, hd_demo_sk#621 AS c6#5873, hd_demo_sk#621 AS c7#5874]
+      +- Filter (isnull(hd_demo_sk#621) AND isnotnull(hd_dep_count#624))
+         +- Relation[hd_demo_sk#621,hd_income_band_sk#622,hd_buy_potential#623,hd_dep_count#624,hd_vehicle_count#625] parquet
+
+== Physical Plan ==
+CollectLimit 199
++- *(1) Project [hd_demo_sk#621 AS c0#5867, hd_vehicle_count#625 AS c1#5868, hd_income_band_sk#622 AS c2#5869, if ((hd_vehicle_count#625 = hd_dep_count#624)) null else hd_vehicle_count#625 AS c3#5870, hd_demo_sk#621 AS c4#5871, hd_dep_count#624 AS c5#5872, hd_demo_sk#621 AS c6#5873, hd_demo_sk#621 AS c7#5874]
+   +- *(1) Filter (isnull(hd_demo_sk#621) AND isnotnull(hd_dep_count#624))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.household_demographics[hd_demo_sk#621,hd_income_band_sk#622,hd_dep_count#624,hd_vehicle_count#625] Batched: true, DataFilters: [isnull(hd_demo_sk#621), isnotnull(hd_dep_count#624)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(hd_demo_sk), IsNotNull(hd_dep_count)], ReadSchema: struct<hd_demo_sk:int,hd_income_band_sk:int,hd_dep_count:int,hd_vehicle_count:int>
+

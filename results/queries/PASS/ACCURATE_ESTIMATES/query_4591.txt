@@ -1,0 +1,49 @@
+
+============================STATS========================================
+Actual Count: 140
+Estimated Count: 140
+Abs diff: 0
+============================QUERY========================================
+select  
+  cast(nullif(ref_0.cs_ext_wholesale_cost,
+    ref_0.cs_ext_wholesale_cost) as INTEGER) as c0, 
+  ref_0.cs_bill_addr_sk as c1
+from 
+  main.catalog_sales as ref_0
+where ref_0.cs_sold_time_sk is not NULL
+limit 140
+============================OUTPUT========================================
+[c0: int, c1: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 140
++- 'LocalLimit 140
+   +- 'Project [cast('nullif('ref_0.cs_ext_wholesale_cost, 'ref_0.cs_ext_wholesale_cost) as int) AS c0#4851, 'ref_0.cs_bill_addr_sk AS c1#4852]
+      +- 'Filter isnotnull('ref_0.cs_sold_time_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, catalog_sales]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int
+GlobalLimit 140
++- LocalLimit 140
+   +- Project [cast(nullif(cs_ext_wholesale_cost#1611, cs_ext_wholesale_cost#1611) as int) AS c0#4851, cs_bill_addr_sk#1593 AS c1#4852]
+      +- Filter isnotnull(cs_sold_time_sk#1588)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.catalog_sales
+               +- Relation[cs_sold_time_sk#1588,cs_ship_date_sk#1589,cs_bill_customer_sk#1590,cs_bill_cdemo_sk#1591,cs_bill_hdemo_sk#1592,cs_bill_addr_sk#1593,cs_ship_customer_sk#1594,cs_ship_cdemo_sk#1595,cs_ship_hdemo_sk#1596,cs_ship_addr_sk#1597,cs_call_center_sk#1598,cs_catalog_page_sk#1599,cs_ship_mode_sk#1600,cs_warehouse_sk#1601,cs_item_sk#1602,cs_promo_sk#1603,cs_order_number#1604L,cs_quantity#1605,cs_wholesale_cost#1606,cs_list_price#1607,cs_sales_price#1608,cs_ext_discount_amt#1609,cs_ext_sales_price#1610,cs_ext_wholesale_cost#1611,... 10 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 140
++- LocalLimit 140
+   +- Project [cast(if ((cs_ext_wholesale_cost#1611 = cs_ext_wholesale_cost#1611)) null else cs_ext_wholesale_cost#1611 as int) AS c0#4851, cs_bill_addr_sk#1593 AS c1#4852]
+      +- Filter isnotnull(cs_sold_time_sk#1588)
+         +- Relation[cs_sold_time_sk#1588,cs_ship_date_sk#1589,cs_bill_customer_sk#1590,cs_bill_cdemo_sk#1591,cs_bill_hdemo_sk#1592,cs_bill_addr_sk#1593,cs_ship_customer_sk#1594,cs_ship_cdemo_sk#1595,cs_ship_hdemo_sk#1596,cs_ship_addr_sk#1597,cs_call_center_sk#1598,cs_catalog_page_sk#1599,cs_ship_mode_sk#1600,cs_warehouse_sk#1601,cs_item_sk#1602,cs_promo_sk#1603,cs_order_number#1604L,cs_quantity#1605,cs_wholesale_cost#1606,cs_list_price#1607,cs_sales_price#1608,cs_ext_discount_amt#1609,cs_ext_sales_price#1610,cs_ext_wholesale_cost#1611,... 10 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 140
++- *(1) Project [cast(if ((cs_ext_wholesale_cost#1611 = cs_ext_wholesale_cost#1611)) null else cs_ext_wholesale_cost#1611 as int) AS c0#4851, cs_bill_addr_sk#1593 AS c1#4852]
+   +- *(1) Filter isnotnull(cs_sold_time_sk#1588)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.catalog_sales[cs_sold_time_sk#1588,cs_bill_addr_sk#1593,cs_ext_wholesale_cost#1611,cs_sold_date_sk#1621] Batched: true, DataFilters: [isnotnull(cs_sold_time_sk#1588)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNotNull(cs_sold_time_sk)], ReadSchema: struct<cs_sold_time_sk:int,cs_bill_addr_sk:int,cs_ext_wholesale_cost:decimal(7,2)>
+

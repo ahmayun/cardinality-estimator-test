@@ -1,0 +1,56 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 1920800
+Abs diff: 1920800
+============================QUERY========================================
+select  
+  ref_0.cd_purchase_estimate as c0, 
+  ref_0.cd_demo_sk as c1, 
+  ref_0.cd_purchase_estimate as c2, 
+  case when ref_0.cd_marital_status is not NULL then ref_0.cd_marital_status else ref_0.cd_marital_status end
+     as c3, 
+  ref_0.cd_dep_college_count as c4, 
+  ref_0.cd_dep_count as c5, 
+  cast(coalesce(ref_0.cd_purchase_estimate,
+    ref_0.cd_purchase_estimate) as INTEGER) as c6, 
+  ref_0.cd_dep_employed_count as c7, 
+  ref_0.cd_marital_status as c8, 
+  ref_0.cd_purchase_estimate as c9, 
+  ref_0.cd_demo_sk as c10, 
+  ref_0.cd_credit_rating as c11, 
+  ref_0.cd_dep_employed_count as c12, 
+  ref_0.cd_education_status as c13, 
+  ref_0.cd_credit_rating as c14
+from 
+  main.customer_demographics as ref_0
+where (ref_0.cd_education_status is NULL) 
+  and (ref_0.cd_gender is not NULL)
+============================OUTPUT========================================
+[c0: int, c1: int ... 13 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.cd_purchase_estimate AS c0#3639, 'ref_0.cd_demo_sk AS c1#3640, 'ref_0.cd_purchase_estimate AS c2#3641, CASE WHEN isnotnull('ref_0.cd_marital_status) THEN 'ref_0.cd_marital_status ELSE 'ref_0.cd_marital_status END AS c3#3642, 'ref_0.cd_dep_college_count AS c4#3643, 'ref_0.cd_dep_count AS c5#3644, cast('coalesce('ref_0.cd_purchase_estimate, 'ref_0.cd_purchase_estimate) as int) AS c6#3645, 'ref_0.cd_dep_employed_count AS c7#3646, 'ref_0.cd_marital_status AS c8#3647, 'ref_0.cd_purchase_estimate AS c9#3648, 'ref_0.cd_demo_sk AS c10#3649, 'ref_0.cd_credit_rating AS c11#3650, 'ref_0.cd_dep_employed_count AS c12#3651, 'ref_0.cd_education_status AS c13#3652, 'ref_0.cd_credit_rating AS c14#3653]
++- 'Filter (isnull('ref_0.cd_education_status) AND isnotnull('ref_0.cd_gender))
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, customer_demographics]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int, c2: int, c3: string, c4: int, c5: int, c6: int, c7: int, c8: string, c9: int, c10: int, c11: string, c12: int, c13: string, c14: string
+Project [cd_purchase_estimate#504 AS c0#3639, cd_demo_sk#500 AS c1#3640, cd_purchase_estimate#504 AS c2#3641, CASE WHEN isnotnull(cd_marital_status#502) THEN cd_marital_status#502 ELSE cd_marital_status#502 END AS c3#3642, cd_dep_college_count#508 AS c4#3643, cd_dep_count#506 AS c5#3644, cast(coalesce(cd_purchase_estimate#504, cd_purchase_estimate#504) as int) AS c6#3645, cd_dep_employed_count#507 AS c7#3646, cd_marital_status#502 AS c8#3647, cd_purchase_estimate#504 AS c9#3648, cd_demo_sk#500 AS c10#3649, cd_credit_rating#505 AS c11#3650, cd_dep_employed_count#507 AS c12#3651, cd_education_status#503 AS c13#3652, cd_credit_rating#505 AS c14#3653]
++- Filter (isnull(cd_education_status#503) AND isnotnull(cd_gender#501))
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.customer_demographics
+         +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Optimized Logical Plan ==
+Project [cd_purchase_estimate#504 AS c0#3639, cd_demo_sk#500 AS c1#3640, cd_purchase_estimate#504 AS c2#3641, cd_marital_status#502 AS c3#3642, cd_dep_college_count#508 AS c4#3643, cd_dep_count#506 AS c5#3644, coalesce(cd_purchase_estimate#504, cd_purchase_estimate#504) AS c6#3645, cd_dep_employed_count#507 AS c7#3646, cd_marital_status#502 AS c8#3647, cd_purchase_estimate#504 AS c9#3648, cd_demo_sk#500 AS c10#3649, cd_credit_rating#505 AS c11#3650, cd_dep_employed_count#507 AS c12#3651, cd_education_status#503 AS c13#3652, cd_credit_rating#505 AS c14#3653]
++- Filter (isnull(cd_education_status#503) AND isnotnull(cd_gender#501))
+   +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Physical Plan ==
+*(1) Project [cd_purchase_estimate#504 AS c0#3639, cd_demo_sk#500 AS c1#3640, cd_purchase_estimate#504 AS c2#3641, cd_marital_status#502 AS c3#3642, cd_dep_college_count#508 AS c4#3643, cd_dep_count#506 AS c5#3644, coalesce(cd_purchase_estimate#504, cd_purchase_estimate#504) AS c6#3645, cd_dep_employed_count#507 AS c7#3646, cd_marital_status#502 AS c8#3647, cd_purchase_estimate#504 AS c9#3648, cd_demo_sk#500 AS c10#3649, cd_credit_rating#505 AS c11#3650, cd_dep_employed_count#507 AS c12#3651, cd_education_status#503 AS c13#3652, cd_credit_rating#505 AS c14#3653]
++- *(1) Filter (isnull(cd_education_status#503) AND isnotnull(cd_gender#501))
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.customer_demographics[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] Batched: true, DataFilters: [isnull(cd_education_status#503), isnotnull(cd_gender#501)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(cd_education_status), IsNotNull(cd_gender)], ReadSchema: struct<cd_demo_sk:int,cd_gender:string,cd_marital_status:string,cd_education_status:string,cd_pur...
+

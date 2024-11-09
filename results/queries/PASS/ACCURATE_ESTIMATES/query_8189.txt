@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 12
+Estimated Count: 12
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.s_store_name as c0
+from 
+  main.store as ref_0
+where ref_0.s_suite_number is not NULL
+limit 134
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 134
++- 'LocalLimit 134
+   +- 'Project ['ref_0.s_store_name AS c0#6575]
+      +- 'Filter isnotnull('ref_0.s_suite_number)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, store]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 134
++- LocalLimit 134
+   +- Project [s_store_name#876 AS c0#6575]
+      +- Filter isnotnull(s_suite_number#892)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.store
+               +- Relation[s_store_sk#871,s_store_id#872,s_rec_start_date#873,s_rec_end_date#874,s_closed_date_sk#875,s_store_name#876,s_number_employees#877,s_floor_space#878,s_hours#879,s_manager#880,s_market_id#881,s_geography_class#882,s_market_desc#883,s_market_manager#884,s_division_id#885,s_division_name#886,s_company_id#887,s_company_name#888,s_street_number#889,s_street_name#890,s_street_type#891,s_suite_number#892,s_city#893,s_county#894,... 5 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 134
++- LocalLimit 134
+   +- Project [s_store_name#876 AS c0#6575]
+      +- Filter isnotnull(s_suite_number#892)
+         +- Relation[s_store_sk#871,s_store_id#872,s_rec_start_date#873,s_rec_end_date#874,s_closed_date_sk#875,s_store_name#876,s_number_employees#877,s_floor_space#878,s_hours#879,s_manager#880,s_market_id#881,s_geography_class#882,s_market_desc#883,s_market_manager#884,s_division_id#885,s_division_name#886,s_company_id#887,s_company_name#888,s_street_number#889,s_street_name#890,s_street_type#891,s_suite_number#892,s_city#893,s_county#894,... 5 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 134
++- *(1) Project [s_store_name#876 AS c0#6575]
+   +- *(1) Filter isnotnull(s_suite_number#892)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.store[s_store_name#876,s_suite_number#892] Batched: true, DataFilters: [isnotnull(s_suite_number#892)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(s_suite_number)], ReadSchema: struct<s_store_name:string,s_suite_number:string>
+

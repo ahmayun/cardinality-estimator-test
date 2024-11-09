@@ -1,0 +1,49 @@
+
+============================STATS========================================
+Actual Count: 4
+Estimated Count: 69
+Abs diff: 65
+============================QUERY========================================
+select  
+  ref_0.p_promo_sk as c0, 
+  ref_0.p_channel_catalog as c1, 
+  ref_0.p_promo_sk as c2
+from 
+  main.promotion as ref_0
+where ref_0.p_channel_event is NULL
+limit 69
+============================OUTPUT========================================
+[c0: int, c1: string ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 69
++- 'LocalLimit 69
+   +- 'Project ['ref_0.p_promo_sk AS c0#5580, 'ref_0.p_channel_catalog AS c1#5581, 'ref_0.p_promo_sk AS c2#5582]
+      +- 'Filter isnull('ref_0.p_channel_event)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, promotion]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string, c2: int
+GlobalLimit 69
++- LocalLimit 69
+   +- Project [p_promo_sk#772 AS c0#5580, p_channel_catalog#782 AS c1#5581, p_promo_sk#772 AS c2#5582]
+      +- Filter isnull(p_channel_event#786)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.promotion
+               +- Relation[p_promo_sk#772,p_promo_id#773,p_start_date_sk#774,p_end_date_sk#775,p_item_sk#776,p_cost#777,p_response_target#778,p_promo_name#779,p_channel_dmail#780,p_channel_email#781,p_channel_catalog#782,p_channel_tv#783,p_channel_radio#784,p_channel_press#785,p_channel_event#786,p_channel_demo#787,p_channel_details#788,p_purpose#789,p_discount_active#790] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 69
++- LocalLimit 69
+   +- Project [p_promo_sk#772 AS c0#5580, p_channel_catalog#782 AS c1#5581, p_promo_sk#772 AS c2#5582]
+      +- Filter isnull(p_channel_event#786)
+         +- Relation[p_promo_sk#772,p_promo_id#773,p_start_date_sk#774,p_end_date_sk#775,p_item_sk#776,p_cost#777,p_response_target#778,p_promo_name#779,p_channel_dmail#780,p_channel_email#781,p_channel_catalog#782,p_channel_tv#783,p_channel_radio#784,p_channel_press#785,p_channel_event#786,p_channel_demo#787,p_channel_details#788,p_purpose#789,p_discount_active#790] parquet
+
+== Physical Plan ==
+CollectLimit 69
++- *(1) Project [p_promo_sk#772 AS c0#5580, p_channel_catalog#782 AS c1#5581, p_promo_sk#772 AS c2#5582]
+   +- *(1) Filter isnull(p_channel_event#786)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.promotion[p_promo_sk#772,p_channel_catalog#782,p_channel_event#786] Batched: true, DataFilters: [isnull(p_channel_event#786)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(p_channel_event)], ReadSchema: struct<p_promo_sk:int,p_channel_catalog:string,p_channel_event:string>
+

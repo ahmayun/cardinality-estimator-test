@@ -1,0 +1,40 @@
+
+============================STATS========================================
+Actual Count: 2912
+Estimated Count: 143680
+Abs diff: 140768
+============================QUERY========================================
+select  
+  ref_0.cr_returning_addr_sk as c0, 
+  ref_0.cr_refunded_cash as c1
+from 
+  main.catalog_returns as ref_0
+where ref_0.cr_refunded_cdemo_sk is NULL
+============================OUTPUT========================================
+[c0: int, c1: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.cr_returning_addr_sk AS c0#6777, 'ref_0.cr_refunded_cash AS c1#6778]
++- 'Filter isnull('ref_0.cr_refunded_cdemo_sk)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, catalog_returns]
+
+== Analyzed Logical Plan ==
+c0: int, c1: decimal(7,2)
+Project [cr_returning_addr_sk#213 AS c0#6777, cr_refunded_cash#226 AS c1#6778]
++- Filter isnull(cr_refunded_cdemo_sk#207)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.catalog_returns
+         +- Relation[cr_returned_time_sk#204,cr_item_sk#205,cr_refunded_customer_sk#206,cr_refunded_cdemo_sk#207,cr_refunded_hdemo_sk#208,cr_refunded_addr_sk#209,cr_returning_customer_sk#210,cr_returning_cdemo_sk#211,cr_returning_hdemo_sk#212,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_catalog_page_sk#215,cr_ship_mode_sk#216,cr_warehouse_sk#217,cr_reason_sk#218,cr_order_number#219L,cr_return_quantity#220,cr_return_amount#221,cr_return_tax#222,cr_return_amt_inc_tax#223,cr_fee#224,cr_return_ship_cost#225,cr_refunded_cash#226,cr_reversed_charge#227,... 3 more fields] parquet
+
+== Optimized Logical Plan ==
+Project [cr_returning_addr_sk#213 AS c0#6777, cr_refunded_cash#226 AS c1#6778]
++- Filter isnull(cr_refunded_cdemo_sk#207)
+   +- Relation[cr_returned_time_sk#204,cr_item_sk#205,cr_refunded_customer_sk#206,cr_refunded_cdemo_sk#207,cr_refunded_hdemo_sk#208,cr_refunded_addr_sk#209,cr_returning_customer_sk#210,cr_returning_cdemo_sk#211,cr_returning_hdemo_sk#212,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_catalog_page_sk#215,cr_ship_mode_sk#216,cr_warehouse_sk#217,cr_reason_sk#218,cr_order_number#219L,cr_return_quantity#220,cr_return_amount#221,cr_return_tax#222,cr_return_amt_inc_tax#223,cr_fee#224,cr_return_ship_cost#225,cr_refunded_cash#226,cr_reversed_charge#227,... 3 more fields] parquet
+
+== Physical Plan ==
+*(1) Project [cr_returning_addr_sk#213 AS c0#6777, cr_refunded_cash#226 AS c1#6778]
++- *(1) Filter isnull(cr_refunded_cdemo_sk#207)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.catalog_returns[cr_refunded_cdemo_sk#207,cr_returning_addr_sk#213,cr_refunded_cash#226,cr_returned_date_sk#230] Batched: true, DataFilters: [isnull(cr_refunded_cdemo_sk#207)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNull(cr_refunded_cdemo_sk)], ReadSchema: struct<cr_refunded_cdemo_sk:int,cr_returning_addr_sk:int,cr_refunded_cash:decimal(7,2)>
+

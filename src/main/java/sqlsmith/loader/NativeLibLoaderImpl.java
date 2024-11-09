@@ -48,10 +48,10 @@ public class NativeLibLoaderImpl {
 
     String nativeLibName = System.mapLibraryName(libraryName);
     String nativeLibPath = String.format("/lib/%s/%s", OS, ARCH);
-    System.out.println("nativeLibName");
-    System.out.println(nativeLibName);
-    System.out.println("nativeLibPath");
-    System.out.println(nativeLibPath);
+//    System.out.println("nativeLibName");
+//    System.out.println(nativeLibName);
+//    System.out.println("nativeLibPath");
+//    System.out.println(nativeLibPath);
 
     // We assume that we have already checked if this platform is supported in advance
     assert(hasResource(nativeLibPath + "/" + nativeLibName));
@@ -115,8 +115,8 @@ public class NativeLibLoaderImpl {
 
     String filePathInJar = srcDirInJar + "/" + fileName;
     File extractedFile = new File(dstDir, outputName);
-    System.out.println("filePathInJar");
-    System.out.println(filePathInJar);
+//    System.out.println("filePathInJar");
+//    System.out.println(filePathInJar);
 
 
     try {
@@ -126,10 +126,10 @@ public class NativeLibLoaderImpl {
       try {
         reader = NativeLibLoaderImpl.class.getResourceAsStream(filePathInJar);
         try {
-          System.out.println("extractedFile");
-          System.out.println(extractedFile);
-          System.out.println("java.library.path");
-          System.out.println(System.getProperty("java.library.path"));
+//          System.out.println("extractedFile");
+//          System.out.println(extractedFile);
+//          System.out.println("java.library.path");
+//          System.out.println(System.getProperty("java.library.path"));
           writer = new FileOutputStream(extractedFile);
 
           byte[] buffer = new byte[8192];

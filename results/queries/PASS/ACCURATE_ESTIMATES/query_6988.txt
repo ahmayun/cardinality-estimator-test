@@ -1,0 +1,42 @@
+
+============================STATS========================================
+Actual Count: 60
+Estimated Count: 60
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.wp_creation_date_sk as c0, 
+  53 as c1, 
+  ref_0.wp_access_date_sk as c2, 
+  ref_0.wp_customer_sk as c3
+from 
+  main.web_page as ref_0
+where ref_0.wp_autogen_flag is not NULL
+============================OUTPUT========================================
+[c0: int, c1: int ... 2 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.wp_creation_date_sk AS c0#6079, 53 AS c1#6080, 'ref_0.wp_access_date_sk AS c2#6081, 'ref_0.wp_customer_sk AS c3#6082]
++- 'Filter isnotnull('ref_0.wp_autogen_flag)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, web_page]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int, c2: int, c3: int
+Project [wp_creation_date_sk#1211 AS c0#6079, 53 AS c1#6080, wp_access_date_sk#1212 AS c2#6081, wp_customer_sk#1214 AS c3#6082]
++- Filter isnotnull(wp_autogen_flag#1213)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.web_page
+         +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Optimized Logical Plan ==
+Project [wp_creation_date_sk#1211 AS c0#6079, 53 AS c1#6080, wp_access_date_sk#1212 AS c2#6081, wp_customer_sk#1214 AS c3#6082]
++- Filter isnotnull(wp_autogen_flag#1213)
+   +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Physical Plan ==
+*(1) Project [wp_creation_date_sk#1211 AS c0#6079, 53 AS c1#6080, wp_access_date_sk#1212 AS c2#6081, wp_customer_sk#1214 AS c3#6082]
++- *(1) Filter isnotnull(wp_autogen_flag#1213)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.web_page[wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214] Batched: true, DataFilters: [isnotnull(wp_autogen_flag#1213)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(wp_autogen_flag)], ReadSchema: struct<wp_creation_date_sk:int,wp_access_date_sk:int,wp_autogen_flag:string,wp_customer_sk:int>
+

@@ -1,0 +1,58 @@
+
+============================STATS========================================
+Actual Count: 20
+Estimated Count: 20
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.sm_ship_mode_sk as c0, 
+  ref_0.sm_type as c1, 
+  ref_0.sm_ship_mode_sk as c2, 
+  ref_0.sm_ship_mode_sk as c3, 
+  case when ref_0.sm_ship_mode_id is not NULL then ref_0.sm_code else ref_0.sm_code end
+     as c4, 
+  ref_0.sm_code as c5, 
+  ref_0.sm_carrier as c6, 
+  ref_0.sm_ship_mode_id as c7, 
+  ref_0.sm_ship_mode_sk as c8, 
+  ref_0.sm_type as c9, 
+  ref_0.sm_contract as c10
+from 
+  main.ship_mode as ref_0
+where ref_0.sm_ship_mode_sk is not NULL
+limit 110
+============================OUTPUT========================================
+[c0: int, c1: string ... 9 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 110
++- 'LocalLimit 110
+   +- 'Project ['ref_0.sm_ship_mode_sk AS c0#5949, 'ref_0.sm_type AS c1#5950, 'ref_0.sm_ship_mode_sk AS c2#5951, 'ref_0.sm_ship_mode_sk AS c3#5952, CASE WHEN isnotnull('ref_0.sm_ship_mode_id) THEN 'ref_0.sm_code ELSE 'ref_0.sm_code END AS c4#5953, 'ref_0.sm_code AS c5#5954, 'ref_0.sm_carrier AS c6#5955, 'ref_0.sm_ship_mode_id AS c7#5956, 'ref_0.sm_ship_mode_sk AS c8#5957, 'ref_0.sm_type AS c9#5958, 'ref_0.sm_contract AS c10#5959]
+      +- 'Filter isnotnull('ref_0.sm_ship_mode_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, ship_mode]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string, c2: int, c3: int, c4: string, c5: string, c6: string, c7: string, c8: int, c9: string, c10: string
+GlobalLimit 110
++- LocalLimit 110
+   +- Project [sm_ship_mode_sk#848 AS c0#5949, sm_type#850 AS c1#5950, sm_ship_mode_sk#848 AS c2#5951, sm_ship_mode_sk#848 AS c3#5952, CASE WHEN isnotnull(sm_ship_mode_id#849) THEN sm_code#851 ELSE sm_code#851 END AS c4#5953, sm_code#851 AS c5#5954, sm_carrier#852 AS c6#5955, sm_ship_mode_id#849 AS c7#5956, sm_ship_mode_sk#848 AS c8#5957, sm_type#850 AS c9#5958, sm_contract#853 AS c10#5959]
+      +- Filter isnotnull(sm_ship_mode_sk#848)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.ship_mode
+               +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 110
++- LocalLimit 110
+   +- Project [sm_ship_mode_sk#848 AS c0#5949, sm_type#850 AS c1#5950, sm_ship_mode_sk#848 AS c2#5951, sm_ship_mode_sk#848 AS c3#5952, sm_code#851 AS c4#5953, sm_code#851 AS c5#5954, sm_carrier#852 AS c6#5955, sm_ship_mode_id#849 AS c7#5956, sm_ship_mode_sk#848 AS c8#5957, sm_type#850 AS c9#5958, sm_contract#853 AS c10#5959]
+      +- Filter isnotnull(sm_ship_mode_sk#848)
+         +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+
+== Physical Plan ==
+CollectLimit 110
++- *(1) Project [sm_ship_mode_sk#848 AS c0#5949, sm_type#850 AS c1#5950, sm_ship_mode_sk#848 AS c2#5951, sm_ship_mode_sk#848 AS c3#5952, sm_code#851 AS c4#5953, sm_code#851 AS c5#5954, sm_carrier#852 AS c6#5955, sm_ship_mode_id#849 AS c7#5956, sm_ship_mode_sk#848 AS c8#5957, sm_type#850 AS c9#5958, sm_contract#853 AS c10#5959]
+   +- *(1) Filter isnotnull(sm_ship_mode_sk#848)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.ship_mode[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] Batched: true, DataFilters: [isnotnull(sm_ship_mode_sk#848)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(sm_ship_mode_sk)], ReadSchema: struct<sm_ship_mode_sk:int,sm_ship_mode_id:string,sm_type:string,sm_code:string,sm_carrier:string...
+

@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 55
+Estimated Count: 55
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.i_wholesale_cost as c0
+from 
+  main.item as ref_0
+where ref_0.i_manufact_id is not NULL
+limit 55
+============================OUTPUT========================================
+[c0: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 55
++- 'LocalLimit 55
+   +- 'Project ['ref_0.i_wholesale_cost AS c0#4660]
+      +- 'Filter isnotnull('ref_0.i_manufact_id)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, item]
+
+== Analyzed Logical Plan ==
+c0: decimal(7,2)
+GlobalLimit 55
++- LocalLimit 55
+   +- Project [i_wholesale_cost#678 AS c0#4660]
+      +- Filter isnotnull(i_manufact_id#685)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.item
+               +- Relation[i_item_sk#672,i_item_id#673,i_rec_start_date#674,i_rec_end_date#675,i_item_desc#676,i_current_price#677,i_wholesale_cost#678,i_brand_id#679,i_brand#680,i_class_id#681,i_class#682,i_category_id#683,i_category#684,i_manufact_id#685,i_manufact#686,i_size#687,i_formulation#688,i_color#689,i_units#690,i_container#691,i_manager_id#692,i_product_name#693] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 55
++- LocalLimit 55
+   +- Project [i_wholesale_cost#678 AS c0#4660]
+      +- Filter isnotnull(i_manufact_id#685)
+         +- Relation[i_item_sk#672,i_item_id#673,i_rec_start_date#674,i_rec_end_date#675,i_item_desc#676,i_current_price#677,i_wholesale_cost#678,i_brand_id#679,i_brand#680,i_class_id#681,i_class#682,i_category_id#683,i_category#684,i_manufact_id#685,i_manufact#686,i_size#687,i_formulation#688,i_color#689,i_units#690,i_container#691,i_manager_id#692,i_product_name#693] parquet
+
+== Physical Plan ==
+CollectLimit 55
++- *(1) Project [i_wholesale_cost#678 AS c0#4660]
+   +- *(1) Filter isnotnull(i_manufact_id#685)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.item[i_wholesale_cost#678,i_manufact_id#685] Batched: true, DataFilters: [isnotnull(i_manufact_id#685)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(i_manufact_id)], ReadSchema: struct<i_wholesale_cost:decimal(7,2),i_manufact_id:int>
+

@@ -1,0 +1,77 @@
+
+============================STATS========================================
+Actual Count: 56
+Estimated Count: 56
+Abs diff: 0
+============================QUERY========================================
+select  
+  subq_0.c1 as c0, 
+  subq_0.c0 as c1, 
+  80 as c2
+from 
+  (select  
+        ref_0.wr_refunded_cash as c0, 
+        ref_0.wr_return_tax as c1, 
+        ref_0.wr_refunded_hdemo_sk as c2, 
+        ref_0.wr_reason_sk as c3, 
+        ref_0.wr_returning_customer_sk as c4
+      from 
+        main.web_returns as ref_0
+      where ref_0.wr_fee is NULL
+      limit 97) as subq_0
+where subq_0.c3 is not NULL
+limit 56
+============================OUTPUT========================================
+[c0: decimal(7,2), c1: decimal(7,2) ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 56
++- 'LocalLimit 56
+   +- 'Project ['subq_0.c1 AS c0#4605, 'subq_0.c0 AS c1#4606, 80 AS c2#4607]
+      +- 'Filter isnotnull('subq_0.c3)
+         +- 'SubqueryAlias subq_0
+            +- 'GlobalLimit 97
+               +- 'LocalLimit 97
+                  +- 'Project ['ref_0.wr_refunded_cash AS c0#4600, 'ref_0.wr_return_tax AS c1#4601, 'ref_0.wr_refunded_hdemo_sk AS c2#4602, 'ref_0.wr_reason_sk AS c3#4603, 'ref_0.wr_returning_customer_sk AS c4#4604]
+                     +- 'Filter isnull('ref_0.wr_fee)
+                        +- 'SubqueryAlias ref_0
+                           +- 'UnresolvedRelation [main, web_returns]
+
+== Analyzed Logical Plan ==
+c0: decimal(7,2), c1: decimal(7,2), c2: int
+GlobalLimit 56
++- LocalLimit 56
+   +- Project [c1#4601 AS c0#4605, c0#4600 AS c1#4606, 80 AS c2#4607]
+      +- Filter isnotnull(c3#4603)
+         +- SubqueryAlias subq_0
+            +- GlobalLimit 97
+               +- LocalLimit 97
+                  +- Project [wr_refunded_cash#2838 AS c0#4600, wr_return_tax#2834 AS c1#4601, wr_refunded_hdemo_sk#2823 AS c2#4602, wr_reason_sk#2830 AS c3#4603, wr_returning_customer_sk#2825 AS c4#4604]
+                     +- Filter isnull(wr_fee#2836)
+                        +- SubqueryAlias ref_0
+                           +- SubqueryAlias spark_catalog.main.web_returns
+                              +- Relation[wr_returned_time_sk#2819,wr_item_sk#2820,wr_refunded_customer_sk#2821,wr_refunded_cdemo_sk#2822,wr_refunded_hdemo_sk#2823,wr_refunded_addr_sk#2824,wr_returning_customer_sk#2825,wr_returning_cdemo_sk#2826,wr_returning_hdemo_sk#2827,wr_returning_addr_sk#2828,wr_web_page_sk#2829,wr_reason_sk#2830,wr_order_number#2831L,wr_return_quantity#2832,wr_return_amt#2833,wr_return_tax#2834,wr_return_amt_inc_tax#2835,wr_fee#2836,wr_return_ship_cost#2837,wr_refunded_cash#2838,wr_reversed_charge#2839,wr_account_credit#2840,wr_net_loss#2841,wr_returned_date_sk#2842] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 56
++- LocalLimit 56
+   +- Project [c1#4601 AS c0#4605, c0#4600 AS c1#4606, 80 AS c2#4607]
+      +- Filter isnotnull(c3#4603)
+         +- GlobalLimit 97
+            +- LocalLimit 97
+               +- Project [wr_refunded_cash#2838 AS c0#4600, wr_return_tax#2834 AS c1#4601, wr_reason_sk#2830 AS c3#4603]
+                  +- Filter isnull(wr_fee#2836)
+                     +- Relation[wr_returned_time_sk#2819,wr_item_sk#2820,wr_refunded_customer_sk#2821,wr_refunded_cdemo_sk#2822,wr_refunded_hdemo_sk#2823,wr_refunded_addr_sk#2824,wr_returning_customer_sk#2825,wr_returning_cdemo_sk#2826,wr_returning_hdemo_sk#2827,wr_returning_addr_sk#2828,wr_web_page_sk#2829,wr_reason_sk#2830,wr_order_number#2831L,wr_return_quantity#2832,wr_return_amt#2833,wr_return_tax#2834,wr_return_amt_inc_tax#2835,wr_fee#2836,wr_return_ship_cost#2837,wr_refunded_cash#2838,wr_reversed_charge#2839,wr_account_credit#2840,wr_net_loss#2841,wr_returned_date_sk#2842] parquet
+
+== Physical Plan ==
+CollectLimit 56
++- *(2) Project [c1#4601 AS c0#4605, c0#4600 AS c1#4606, 80 AS c2#4607]
+   +- *(2) Filter isnotnull(c3#4603)
+      +- *(2) GlobalLimit 97
+         +- Exchange SinglePartition, true, [id=#4758]
+            +- *(1) LocalLimit 97
+               +- *(1) Project [wr_refunded_cash#2838 AS c0#4600, wr_return_tax#2834 AS c1#4601, wr_reason_sk#2830 AS c3#4603]
+                  +- *(1) Filter isnull(wr_fee#2836)
+                     +- *(1) ColumnarToRow
+                        +- FileScan parquet main.web_returns[wr_reason_sk#2830,wr_return_tax#2834,wr_fee#2836,wr_refunded_cash#2838,wr_returned_date_sk#2842] Batched: true, DataFilters: [isnull(wr_fee#2836)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNull(wr_fee)], ReadSchema: struct<wr_reason_sk:int,wr_return_tax:decimal(7,2),wr_fee:decimal(7,2),wr_refunded_cash:decimal(7...
+

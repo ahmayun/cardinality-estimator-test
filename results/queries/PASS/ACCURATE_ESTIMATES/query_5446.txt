@@ -1,0 +1,77 @@
+
+============================STATS========================================
+Actual Count: 3
+Estimated Count: 3
+Abs diff: 0
+============================QUERY========================================
+select  
+  cast(nullif(subq_0.c2,
+    subq_0.c1) as REAL) as c0, 
+  subq_0.c0 as c1, 
+  subq_0.c1 as c2
+from 
+  (select  
+        ref_0.user_id as c0, 
+        ref_0.amount as c1, 
+        ref_0.amount as c2
+      from 
+        main.orders as ref_0
+      where ref_0.c0 is not NULL
+      limit 108) as subq_0
+where (subq_0.c1 is not NULL) 
+  and (subq_0.c0 is not NULL)
+limit 66
+============================OUTPUT========================================
+[c0: float, c1: int ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 66
++- 'LocalLimit 66
+   +- 'Project [cast('nullif('subq_0.c2, 'subq_0.c1) as float) AS c0#5167, 'subq_0.c0 AS c1#5168, 'subq_0.c1 AS c2#5169]
+      +- 'Filter (isnotnull('subq_0.c1) AND isnotnull('subq_0.c0))
+         +- 'SubqueryAlias subq_0
+            +- 'GlobalLimit 108
+               +- 'LocalLimit 108
+                  +- 'Project ['ref_0.user_id AS c0#5164, 'ref_0.amount AS c1#5165, 'ref_0.amount AS c2#5166]
+                     +- 'Filter isnotnull('ref_0.c0)
+                        +- 'SubqueryAlias ref_0
+                           +- 'UnresolvedRelation [main, orders]
+
+== Analyzed Logical Plan ==
+c0: float, c1: int, c2: double
+GlobalLimit 66
++- LocalLimit 66
+   +- Project [cast(nullif(c2#5166, c1#5165) as float) AS c0#5167, c0#5164 AS c1#5168, c1#5165 AS c2#5169]
+      +- Filter (isnotnull(c1#5165) AND isnotnull(c0#5164))
+         +- SubqueryAlias subq_0
+            +- GlobalLimit 108
+               +- LocalLimit 108
+                  +- Project [user_id#746 AS c0#5164, amount#748 AS c1#5165, amount#748 AS c2#5166]
+                     +- Filter isnotnull(c0#743)
+                        +- SubqueryAlias ref_0
+                           +- SubqueryAlias spark_catalog.main.orders
+                              +- Relation[c0#743,id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 66
++- LocalLimit 66
+   +- Project [cast(if ((c2#5166 = c1#5165)) null else c2#5166 as float) AS c0#5167, c0#5164 AS c1#5168, c1#5165 AS c2#5169]
+      +- Filter (isnotnull(c1#5165) AND isnotnull(c0#5164))
+         +- GlobalLimit 108
+            +- LocalLimit 108
+               +- Project [user_id#746 AS c0#5164, amount#748 AS c1#5165, amount#748 AS c2#5166]
+                  +- Filter isnotnull(c0#743)
+                     +- Relation[c0#743,id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] parquet
+
+== Physical Plan ==
+CollectLimit 66
++- *(2) Project [cast(if ((c2#5166 = c1#5165)) null else c2#5166 as float) AS c0#5167, c0#5164 AS c1#5168, c1#5165 AS c2#5169]
+   +- *(2) Filter (isnotnull(c1#5165) AND isnotnull(c0#5164))
+      +- *(2) GlobalLimit 108
+         +- Exchange SinglePartition, true, [id=#5844]
+            +- *(1) LocalLimit 108
+               +- *(1) Project [user_id#746 AS c0#5164, amount#748 AS c1#5165, amount#748 AS c2#5166]
+                  +- *(1) Filter isnotnull(c0#743)
+                     +- *(1) ColumnarToRow
+                        +- FileScan parquet main.orders[c0#743,user_id#746,amount#748] Batched: true, DataFilters: [isnotnull(c0#743)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/spark-warehouse/m..., PartitionFilters: [], PushedFilters: [IsNotNull(c0)], ReadSchema: struct<c0:int,user_id:int,amount:double>
+

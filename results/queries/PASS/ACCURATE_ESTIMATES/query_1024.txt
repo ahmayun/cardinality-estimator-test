@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 127
+Estimated Count: 127
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.t_time as c0
+from 
+  main.time_dim as ref_0
+where ref_0.t_hour is not NULL
+limit 127
+============================OUTPUT========================================
+[c0: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 127
++- 'LocalLimit 127
+   +- 'Project ['ref_0.t_time AS c0#2936]
+      +- 'Filter isnotnull('ref_0.t_hour)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, time_dim]
+
+== Analyzed Logical Plan ==
+c0: int
+GlobalLimit 127
++- LocalLimit 127
+   +- Project [t_time#1104 AS c0#2936]
+      +- Filter isnotnull(t_hour#1105)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.time_dim
+               +- Relation[t_time_sk#1102,t_time_id#1103,t_time#1104,t_hour#1105,t_minute#1106,t_second#1107,t_am_pm#1108,t_shift#1109,t_sub_shift#1110,t_meal_time#1111] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 127
++- LocalLimit 127
+   +- Project [t_time#1104 AS c0#2936]
+      +- Filter isnotnull(t_hour#1105)
+         +- Relation[t_time_sk#1102,t_time_id#1103,t_time#1104,t_hour#1105,t_minute#1106,t_second#1107,t_am_pm#1108,t_shift#1109,t_sub_shift#1110,t_meal_time#1111] parquet
+
+== Physical Plan ==
+CollectLimit 127
++- *(1) Project [t_time#1104 AS c0#2936]
+   +- *(1) Filter isnotnull(t_hour#1105)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.time_dim[t_time#1104,t_hour#1105] Batched: true, DataFilters: [isnotnull(t_hour#1105)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(t_hour)], ReadSchema: struct<t_time:int,t_hour:int>
+

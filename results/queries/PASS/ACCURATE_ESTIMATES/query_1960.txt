@@ -1,0 +1,49 @@
+
+============================STATS========================================
+Actual Count: 30
+Estimated Count: 30
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.web_street_type as c0, 
+  ref_0.web_mkt_id as c1, 
+  ref_0.web_zip as c2, 
+  ref_0.web_name as c3, 
+  ref_0.web_mkt_class as c4
+from 
+  main.web_site as ref_0
+where 90 is not NULL
+limit 148
+============================OUTPUT========================================
+[c0: string, c1: int ... 3 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 148
++- 'LocalLimit 148
+   +- 'Project ['ref_0.web_street_type AS c0#3428, 'ref_0.web_mkt_id AS c1#3429, 'ref_0.web_zip AS c2#3430, 'ref_0.web_name AS c3#3431, 'ref_0.web_mkt_class AS c4#3432]
+      +- 'Filter isnotnull(90)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, web_site]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: string, c3: string, c4: string
+GlobalLimit 148
++- LocalLimit 148
+   +- Project [web_street_type#1455 AS c0#3428, web_mkt_id#1447 AS c1#3429, web_zip#1460 AS c2#3430, web_name#1442 AS c3#3431, web_mkt_class#1448 AS c4#3432]
+      +- Filter isnotnull(90)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.web_site
+               +- Relation[web_site_sk#1438,web_site_id#1439,web_rec_start_date#1440,web_rec_end_date#1441,web_name#1442,web_open_date_sk#1443,web_close_date_sk#1444,web_class#1445,web_manager#1446,web_mkt_id#1447,web_mkt_class#1448,web_mkt_desc#1449,web_market_manager#1450,web_company_id#1451,web_company_name#1452,web_street_number#1453,web_street_name#1454,web_street_type#1455,web_suite_number#1456,web_city#1457,web_county#1458,web_state#1459,web_zip#1460,web_country#1461,... 2 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 148
++- LocalLimit 148
+   +- Project [web_street_type#1455 AS c0#3428, web_mkt_id#1447 AS c1#3429, web_zip#1460 AS c2#3430, web_name#1442 AS c3#3431, web_mkt_class#1448 AS c4#3432]
+      +- Relation[web_site_sk#1438,web_site_id#1439,web_rec_start_date#1440,web_rec_end_date#1441,web_name#1442,web_open_date_sk#1443,web_close_date_sk#1444,web_class#1445,web_manager#1446,web_mkt_id#1447,web_mkt_class#1448,web_mkt_desc#1449,web_market_manager#1450,web_company_id#1451,web_company_name#1452,web_street_number#1453,web_street_name#1454,web_street_type#1455,web_suite_number#1456,web_city#1457,web_county#1458,web_state#1459,web_zip#1460,web_country#1461,... 2 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 148
++- *(1) Project [web_street_type#1455 AS c0#3428, web_mkt_id#1447 AS c1#3429, web_zip#1460 AS c2#3430, web_name#1442 AS c3#3431, web_mkt_class#1448 AS c4#3432]
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.web_site[web_name#1442,web_mkt_id#1447,web_mkt_class#1448,web_street_type#1455,web_zip#1460] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [], ReadSchema: struct<web_name:string,web_mkt_id:int,web_mkt_class:string,web_street_type:string,web_zip:string>
+

@@ -1,0 +1,55 @@
+
+============================STATS========================================
+Actual Count: 130
+Estimated Count: 130
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.ws_ship_cdemo_sk as c0, 
+  ref_0.ws_wholesale_cost as c1, 
+  49 as c2, 
+  ref_0.ws_sold_date_sk as c3, 
+  ref_0.ws_ship_cdemo_sk as c4, 
+  ref_0.ws_net_paid_inc_ship_tax as c5, 
+  ref_0.ws_promo_sk as c6, 
+  ref_0.ws_promo_sk as c7, 
+  ref_0.ws_ext_sales_price as c8
+from 
+  main.web_sales as ref_0
+where ref_0.ws_ship_hdemo_sk is NULL
+limit 130
+============================OUTPUT========================================
+[c0: int, c1: decimal(7,2) ... 7 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 130
++- 'LocalLimit 130
+   +- 'Project ['ref_0.ws_ship_cdemo_sk AS c0#4342, 'ref_0.ws_wholesale_cost AS c1#4343, 49 AS c2#4344, 'ref_0.ws_sold_date_sk AS c3#4345, 'ref_0.ws_ship_cdemo_sk AS c4#4346, 'ref_0.ws_net_paid_inc_ship_tax AS c5#4347, 'ref_0.ws_promo_sk AS c6#4348, 'ref_0.ws_promo_sk AS c7#4349, 'ref_0.ws_ext_sales_price AS c8#4350]
+      +- 'Filter isnull('ref_0.ws_ship_hdemo_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, web_sales]
+
+== Analyzed Logical Plan ==
+c0: int, c1: decimal(7,2), c2: int, c3: int, c4: int, c5: decimal(7,2), c6: int, c7: int, c8: decimal(7,2)
+GlobalLimit 130
++- LocalLimit 130
+   +- Project [ws_ship_cdemo_sk#3082 AS c0#4342, ws_wholesale_cost#3092 AS c1#4343, 49 AS c2#4344, ws_sold_date_sk#3107 AS c3#4345, ws_ship_cdemo_sk#3082 AS c4#4346, ws_net_paid_inc_ship_tax#3105 AS c5#4347, ws_promo_sk#3089 AS c6#4348, ws_promo_sk#3089 AS c7#4349, ws_ext_sales_price#3096 AS c8#4350]
+      +- Filter isnull(ws_ship_hdemo_sk#3083)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.web_sales
+               +- Relation[ws_sold_time_sk#3074,ws_ship_date_sk#3075,ws_item_sk#3076,ws_bill_customer_sk#3077,ws_bill_cdemo_sk#3078,ws_bill_hdemo_sk#3079,ws_bill_addr_sk#3080,ws_ship_customer_sk#3081,ws_ship_cdemo_sk#3082,ws_ship_hdemo_sk#3083,ws_ship_addr_sk#3084,ws_web_page_sk#3085,ws_web_site_sk#3086,ws_ship_mode_sk#3087,ws_warehouse_sk#3088,ws_promo_sk#3089,ws_order_number#3090L,ws_quantity#3091,ws_wholesale_cost#3092,ws_list_price#3093,ws_sales_price#3094,ws_ext_discount_amt#3095,ws_ext_sales_price#3096,ws_ext_wholesale_cost#3097,... 10 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 130
++- LocalLimit 130
+   +- Project [ws_ship_cdemo_sk#3082 AS c0#4342, ws_wholesale_cost#3092 AS c1#4343, 49 AS c2#4344, ws_sold_date_sk#3107 AS c3#4345, ws_ship_cdemo_sk#3082 AS c4#4346, ws_net_paid_inc_ship_tax#3105 AS c5#4347, ws_promo_sk#3089 AS c6#4348, ws_promo_sk#3089 AS c7#4349, ws_ext_sales_price#3096 AS c8#4350]
+      +- Filter isnull(ws_ship_hdemo_sk#3083)
+         +- Relation[ws_sold_time_sk#3074,ws_ship_date_sk#3075,ws_item_sk#3076,ws_bill_customer_sk#3077,ws_bill_cdemo_sk#3078,ws_bill_hdemo_sk#3079,ws_bill_addr_sk#3080,ws_ship_customer_sk#3081,ws_ship_cdemo_sk#3082,ws_ship_hdemo_sk#3083,ws_ship_addr_sk#3084,ws_web_page_sk#3085,ws_web_site_sk#3086,ws_ship_mode_sk#3087,ws_warehouse_sk#3088,ws_promo_sk#3089,ws_order_number#3090L,ws_quantity#3091,ws_wholesale_cost#3092,ws_list_price#3093,ws_sales_price#3094,ws_ext_discount_amt#3095,ws_ext_sales_price#3096,ws_ext_wholesale_cost#3097,... 10 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 130
++- *(1) Project [ws_ship_cdemo_sk#3082 AS c0#4342, ws_wholesale_cost#3092 AS c1#4343, 49 AS c2#4344, ws_sold_date_sk#3107 AS c3#4345, ws_ship_cdemo_sk#3082 AS c4#4346, ws_net_paid_inc_ship_tax#3105 AS c5#4347, ws_promo_sk#3089 AS c6#4348, ws_promo_sk#3089 AS c7#4349, ws_ext_sales_price#3096 AS c8#4350]
+   +- *(1) Filter isnull(ws_ship_hdemo_sk#3083)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.web_sales[ws_ship_cdemo_sk#3082,ws_ship_hdemo_sk#3083,ws_promo_sk#3089,ws_wholesale_cost#3092,ws_ext_sales_price#3096,ws_net_paid_inc_ship_tax#3105,ws_sold_date_sk#3107] Batched: true, DataFilters: [isnull(ws_ship_hdemo_sk#3083)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNull(ws_ship_hdemo_sk)], ReadSchema: struct<ws_ship_cdemo_sk:int,ws_ship_hdemo_sk:int,ws_promo_sk:int,ws_wholesale_cost:decimal(7,2),w...
+

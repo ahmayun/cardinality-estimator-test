@@ -1,0 +1,41 @@
+
+============================STATS========================================
+Actual Count: 718860
+Estimated Count: No Estimate
+Abs diff: 718861
+============================QUERY========================================
+select  
+  ref_0.ws_ship_addr_sk as c0, 
+  ref_0.ws_list_price as c1
+from 
+  main.web_sales as ref_0
+where (ref_0.ws_ship_mode_sk is NULL) 
+  or (ref_0.ws_ext_wholesale_cost is not NULL)
+============================OUTPUT========================================
+[c0: int, c1: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.ws_ship_addr_sk AS c0#6324, 'ref_0.ws_list_price AS c1#6325]
++- 'Filter (isnull('ref_0.ws_ship_mode_sk) OR isnotnull('ref_0.ws_ext_wholesale_cost))
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, web_sales]
+
+== Analyzed Logical Plan ==
+c0: int, c1: decimal(7,2)
+Project [ws_ship_addr_sk#3084 AS c0#6324, ws_list_price#3093 AS c1#6325]
++- Filter (isnull(ws_ship_mode_sk#3087) OR isnotnull(ws_ext_wholesale_cost#3097))
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.web_sales
+         +- Relation[ws_sold_time_sk#3074,ws_ship_date_sk#3075,ws_item_sk#3076,ws_bill_customer_sk#3077,ws_bill_cdemo_sk#3078,ws_bill_hdemo_sk#3079,ws_bill_addr_sk#3080,ws_ship_customer_sk#3081,ws_ship_cdemo_sk#3082,ws_ship_hdemo_sk#3083,ws_ship_addr_sk#3084,ws_web_page_sk#3085,ws_web_site_sk#3086,ws_ship_mode_sk#3087,ws_warehouse_sk#3088,ws_promo_sk#3089,ws_order_number#3090L,ws_quantity#3091,ws_wholesale_cost#3092,ws_list_price#3093,ws_sales_price#3094,ws_ext_discount_amt#3095,ws_ext_sales_price#3096,ws_ext_wholesale_cost#3097,... 10 more fields] parquet
+
+== Optimized Logical Plan ==
+Project [ws_ship_addr_sk#3084 AS c0#6324, ws_list_price#3093 AS c1#6325]
++- Filter (isnull(ws_ship_mode_sk#3087) OR isnotnull(ws_ext_wholesale_cost#3097))
+   +- Relation[ws_sold_time_sk#3074,ws_ship_date_sk#3075,ws_item_sk#3076,ws_bill_customer_sk#3077,ws_bill_cdemo_sk#3078,ws_bill_hdemo_sk#3079,ws_bill_addr_sk#3080,ws_ship_customer_sk#3081,ws_ship_cdemo_sk#3082,ws_ship_hdemo_sk#3083,ws_ship_addr_sk#3084,ws_web_page_sk#3085,ws_web_site_sk#3086,ws_ship_mode_sk#3087,ws_warehouse_sk#3088,ws_promo_sk#3089,ws_order_number#3090L,ws_quantity#3091,ws_wholesale_cost#3092,ws_list_price#3093,ws_sales_price#3094,ws_ext_discount_amt#3095,ws_ext_sales_price#3096,ws_ext_wholesale_cost#3097,... 10 more fields] parquet
+
+== Physical Plan ==
+*(1) Project [ws_ship_addr_sk#3084 AS c0#6324, ws_list_price#3093 AS c1#6325]
++- *(1) Filter (isnull(ws_ship_mode_sk#3087) OR isnotnull(ws_ext_wholesale_cost#3097))
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.web_sales[ws_ship_addr_sk#3084,ws_ship_mode_sk#3087,ws_list_price#3093,ws_ext_wholesale_cost#3097,ws_sold_date_sk#3107] Batched: true, DataFilters: [(isnull(ws_ship_mode_sk#3087) OR isnotnull(ws_ext_wholesale_cost#3097))], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [Or(IsNull(ws_ship_mode_sk),IsNotNull(ws_ext_wholesale_cost))], ReadSchema: struct<ws_ship_addr_sk:int,ws_ship_mode_sk:int,ws_list_price:decimal(7,2),ws_ext_wholesale_cost:d...
+

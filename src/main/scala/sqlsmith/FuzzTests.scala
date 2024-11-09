@@ -149,6 +149,8 @@ object FuzzTests {
       outputDir.mkdir()
     }
 
+    val results_dir = "tmp"
+
     // TODO: Makes this code independent from the Spark version
     val spark = SparkSession.builder()
       .appName("FuzzTest")
@@ -292,11 +294,11 @@ object FuzzTests {
 
             status = s"PASS"
             if(estCount < 0) {
-              writeQueryToFile(output, s"${numStmtGenerated}_${actualCount}", s"queries/$status/NO_ESTIMATES")
+              writeQueryToFile(output, s"${numStmtGenerated}_${actualCount}", s"$results_dir/queries/$status/NO_ESTIMATES")
             } else if (absDiff > 0) {
-              writeQueryToFile(output, s"${numStmtGenerated}_${sign}${absDiff}", s"queries/$status/DIFFERENT_ESTIMATES")
+              writeQueryToFile(output, s"${numStmtGenerated}_${sign}${absDiff}", s"$results_dir/queries/$status/DIFFERENT_ESTIMATES")
             } else {
-              writeQueryToFile(output, s"${numStmtGenerated}", s"queries/$status/ACCURATE_ESTIMATES")
+              writeQueryToFile(output, s"${numStmtGenerated}", s"$results_dir/queries/$status/ACCURATE_ESTIMATES")
             }
 
             println(makeDivider())
@@ -351,7 +353,7 @@ object FuzzTests {
               // Finally, updates exception stats
               val curVal = errStore.getOrElseUpdate(exceptionName, 0)
               errStore.update(exceptionName, curVal + 1)
-              writeQueryToFile(s"${sqlFuzz}\n${makeDivider("ERROR")}\n$e", s"${numStmtGenerated}", s"queries/$status")
+              writeQueryToFile(s"${sqlFuzz}\n${makeDivider("ERROR")}\n$e", s"${numStmtGenerated}", s"$results_dir/queries/$status")
             case e =>
               throw new RuntimeException(s"Fuzz testing stopped because: $e")
           }

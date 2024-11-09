@@ -33,8 +33,11 @@ public class SQLSmithLoader {
     if (sqlSmithNative != null) {
       return sqlSmithNative;
     }
-//    System.load(loaderForSQLSmith.loadNativeLibFromJar().getAbsolutePath());
-    System.load("/home/ahmad/Documents/project/fuzz-testing-for-spark/src/main/resources/lib/Linux/aarch64/libsqlsmith.so");
+    String path = loaderForSQLSmith.loadNativeLibFromJar().getAbsolutePath();
+    System.load(path);
+//    System.out.println(path);
+//    System.exit(0);
+//    System.load("/home/ahmad/Documents/project/fuzz-testing-for-spark/src/main/resources/lib/Linux/aarch64/libsqlsmith.so");
     sqlSmithNative = new SQLSmithNative();
     return sqlSmithNative;
   }

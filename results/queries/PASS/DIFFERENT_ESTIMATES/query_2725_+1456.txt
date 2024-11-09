@@ -1,0 +1,45 @@
+
+============================STATS========================================
+Actual Count: 142224
+Estimated Count: 143680
+Abs diff: 1456
+============================QUERY========================================
+select  
+  ref_0.cr_returning_customer_sk as c0, 
+  ref_0.cr_order_number as c1, 
+  ref_0.cr_returning_addr_sk as c2, 
+  ref_0.cr_refunded_cdemo_sk as c3, 
+  ref_0.cr_order_number as c4, 
+  ref_0.cr_returning_customer_sk as c5
+from 
+  main.catalog_returns as ref_0
+where cast(coalesce(ref_0.cr_return_ship_cost,
+    ref_0.cr_call_center_sk) as INTEGER) is not NULL
+============================OUTPUT========================================
+[c0: int, c1: bigint ... 4 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.cr_returning_customer_sk AS c0#3763, 'ref_0.cr_order_number AS c1#3764, 'ref_0.cr_returning_addr_sk AS c2#3765, 'ref_0.cr_refunded_cdemo_sk AS c3#3766, 'ref_0.cr_order_number AS c4#3767, 'ref_0.cr_returning_customer_sk AS c5#3768]
++- 'Filter isnotnull(cast('coalesce('ref_0.cr_return_ship_cost, 'ref_0.cr_call_center_sk) as int))
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, catalog_returns]
+
+== Analyzed Logical Plan ==
+c0: int, c1: bigint, c2: int, c3: int, c4: bigint, c5: int
+Project [cr_returning_customer_sk#210 AS c0#3763, cr_order_number#219L AS c1#3764L, cr_returning_addr_sk#213 AS c2#3765, cr_refunded_cdemo_sk#207 AS c3#3766, cr_order_number#219L AS c4#3767L, cr_returning_customer_sk#210 AS c5#3768]
++- Filter isnotnull(cast(coalesce(cast(cr_return_ship_cost#225 as decimal(12,2)), cast(cr_call_center_sk#214 as decimal(12,2))) as int))
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.catalog_returns
+         +- Relation[cr_returned_time_sk#204,cr_item_sk#205,cr_refunded_customer_sk#206,cr_refunded_cdemo_sk#207,cr_refunded_hdemo_sk#208,cr_refunded_addr_sk#209,cr_returning_customer_sk#210,cr_returning_cdemo_sk#211,cr_returning_hdemo_sk#212,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_catalog_page_sk#215,cr_ship_mode_sk#216,cr_warehouse_sk#217,cr_reason_sk#218,cr_order_number#219L,cr_return_quantity#220,cr_return_amount#221,cr_return_tax#222,cr_return_amt_inc_tax#223,cr_fee#224,cr_return_ship_cost#225,cr_refunded_cash#226,cr_reversed_charge#227,... 3 more fields] parquet
+
+== Optimized Logical Plan ==
+Project [cr_returning_customer_sk#210 AS c0#3763, cr_order_number#219L AS c1#3764L, cr_returning_addr_sk#213 AS c2#3765, cr_refunded_cdemo_sk#207 AS c3#3766, cr_order_number#219L AS c4#3767L, cr_returning_customer_sk#210 AS c5#3768]
++- Filter isnotnull(cast(coalesce(cast(cr_return_ship_cost#225 as decimal(12,2)), cast(cr_call_center_sk#214 as decimal(12,2))) as int))
+   +- Relation[cr_returned_time_sk#204,cr_item_sk#205,cr_refunded_customer_sk#206,cr_refunded_cdemo_sk#207,cr_refunded_hdemo_sk#208,cr_refunded_addr_sk#209,cr_returning_customer_sk#210,cr_returning_cdemo_sk#211,cr_returning_hdemo_sk#212,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_catalog_page_sk#215,cr_ship_mode_sk#216,cr_warehouse_sk#217,cr_reason_sk#218,cr_order_number#219L,cr_return_quantity#220,cr_return_amount#221,cr_return_tax#222,cr_return_amt_inc_tax#223,cr_fee#224,cr_return_ship_cost#225,cr_refunded_cash#226,cr_reversed_charge#227,... 3 more fields] parquet
+
+== Physical Plan ==
+*(1) Project [cr_returning_customer_sk#210 AS c0#3763, cr_order_number#219L AS c1#3764L, cr_returning_addr_sk#213 AS c2#3765, cr_refunded_cdemo_sk#207 AS c3#3766, cr_order_number#219L AS c4#3767L, cr_returning_customer_sk#210 AS c5#3768]
++- *(1) Filter isnotnull(cast(coalesce(cast(cr_return_ship_cost#225 as decimal(12,2)), cast(cr_call_center_sk#214 as decimal(12,2))) as int))
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.catalog_returns[cr_refunded_cdemo_sk#207,cr_returning_customer_sk#210,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_order_number#219L,cr_return_ship_cost#225,cr_returned_date_sk#230] Batched: true, DataFilters: [isnotnull(cast(coalesce(cast(cr_return_ship_cost#225 as decimal(12,2)), cast(cr_call_center_sk#2..., Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [], ReadSchema: struct<cr_refunded_cdemo_sk:int,cr_returning_customer_sk:int,cr_returning_addr_sk:int,cr_call_cen...
+

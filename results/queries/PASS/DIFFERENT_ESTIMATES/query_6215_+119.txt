@@ -1,0 +1,59 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 119
+Abs diff: 119
+============================QUERY========================================
+select  
+  subq_0.c0 as c0
+from 
+  (select  
+        ref_0.cd_marital_status as c0, 
+        ref_0.cd_education_status as c1, 
+        ref_0.cd_purchase_estimate as c2
+      from 
+        main.customer_demographics as ref_0
+      where ref_0.cd_credit_rating is NULL) as subq_0
+where subq_0.c0 is not NULL
+limit 119
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 119
++- 'LocalLimit 119
+   +- 'Project ['subq_0.c0 AS c0#5644]
+      +- 'Filter isnotnull('subq_0.c0)
+         +- 'SubqueryAlias subq_0
+            +- 'Project ['ref_0.cd_marital_status AS c0#5641, 'ref_0.cd_education_status AS c1#5642, 'ref_0.cd_purchase_estimate AS c2#5643]
+               +- 'Filter isnull('ref_0.cd_credit_rating)
+                  +- 'SubqueryAlias ref_0
+                     +- 'UnresolvedRelation [main, customer_demographics]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 119
++- LocalLimit 119
+   +- Project [c0#5641 AS c0#5644]
+      +- Filter isnotnull(c0#5641)
+         +- SubqueryAlias subq_0
+            +- Project [cd_marital_status#502 AS c0#5641, cd_education_status#503 AS c1#5642, cd_purchase_estimate#504 AS c2#5643]
+               +- Filter isnull(cd_credit_rating#505)
+                  +- SubqueryAlias ref_0
+                     +- SubqueryAlias spark_catalog.main.customer_demographics
+                        +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 119
++- LocalLimit 119
+   +- Project [cd_marital_status#502 AS c0#5644]
+      +- Filter (isnull(cd_credit_rating#505) AND isnotnull(cd_marital_status#502))
+         +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Physical Plan ==
+CollectLimit 119
++- *(1) Project [cd_marital_status#502 AS c0#5644]
+   +- *(1) Filter (isnull(cd_credit_rating#505) AND isnotnull(cd_marital_status#502))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.customer_demographics[cd_marital_status#502,cd_credit_rating#505] Batched: true, DataFilters: [isnull(cd_credit_rating#505), isnotnull(cd_marital_status#502)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(cd_credit_rating), IsNotNull(cd_marital_status)], ReadSchema: struct<cd_marital_status:string,cd_credit_rating:string>
+

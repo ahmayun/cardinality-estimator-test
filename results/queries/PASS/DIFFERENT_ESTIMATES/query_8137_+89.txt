@@ -1,0 +1,84 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 89
+Abs diff: 89
+============================QUERY========================================
+select  
+  subq_0.c3 as c0, 
+  subq_0.c0 as c1
+from 
+  (select  
+        ref_0.ib_income_band_sk as c0, 
+        ref_1.w_country as c1, 
+        ref_1.w_street_name as c2, 
+        ref_1.w_state as c3
+      from 
+        main.income_band as ref_0
+          left join main.warehouse as ref_1
+          on (ref_0.ib_upper_bound = ref_1.w_warehouse_sk )
+      where ref_1.w_warehouse_sk is not NULL) as subq_0
+where (subq_0.c2 is not NULL) 
+  and (cast(nullif(subq_0.c0,
+      subq_0.c0) as INTEGER) is not NULL)
+limit 89
+============================OUTPUT========================================
+[c0: string, c1: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 89
++- 'LocalLimit 89
+   +- 'Project ['subq_0.c3 AS c0#6552, 'subq_0.c0 AS c1#6553]
+      +- 'Filter (isnotnull('subq_0.c2) AND isnotnull(cast('nullif('subq_0.c0, 'subq_0.c0) as int)))
+         +- 'SubqueryAlias subq_0
+            +- 'Project ['ref_0.ib_income_band_sk AS c0#6548, 'ref_1.w_country AS c1#6549, 'ref_1.w_street_name AS c2#6550, 'ref_1.w_state AS c3#6551]
+               +- 'Filter isnotnull('ref_1.w_warehouse_sk)
+                  +- 'Join LeftOuter, ('ref_0.ib_upper_bound = 'ref_1.w_warehouse_sk)
+                     :- 'SubqueryAlias ref_0
+                     :  +- 'UnresolvedRelation [main, income_band]
+                     +- 'SubqueryAlias ref_1
+                        +- 'UnresolvedRelation [main, warehouse]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int
+GlobalLimit 89
++- LocalLimit 89
+   +- Project [c3#6551 AS c0#6552, c0#6548 AS c1#6553]
+      +- Filter (isnotnull(c2#6550) AND isnotnull(cast(nullif(c0#6548, c0#6548) as int)))
+         +- SubqueryAlias subq_0
+            +- Project [ib_income_band_sk#4955 AS c0#6548, w_country#1172 AS c1#6549, w_street_name#1165 AS c2#6550, w_state#1170 AS c3#6551]
+               +- Filter isnotnull(w_warehouse_sk#1160)
+                  +- Join LeftOuter, (ib_upper_bound#4957 = w_warehouse_sk#1160)
+                     :- SubqueryAlias ref_0
+                     :  +- SubqueryAlias spark_catalog.main.income_band
+                     :     +- Relation[ib_income_band_sk#4955,ib_lower_bound#4956,ib_upper_bound#4957] parquet
+                     +- SubqueryAlias ref_1
+                        +- SubqueryAlias spark_catalog.main.warehouse
+                           +- Relation[w_warehouse_sk#1160,w_warehouse_id#1161,w_warehouse_name#1162,w_warehouse_sq_ft#1163,w_street_number#1164,w_street_name#1165,w_street_type#1166,w_suite_number#1167,w_city#1168,w_county#1169,w_state#1170,w_zip#1171,w_country#1172,w_gmt_offset#1173] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 89
++- LocalLimit 89
+   +- Project [w_state#1170 AS c0#6552, ib_income_band_sk#4955 AS c1#6553]
+      +- Join Inner, (ib_upper_bound#4957 = w_warehouse_sk#1160)
+         :- Project [ib_income_band_sk#4955, ib_upper_bound#4957]
+         :  +- Filter (isnotnull(if ((ib_income_band_sk#4955 = ib_income_band_sk#4955)) null else ib_income_band_sk#4955) AND isnotnull(ib_upper_bound#4957))
+         :     +- Relation[ib_income_band_sk#4955,ib_lower_bound#4956,ib_upper_bound#4957] parquet
+         +- Project [w_warehouse_sk#1160, w_state#1170]
+            +- Filter (isnotnull(w_street_name#1165) AND isnotnull(w_warehouse_sk#1160))
+               +- Relation[w_warehouse_sk#1160,w_warehouse_id#1161,w_warehouse_name#1162,w_warehouse_sq_ft#1163,w_street_number#1164,w_street_name#1165,w_street_type#1166,w_suite_number#1167,w_city#1168,w_county#1169,w_state#1170,w_zip#1171,w_country#1172,w_gmt_offset#1173] parquet
+
+== Physical Plan ==
+CollectLimit 89
++- *(2) Project [w_state#1170 AS c0#6552, ib_income_band_sk#4955 AS c1#6553]
+   +- *(2) BroadcastHashJoin [ib_upper_bound#4957], [w_warehouse_sk#1160], Inner, BuildRight
+      :- *(2) Project [ib_income_band_sk#4955, ib_upper_bound#4957]
+      :  +- *(2) Filter (isnotnull(if ((ib_income_band_sk#4955 = ib_income_band_sk#4955)) null else ib_income_band_sk#4955) AND isnotnull(ib_upper_bound#4957))
+      :     +- *(2) ColumnarToRow
+      :        +- FileScan parquet main.income_band[ib_income_band_sk#4955,ib_upper_bound#4957] Batched: true, DataFilters: [isnotnull(if ((ib_income_band_sk#4955 = ib_income_band_sk#4955)) null else ib_income_band_sk#495..., Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(ib_upper_bound)], ReadSchema: struct<ib_income_band_sk:int,ib_upper_bound:int>
+      +- BroadcastExchange HashedRelationBroadcastMode(List(cast(input[0, int, true] as bigint))), [id=#7877]
+         +- *(1) Project [w_warehouse_sk#1160, w_state#1170]
+            +- *(1) Filter (isnotnull(w_street_name#1165) AND isnotnull(w_warehouse_sk#1160))
+               +- *(1) ColumnarToRow
+                  +- FileScan parquet main.warehouse[w_warehouse_sk#1160,w_street_name#1165,w_state#1170] Batched: true, DataFilters: [isnotnull(w_street_name#1165), isnotnull(w_warehouse_sk#1160)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(w_street_name), IsNotNull(w_warehouse_sk)], ReadSchema: struct<w_warehouse_sk:int,w_street_name:string,w_state:string>
+
