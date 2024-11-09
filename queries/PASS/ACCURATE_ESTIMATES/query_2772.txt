@@ -1,0 +1,51 @@
+
+============================STATS========================================
+Actual Count: 125
+Estimated Count: 125
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.hd_dep_count as c0, 
+  ref_0.hd_income_band_sk as c1, 
+  ref_0.hd_income_band_sk as c2
+from 
+  main.household_demographics as ref_0
+where ((ref_0.hd_dep_count is NULL) 
+    and (ref_0.hd_income_band_sk is NULL)) 
+  or (ref_0.hd_vehicle_count is not NULL)
+limit 125
+============================OUTPUT========================================
+[c0: int, c1: int ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 125
++- 'LocalLimit 125
+   +- 'Project ['ref_0.hd_dep_count AS c0#3914, 'ref_0.hd_income_band_sk AS c1#3915, 'ref_0.hd_income_band_sk AS c2#3916]
+      +- 'Filter ((isnull('ref_0.hd_dep_count) AND isnull('ref_0.hd_income_band_sk)) OR isnotnull('ref_0.hd_vehicle_count))
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, household_demographics]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int, c2: int
+GlobalLimit 125
++- LocalLimit 125
+   +- Project [hd_dep_count#624 AS c0#3914, hd_income_band_sk#622 AS c1#3915, hd_income_band_sk#622 AS c2#3916]
+      +- Filter ((isnull(hd_dep_count#624) AND isnull(hd_income_band_sk#622)) OR isnotnull(hd_vehicle_count#625))
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.household_demographics
+               +- Relation[hd_demo_sk#621,hd_income_band_sk#622,hd_buy_potential#623,hd_dep_count#624,hd_vehicle_count#625] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 125
++- LocalLimit 125
+   +- Project [hd_dep_count#624 AS c0#3914, hd_income_band_sk#622 AS c1#3915, hd_income_band_sk#622 AS c2#3916]
+      +- Filter ((isnull(hd_dep_count#624) AND isnull(hd_income_band_sk#622)) OR isnotnull(hd_vehicle_count#625))
+         +- Relation[hd_demo_sk#621,hd_income_band_sk#622,hd_buy_potential#623,hd_dep_count#624,hd_vehicle_count#625] parquet
+
+== Physical Plan ==
+CollectLimit 125
++- *(1) Project [hd_dep_count#624 AS c0#3914, hd_income_band_sk#622 AS c1#3915, hd_income_band_sk#622 AS c2#3916]
+   +- *(1) Filter ((isnull(hd_dep_count#624) AND isnull(hd_income_band_sk#622)) OR isnotnull(hd_vehicle_count#625))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.household_demographics[hd_income_band_sk#622,hd_dep_count#624,hd_vehicle_count#625] Batched: true, DataFilters: [((isnull(hd_dep_count#624) AND isnull(hd_income_band_sk#622)) OR isnotnull(hd_vehicle_count#625))], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [Or(And(IsNull(hd_dep_count),IsNull(hd_income_band_sk)),IsNotNull(hd_vehicle_count))], ReadSchema: struct<hd_income_band_sk:int,hd_dep_count:int,hd_vehicle_count:int>
+

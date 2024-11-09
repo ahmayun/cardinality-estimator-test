@@ -1,0 +1,53 @@
+
+============================STATS========================================
+Actual Count: 93
+Estimated Count: 93
+Abs diff: 0
+============================QUERY========================================
+select  
+  cast(coalesce(ref_0.wr_web_page_sk,
+    ref_0.wr_return_ship_cost) as INTEGER) as c0, 
+  ref_0.wr_returning_cdemo_sk as c1, 
+  ref_0.wr_item_sk as c2, 
+  ref_0.wr_refunded_addr_sk as c3, 
+  ref_0.wr_returned_time_sk as c4, 
+  17 as c5
+from 
+  main.web_returns as ref_0
+where ref_0.wr_reversed_charge is not NULL
+limit 93
+============================OUTPUT========================================
+[c0: int, c1: int ... 4 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 93
++- 'LocalLimit 93
+   +- 'Project [cast('coalesce('ref_0.wr_web_page_sk, 'ref_0.wr_return_ship_cost) as int) AS c0#2399, 'ref_0.wr_returning_cdemo_sk AS c1#2400, 'ref_0.wr_item_sk AS c2#2401, 'ref_0.wr_refunded_addr_sk AS c3#2402, 'ref_0.wr_returned_time_sk AS c4#2403, 17 AS c5#2404]
+      +- 'Filter isnotnull('ref_0.wr_reversed_charge)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, web_returns]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int, c2: int, c3: int, c4: int, c5: int
+GlobalLimit 93
++- LocalLimit 93
+   +- Project [cast(coalesce(cast(wr_web_page_sk#1947 as decimal(12,2)), cast(wr_return_ship_cost#1955 as decimal(12,2))) as int) AS c0#2399, wr_returning_cdemo_sk#1944 AS c1#2400, wr_item_sk#1938 AS c2#2401, wr_refunded_addr_sk#1942 AS c3#2402, wr_returned_time_sk#1937 AS c4#2403, 17 AS c5#2404]
+      +- Filter isnotnull(wr_reversed_charge#1957)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.web_returns
+               +- Relation[wr_returned_time_sk#1937,wr_item_sk#1938,wr_refunded_customer_sk#1939,wr_refunded_cdemo_sk#1940,wr_refunded_hdemo_sk#1941,wr_refunded_addr_sk#1942,wr_returning_customer_sk#1943,wr_returning_cdemo_sk#1944,wr_returning_hdemo_sk#1945,wr_returning_addr_sk#1946,wr_web_page_sk#1947,wr_reason_sk#1948,wr_order_number#1949L,wr_return_quantity#1950,wr_return_amt#1951,wr_return_tax#1952,wr_return_amt_inc_tax#1953,wr_fee#1954,wr_return_ship_cost#1955,wr_refunded_cash#1956,wr_reversed_charge#1957,wr_account_credit#1958,wr_net_loss#1959,wr_returned_date_sk#1960] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 93
++- LocalLimit 93
+   +- Project [cast(coalesce(cast(wr_web_page_sk#1947 as decimal(12,2)), cast(wr_return_ship_cost#1955 as decimal(12,2))) as int) AS c0#2399, wr_returning_cdemo_sk#1944 AS c1#2400, wr_item_sk#1938 AS c2#2401, wr_refunded_addr_sk#1942 AS c3#2402, wr_returned_time_sk#1937 AS c4#2403, 17 AS c5#2404]
+      +- Filter isnotnull(wr_reversed_charge#1957)
+         +- Relation[wr_returned_time_sk#1937,wr_item_sk#1938,wr_refunded_customer_sk#1939,wr_refunded_cdemo_sk#1940,wr_refunded_hdemo_sk#1941,wr_refunded_addr_sk#1942,wr_returning_customer_sk#1943,wr_returning_cdemo_sk#1944,wr_returning_hdemo_sk#1945,wr_returning_addr_sk#1946,wr_web_page_sk#1947,wr_reason_sk#1948,wr_order_number#1949L,wr_return_quantity#1950,wr_return_amt#1951,wr_return_tax#1952,wr_return_amt_inc_tax#1953,wr_fee#1954,wr_return_ship_cost#1955,wr_refunded_cash#1956,wr_reversed_charge#1957,wr_account_credit#1958,wr_net_loss#1959,wr_returned_date_sk#1960] parquet
+
+== Physical Plan ==
+CollectLimit 93
++- *(1) Project [cast(coalesce(cast(wr_web_page_sk#1947 as decimal(12,2)), cast(wr_return_ship_cost#1955 as decimal(12,2))) as int) AS c0#2399, wr_returning_cdemo_sk#1944 AS c1#2400, wr_item_sk#1938 AS c2#2401, wr_refunded_addr_sk#1942 AS c3#2402, wr_returned_time_sk#1937 AS c4#2403, 17 AS c5#2404]
+   +- *(1) Filter isnotnull(wr_reversed_charge#1957)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.web_returns[wr_returned_time_sk#1937,wr_item_sk#1938,wr_refunded_addr_sk#1942,wr_returning_cdemo_sk#1944,wr_web_page_sk#1947,wr_return_ship_cost#1955,wr_reversed_charge#1957,wr_returned_date_sk#1960] Batched: true, DataFilters: [isnotnull(wr_reversed_charge#1957)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNotNull(wr_reversed_charge)], ReadSchema: struct<wr_returned_time_sk:int,wr_item_sk:int,wr_refunded_addr_sk:int,wr_returning_cdemo_sk:int,w...
+

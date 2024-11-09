@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 6
+Estimated Count: 6
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.cc_mkt_class as c0
+from 
+  main.call_center as ref_0
+where ref_0.cc_division_name is not NULL
+limit 95
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 95
++- 'LocalLimit 95
+   +- 'Project ['ref_0.cc_mkt_class AS c0#3110]
+      +- 'Filter isnotnull('ref_0.cc_division_name)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, call_center]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 95
++- LocalLimit 95
+   +- Project [cc_mkt_class#87 AS c0#3110]
+      +- Filter isnotnull(cc_division_name#91)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.call_center
+               +- Relation[cc_call_center_sk#74,cc_call_center_id#75,cc_rec_start_date#76,cc_rec_end_date#77,cc_closed_date_sk#78,cc_open_date_sk#79,cc_name#80,cc_class#81,cc_employees#82,cc_sq_ft#83,cc_hours#84,cc_manager#85,cc_mkt_id#86,cc_mkt_class#87,cc_mkt_desc#88,cc_market_manager#89,cc_division#90,cc_division_name#91,cc_company#92,cc_company_name#93,cc_street_number#94,cc_street_name#95,cc_street_type#96,cc_suite_number#97,... 7 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 95
++- LocalLimit 95
+   +- Project [cc_mkt_class#87 AS c0#3110]
+      +- Filter isnotnull(cc_division_name#91)
+         +- Relation[cc_call_center_sk#74,cc_call_center_id#75,cc_rec_start_date#76,cc_rec_end_date#77,cc_closed_date_sk#78,cc_open_date_sk#79,cc_name#80,cc_class#81,cc_employees#82,cc_sq_ft#83,cc_hours#84,cc_manager#85,cc_mkt_id#86,cc_mkt_class#87,cc_mkt_desc#88,cc_market_manager#89,cc_division#90,cc_division_name#91,cc_company#92,cc_company_name#93,cc_street_number#94,cc_street_name#95,cc_street_type#96,cc_suite_number#97,... 7 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 95
++- *(1) Project [cc_mkt_class#87 AS c0#3110]
+   +- *(1) Filter isnotnull(cc_division_name#91)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.call_center[cc_mkt_class#87,cc_division_name#91] Batched: true, DataFilters: [isnotnull(cc_division_name#91)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(cc_division_name)], ReadSchema: struct<cc_mkt_class:string,cc_division_name:string>
+

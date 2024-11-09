@@ -1,0 +1,48 @@
+
+============================STATS========================================
+Actual Count: 2
+Estimated Count: No Estimate
+Abs diff: 3
+============================QUERY========================================
+select distinct 
+  cast(nullif(ref_0.id,
+    ref_0.c0) as INTEGER) as c0, 
+  ref_0.name as c1, 
+  ref_0.c0 as c2
+from 
+  main.users as ref_0
+where ref_0.c2 is not NULL
+============================OUTPUT========================================
+[c0: int, c1: string ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Distinct
++- 'Project [cast('nullif('ref_0.id, 'ref_0.c0) as int) AS c0#5112, 'ref_0.name AS c1#5113, 'ref_0.c0 AS c2#5114]
+   +- 'Filter isnotnull('ref_0.c2)
+      +- 'SubqueryAlias ref_0
+         +- 'UnresolvedRelation [main, users]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string, c2: int
+Distinct
++- Project [cast(nullif(id#1138, c0#1137) as int) AS c0#5112, name#1140 AS c1#5113, c0#1137 AS c2#5114]
+   +- Filter isnotnull(c2#1141)
+      +- SubqueryAlias ref_0
+         +- SubqueryAlias spark_catalog.main.users
+            +- Relation[c0#1137,id#1138,c1#1139,name#1140,c2#1141,email#1142] parquet
+
+== Optimized Logical Plan ==
+Aggregate [c0#5112, c1#5113, c2#5114], [c0#5112, c1#5113, c2#5114]
++- Project [if ((id#1138 = c0#1137)) null else id#1138 AS c0#5112, name#1140 AS c1#5113, c0#1137 AS c2#5114]
+   +- Filter isnotnull(c2#1141)
+      +- Relation[c0#1137,id#1138,c1#1139,name#1140,c2#1141,email#1142] parquet
+
+== Physical Plan ==
+*(2) HashAggregate(keys=[c0#5112, c1#5113, c2#5114], functions=[], output=[c0#5112, c1#5113, c2#5114])
++- Exchange hashpartitioning(c0#5112, c1#5113, c2#5114, 200), true, [id=#5673]
+   +- *(1) HashAggregate(keys=[c0#5112, c1#5113, c2#5114], functions=[], output=[c0#5112, c1#5113, c2#5114])
+      +- *(1) Project [if ((id#1138 = c0#1137)) null else id#1138 AS c0#5112, name#1140 AS c1#5113, c0#1137 AS c2#5114]
+         +- *(1) Filter isnotnull(c2#1141)
+            +- *(1) ColumnarToRow
+               +- FileScan parquet main.users[c0#1137,id#1138,name#1140,c2#1141] Batched: true, DataFilters: [isnotnull(c2#1141)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/spark-warehouse/m..., PartitionFilters: [], PushedFilters: [IsNotNull(c2)], ReadSchema: struct<c0:int,id:int,name:string,c2:string>
+

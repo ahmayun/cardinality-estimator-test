@@ -1,0 +1,48 @@
+
+============================STATS========================================
+Actual Count: 106
+Estimated Count: 106
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.cd_purchase_estimate as c0, 
+  ref_0.cd_education_status as c1
+from 
+  main.customer_demographics as ref_0
+where ref_0.cd_gender is not NULL
+limit 106
+============================OUTPUT========================================
+[c0: int, c1: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 106
++- 'LocalLimit 106
+   +- 'Project ['ref_0.cd_purchase_estimate AS c0#6140, 'ref_0.cd_education_status AS c1#6141]
+      +- 'Filter isnotnull('ref_0.cd_gender)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, customer_demographics]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string
+GlobalLimit 106
++- LocalLimit 106
+   +- Project [cd_purchase_estimate#504 AS c0#6140, cd_education_status#503 AS c1#6141]
+      +- Filter isnotnull(cd_gender#501)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.customer_demographics
+               +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 106
++- LocalLimit 106
+   +- Project [cd_purchase_estimate#504 AS c0#6140, cd_education_status#503 AS c1#6141]
+      +- Filter isnotnull(cd_gender#501)
+         +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Physical Plan ==
+CollectLimit 106
++- *(1) Project [cd_purchase_estimate#504 AS c0#6140, cd_education_status#503 AS c1#6141]
+   +- *(1) Filter isnotnull(cd_gender#501)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.customer_demographics[cd_gender#501,cd_education_status#503,cd_purchase_estimate#504] Batched: true, DataFilters: [isnotnull(cd_gender#501)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(cd_gender)], ReadSchema: struct<cd_gender:string,cd_education_status:string,cd_purchase_estimate:int>
+

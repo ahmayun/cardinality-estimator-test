@@ -1,0 +1,43 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 11718
+Abs diff: 11718
+============================QUERY========================================
+select  
+  ref_0.cp_description as c0, 
+  case when ref_0.cp_catalog_number is not NULL then ref_0.cp_start_date_sk else ref_0.cp_start_date_sk end
+     as c1, 
+  ref_0.cp_catalog_page_sk as c2, 
+  ref_0.cp_catalog_page_number as c3
+from 
+  main.catalog_page as ref_0
+where ref_0.cp_catalog_page_sk is NULL
+============================OUTPUT========================================
+[c0: string, c1: int ... 2 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.cp_description AS c0#6880, CASE WHEN isnotnull('ref_0.cp_catalog_number) THEN 'ref_0.cp_start_date_sk ELSE 'ref_0.cp_start_date_sk END AS c1#6881, 'ref_0.cp_catalog_page_sk AS c2#6882, 'ref_0.cp_catalog_page_number AS c3#6883]
++- 'Filter isnull('ref_0.cp_catalog_page_sk)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, catalog_page]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: int, c3: int
+Project [cp_description#179 AS c0#6880, CASE WHEN isnotnull(cp_catalog_number#177) THEN cp_start_date_sk#174 ELSE cp_start_date_sk#174 END AS c1#6881, cp_catalog_page_sk#172 AS c2#6882, cp_catalog_page_number#178 AS c3#6883]
++- Filter isnull(cp_catalog_page_sk#172)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.catalog_page
+         +- Relation[cp_catalog_page_sk#172,cp_catalog_page_id#173,cp_start_date_sk#174,cp_end_date_sk#175,cp_department#176,cp_catalog_number#177,cp_catalog_page_number#178,cp_description#179,cp_type#180] parquet
+
+== Optimized Logical Plan ==
+Project [cp_description#179 AS c0#6880, cp_start_date_sk#174 AS c1#6881, cp_catalog_page_sk#172 AS c2#6882, cp_catalog_page_number#178 AS c3#6883]
++- Filter isnull(cp_catalog_page_sk#172)
+   +- Relation[cp_catalog_page_sk#172,cp_catalog_page_id#173,cp_start_date_sk#174,cp_end_date_sk#175,cp_department#176,cp_catalog_number#177,cp_catalog_page_number#178,cp_description#179,cp_type#180] parquet
+
+== Physical Plan ==
+*(1) Project [cp_description#179 AS c0#6880, cp_start_date_sk#174 AS c1#6881, cp_catalog_page_sk#172 AS c2#6882, cp_catalog_page_number#178 AS c3#6883]
++- *(1) Filter isnull(cp_catalog_page_sk#172)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.catalog_page[cp_catalog_page_sk#172,cp_start_date_sk#174,cp_catalog_page_number#178,cp_description#179] Batched: true, DataFilters: [isnull(cp_catalog_page_sk#172)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(cp_catalog_page_sk)], ReadSchema: struct<cp_catalog_page_sk:int,cp_start_date_sk:int,cp_catalog_page_number:int,cp_description:string>
+

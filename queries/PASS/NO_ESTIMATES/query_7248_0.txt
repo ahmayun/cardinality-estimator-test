@@ -1,0 +1,159 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: No Estimate
+Abs diff: 1
+============================QUERY========================================
+insert into main.store_returns values (
+53, 
+46, 
+70, 
+9, 
+70, 
+95, 
+69, 
+85, 
+4, 
+66, 
+11, 
+5, 
+58, 
+82, 
+54, 
+83, 
+23, 
+15, 
+34, 
+65)
+============================OUTPUT========================================
+[]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'InsertIntoStatement 'UnresolvedRelation [main, store_returns], false, false
++- 'UnresolvedInlineTable [col1, col2, col3, col4, col5, col6, col7, col8, col9, col10, col11, col12, col13, col14, col15, col16, col17, col18, col19, col20], [List(53, 46, 70, 9, 70, 95, 69, 85, 4, 66, 11, 5, 58, 82, 54, 83, 23, 15, 34, 65)]
+
+== Analyzed Logical Plan ==
+
+InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns, false, [sr_returned_date_sk#6267], Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns), Append, CatalogTable(
+Database: main
+Table: store_returns
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:28 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 29182362 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Partition Provider: Catalog
+Partition Columns: [`sr_returned_date_sk`]
+Schema: root
+-- sr_return_time_sk: integer (nullable = true)
+-- sr_item_sk: integer (nullable = true)
+-- sr_customer_sk: integer (nullable = true)
+-- sr_cdemo_sk: integer (nullable = true)
+-- sr_hdemo_sk: integer (nullable = true)
+-- sr_addr_sk: integer (nullable = true)
+-- sr_store_sk: integer (nullable = true)
+-- sr_reason_sk: integer (nullable = true)
+-- sr_ticket_number: long (nullable = true)
+-- sr_return_quantity: integer (nullable = true)
+-- sr_return_amt: decimal(7,2) (nullable = true)
+-- sr_return_tax: decimal(7,2) (nullable = true)
+-- sr_return_amt_inc_tax: decimal(7,2) (nullable = true)
+-- sr_fee: decimal(7,2) (nullable = true)
+-- sr_return_ship_cost: decimal(7,2) (nullable = true)
+-- sr_refunded_cash: decimal(7,2) (nullable = true)
+-- sr_reversed_charge: decimal(7,2) (nullable = true)
+-- sr_store_credit: decimal(7,2) (nullable = true)
+-- sr_net_loss: decimal(7,2) (nullable = true)
+-- sr_returned_date_sk: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.CatalogFileIndex@4bd5ce2, [sr_return_time_sk, sr_item_sk, sr_customer_sk, sr_cdemo_sk, sr_hdemo_sk, sr_addr_sk, sr_store_sk, sr_reason_sk, sr_ticket_number, sr_return_quantity, sr_return_amt, sr_return_tax, sr_return_amt_inc_tax, sr_fee, sr_return_ship_cost, sr_refunded_cash, sr_reversed_charge, sr_store_credit, sr_net_loss, sr_returned_date_sk]
++- Project [ansi_cast(col1#6208 as int) AS sr_return_time_sk#6248, ansi_cast(col2#6209 as int) AS sr_item_sk#6249, ansi_cast(col3#6210 as int) AS sr_customer_sk#6250, ansi_cast(col4#6211 as int) AS sr_cdemo_sk#6251, ansi_cast(col5#6212 as int) AS sr_hdemo_sk#6252, ansi_cast(col6#6213 as int) AS sr_addr_sk#6253, ansi_cast(col7#6214 as int) AS sr_store_sk#6254, ansi_cast(col8#6215 as int) AS sr_reason_sk#6255, ansi_cast(col9#6216 as bigint) AS sr_ticket_number#6256L, ansi_cast(col10#6217 as int) AS sr_return_quantity#6257, ansi_cast(col11#6218 as decimal(7,2)) AS sr_return_amt#6258, ansi_cast(col12#6219 as decimal(7,2)) AS sr_return_tax#6259, ansi_cast(col13#6220 as decimal(7,2)) AS sr_return_amt_inc_tax#6260, ansi_cast(col14#6221 as decimal(7,2)) AS sr_fee#6261, ansi_cast(col15#6222 as decimal(7,2)) AS sr_return_ship_cost#6262, ansi_cast(col16#6223 as decimal(7,2)) AS sr_refunded_cash#6263, ansi_cast(col17#6224 as decimal(7,2)) AS sr_reversed_charge#6264, ansi_cast(col18#6225 as decimal(7,2)) AS sr_store_credit#6265, ansi_cast(col19#6226 as decimal(7,2)) AS sr_net_loss#6266, ansi_cast(col20#6227 as int) AS sr_returned_date_sk#6267]
+   +- LocalRelation [col1#6208, col2#6209, col3#6210, col4#6211, col5#6212, col6#6213, col7#6214, col8#6215, col9#6216, col10#6217, col11#6218, col12#6219, col13#6220, col14#6221, col15#6222, col16#6223, col17#6224, col18#6225, col19#6226, col20#6227]
+
+== Optimized Logical Plan ==
+InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns, false, [sr_returned_date_sk#6267], Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns), Append, CatalogTable(
+Database: main
+Table: store_returns
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:28 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 29182362 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Partition Provider: Catalog
+Partition Columns: [`sr_returned_date_sk`]
+Schema: root
+-- sr_return_time_sk: integer (nullable = true)
+-- sr_item_sk: integer (nullable = true)
+-- sr_customer_sk: integer (nullable = true)
+-- sr_cdemo_sk: integer (nullable = true)
+-- sr_hdemo_sk: integer (nullable = true)
+-- sr_addr_sk: integer (nullable = true)
+-- sr_store_sk: integer (nullable = true)
+-- sr_reason_sk: integer (nullable = true)
+-- sr_ticket_number: long (nullable = true)
+-- sr_return_quantity: integer (nullable = true)
+-- sr_return_amt: decimal(7,2) (nullable = true)
+-- sr_return_tax: decimal(7,2) (nullable = true)
+-- sr_return_amt_inc_tax: decimal(7,2) (nullable = true)
+-- sr_fee: decimal(7,2) (nullable = true)
+-- sr_return_ship_cost: decimal(7,2) (nullable = true)
+-- sr_refunded_cash: decimal(7,2) (nullable = true)
+-- sr_reversed_charge: decimal(7,2) (nullable = true)
+-- sr_store_credit: decimal(7,2) (nullable = true)
+-- sr_net_loss: decimal(7,2) (nullable = true)
+-- sr_returned_date_sk: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.CatalogFileIndex@4bd5ce2, [sr_return_time_sk, sr_item_sk, sr_customer_sk, sr_cdemo_sk, sr_hdemo_sk, sr_addr_sk, sr_store_sk, sr_reason_sk, sr_ticket_number, sr_return_quantity, sr_return_amt, sr_return_tax, sr_return_amt_inc_tax, sr_fee, sr_return_ship_cost, sr_refunded_cash, sr_reversed_charge, sr_store_credit, sr_net_loss, sr_returned_date_sk]
++- LocalRelation [sr_return_time_sk#6248, sr_item_sk#6249, sr_customer_sk#6250, sr_cdemo_sk#6251, sr_hdemo_sk#6252, sr_addr_sk#6253, sr_store_sk#6254, sr_reason_sk#6255, sr_ticket_number#6256L, sr_return_quantity#6257, sr_return_amt#6258, sr_return_tax#6259, sr_return_amt_inc_tax#6260, sr_fee#6261, sr_return_ship_cost#6262, sr_refunded_cash#6263, sr_reversed_charge#6264, sr_store_credit#6265, sr_net_loss#6266, sr_returned_date_sk#6267]
+
+== Physical Plan ==
+Execute InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns, false, [sr_returned_date_sk#6267], Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns), Append, CatalogTable(
+Database: main
+Table: store_returns
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:28 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 29182362 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/store_returns
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Partition Provider: Catalog
+Partition Columns: [`sr_returned_date_sk`]
+Schema: root
+-- sr_return_time_sk: integer (nullable = true)
+-- sr_item_sk: integer (nullable = true)
+-- sr_customer_sk: integer (nullable = true)
+-- sr_cdemo_sk: integer (nullable = true)
+-- sr_hdemo_sk: integer (nullable = true)
+-- sr_addr_sk: integer (nullable = true)
+-- sr_store_sk: integer (nullable = true)
+-- sr_reason_sk: integer (nullable = true)
+-- sr_ticket_number: long (nullable = true)
+-- sr_return_quantity: integer (nullable = true)
+-- sr_return_amt: decimal(7,2) (nullable = true)
+-- sr_return_tax: decimal(7,2) (nullable = true)
+-- sr_return_amt_inc_tax: decimal(7,2) (nullable = true)
+-- sr_fee: decimal(7,2) (nullable = true)
+-- sr_return_ship_cost: decimal(7,2) (nullable = true)
+-- sr_refunded_cash: decimal(7,2) (nullable = true)
+-- sr_reversed_charge: decimal(7,2) (nullable = true)
+-- sr_store_credit: decimal(7,2) (nullable = true)
+-- sr_net_loss: decimal(7,2) (nullable = true)
+-- sr_returned_date_sk: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.CatalogFileIndex@4bd5ce2, [sr_return_time_sk, sr_item_sk, sr_customer_sk, sr_cdemo_sk, sr_hdemo_sk, sr_addr_sk, sr_store_sk, sr_reason_sk, sr_ticket_number, sr_return_quantity, sr_return_amt, sr_return_tax, sr_return_amt_inc_tax, sr_fee, sr_return_ship_cost, sr_refunded_cash, sr_reversed_charge, sr_store_credit, sr_net_loss, sr_returned_date_sk]
++- LocalTableScan [sr_return_time_sk#6248, sr_item_sk#6249, sr_customer_sk#6250, sr_cdemo_sk#6251, sr_hdemo_sk#6252, sr_addr_sk#6253, sr_store_sk#6254, sr_reason_sk#6255, sr_ticket_number#6256L, sr_return_quantity#6257, sr_return_amt#6258, sr_return_tax#6259, sr_return_amt_inc_tax#6260, sr_fee#6261, sr_return_ship_cost#6262, sr_refunded_cash#6263, sr_reversed_charge#6264, sr_store_credit#6265, sr_net_loss#6266, sr_returned_date_sk#6267]
+

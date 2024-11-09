@@ -1,0 +1,39 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 1920800
+Abs diff: 1920800
+============================QUERY========================================
+select  
+  12 as c0
+from 
+  main.customer_demographics as ref_0
+where ref_0.cd_credit_rating is NULL
+============================OUTPUT========================================
+[c0: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project [12 AS c0#6595]
++- 'Filter isnull('ref_0.cd_credit_rating)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, customer_demographics]
+
+== Analyzed Logical Plan ==
+c0: int
+Project [12 AS c0#6595]
++- Filter isnull(cd_credit_rating#505)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.customer_demographics
+         +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Optimized Logical Plan ==
+Project [12 AS c0#6595]
++- Filter isnull(cd_credit_rating#505)
+   +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Physical Plan ==
+*(1) Project [12 AS c0#6595]
++- *(1) Filter isnull(cd_credit_rating#505)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.customer_demographics[cd_credit_rating#505] Batched: true, DataFilters: [isnull(cd_credit_rating#505)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(cd_credit_rating)], ReadSchema: struct<cd_credit_rating:string>
+

@@ -1,0 +1,47 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 35
+Abs diff: 35
+============================QUERY========================================
+select  
+  ref_0.r_reason_desc as c0
+from 
+  main.reason as ref_0
+where ref_0.r_reason_desc is NULL
+limit 106
+============================OUTPUT========================================
+[c0: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 106
++- 'LocalLimit 106
+   +- 'Project ['ref_0.r_reason_desc AS c0#6899]
+      +- 'Filter isnull('ref_0.r_reason_desc)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, reason]
+
+== Analyzed Logical Plan ==
+c0: string
+GlobalLimit 106
++- LocalLimit 106
+   +- Project [r_reason_desc#836 AS c0#6899]
+      +- Filter isnull(r_reason_desc#836)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.reason
+               +- Relation[r_reason_sk#834,r_reason_id#835,r_reason_desc#836] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 106
++- LocalLimit 106
+   +- Project [r_reason_desc#836 AS c0#6899]
+      +- Filter isnull(r_reason_desc#836)
+         +- Relation[r_reason_sk#834,r_reason_id#835,r_reason_desc#836] parquet
+
+== Physical Plan ==
+CollectLimit 106
++- *(1) Project [r_reason_desc#836 AS c0#6899]
+   +- *(1) Filter isnull(r_reason_desc#836)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.reason[r_reason_desc#836] Batched: true, DataFilters: [isnull(r_reason_desc#836)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(r_reason_desc)], ReadSchema: struct<r_reason_desc:string>
+

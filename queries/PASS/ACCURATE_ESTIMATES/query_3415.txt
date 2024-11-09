@@ -1,0 +1,48 @@
+
+============================STATS========================================
+Actual Count: 102
+Estimated Count: 102
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.cp_catalog_page_number as c0, 
+  72 as c1
+from 
+  main.catalog_page as ref_0
+where ref_0.cp_start_date_sk is not NULL
+limit 102
+============================OUTPUT========================================
+[c0: int, c1: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 102
++- 'LocalLimit 102
+   +- 'Project ['ref_0.cp_catalog_page_number AS c0#4313, 72 AS c1#4314]
+      +- 'Filter isnotnull('ref_0.cp_start_date_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, catalog_page]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int
+GlobalLimit 102
++- LocalLimit 102
+   +- Project [cp_catalog_page_number#178 AS c0#4313, 72 AS c1#4314]
+      +- Filter isnotnull(cp_start_date_sk#174)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.catalog_page
+               +- Relation[cp_catalog_page_sk#172,cp_catalog_page_id#173,cp_start_date_sk#174,cp_end_date_sk#175,cp_department#176,cp_catalog_number#177,cp_catalog_page_number#178,cp_description#179,cp_type#180] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 102
++- LocalLimit 102
+   +- Project [cp_catalog_page_number#178 AS c0#4313, 72 AS c1#4314]
+      +- Filter isnotnull(cp_start_date_sk#174)
+         +- Relation[cp_catalog_page_sk#172,cp_catalog_page_id#173,cp_start_date_sk#174,cp_end_date_sk#175,cp_department#176,cp_catalog_number#177,cp_catalog_page_number#178,cp_description#179,cp_type#180] parquet
+
+== Physical Plan ==
+CollectLimit 102
++- *(1) Project [cp_catalog_page_number#178 AS c0#4313, 72 AS c1#4314]
+   +- *(1) Filter isnotnull(cp_start_date_sk#174)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.catalog_page[cp_start_date_sk#174,cp_catalog_page_number#178] Batched: true, DataFilters: [isnotnull(cp_start_date_sk#174)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(cp_start_date_sk)], ReadSchema: struct<cp_start_date_sk:int,cp_catalog_page_number:int>
+

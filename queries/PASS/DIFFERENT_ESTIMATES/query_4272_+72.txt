@@ -1,0 +1,53 @@
+
+============================STATS========================================
+Actual Count: 3
+Estimated Count: 75
+Abs diff: 72
+============================QUERY========================================
+select  
+  ref_0.p_channel_press as c0, 
+  ref_0.p_response_target as c1, 
+  ref_0.p_channel_demo as c2, 
+  ref_0.p_purpose as c3, 
+  ref_0.p_cost as c4, 
+  ref_0.p_channel_radio as c5
+from 
+  main.promotion as ref_0
+where (ref_0.p_response_target is NULL) 
+  and (ref_0.p_promo_name is NULL)
+limit 75
+============================OUTPUT========================================
+[c0: string, c1: int ... 4 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 75
++- 'LocalLimit 75
+   +- 'Project ['ref_0.p_channel_press AS c0#4684, 'ref_0.p_response_target AS c1#4685, 'ref_0.p_channel_demo AS c2#4686, 'ref_0.p_purpose AS c3#4687, 'ref_0.p_cost AS c4#4688, 'ref_0.p_channel_radio AS c5#4689]
+      +- 'Filter (isnull('ref_0.p_response_target) AND isnull('ref_0.p_promo_name))
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, promotion]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: string, c3: string, c4: decimal(15,2), c5: string
+GlobalLimit 75
++- LocalLimit 75
+   +- Project [p_channel_press#785 AS c0#4684, p_response_target#778 AS c1#4685, p_channel_demo#787 AS c2#4686, p_purpose#789 AS c3#4687, p_cost#777 AS c4#4688, p_channel_radio#784 AS c5#4689]
+      +- Filter (isnull(p_response_target#778) AND isnull(p_promo_name#779))
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.promotion
+               +- Relation[p_promo_sk#772,p_promo_id#773,p_start_date_sk#774,p_end_date_sk#775,p_item_sk#776,p_cost#777,p_response_target#778,p_promo_name#779,p_channel_dmail#780,p_channel_email#781,p_channel_catalog#782,p_channel_tv#783,p_channel_radio#784,p_channel_press#785,p_channel_event#786,p_channel_demo#787,p_channel_details#788,p_purpose#789,p_discount_active#790] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 75
++- LocalLimit 75
+   +- Project [p_channel_press#785 AS c0#4684, p_response_target#778 AS c1#4685, p_channel_demo#787 AS c2#4686, p_purpose#789 AS c3#4687, p_cost#777 AS c4#4688, p_channel_radio#784 AS c5#4689]
+      +- Filter (isnull(p_response_target#778) AND isnull(p_promo_name#779))
+         +- Relation[p_promo_sk#772,p_promo_id#773,p_start_date_sk#774,p_end_date_sk#775,p_item_sk#776,p_cost#777,p_response_target#778,p_promo_name#779,p_channel_dmail#780,p_channel_email#781,p_channel_catalog#782,p_channel_tv#783,p_channel_radio#784,p_channel_press#785,p_channel_event#786,p_channel_demo#787,p_channel_details#788,p_purpose#789,p_discount_active#790] parquet
+
+== Physical Plan ==
+CollectLimit 75
++- *(1) Project [p_channel_press#785 AS c0#4684, p_response_target#778 AS c1#4685, p_channel_demo#787 AS c2#4686, p_purpose#789 AS c3#4687, p_cost#777 AS c4#4688, p_channel_radio#784 AS c5#4689]
+   +- *(1) Filter (isnull(p_response_target#778) AND isnull(p_promo_name#779))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.promotion[p_cost#777,p_response_target#778,p_promo_name#779,p_channel_radio#784,p_channel_press#785,p_channel_demo#787,p_purpose#789] Batched: true, DataFilters: [isnull(p_response_target#778), isnull(p_promo_name#779)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(p_response_target), IsNull(p_promo_name)], ReadSchema: struct<p_cost:decimal(15,2),p_response_target:int,p_promo_name:string,p_channel_radio:string,p_ch...
+

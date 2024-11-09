@@ -1,0 +1,85 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: No Estimate
+Abs diff: 1
+============================QUERY========================================
+insert into main.income_band values (
+16, 
+26, 
+84)
+============================OUTPUT========================================
+[]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'InsertIntoStatement 'UnresolvedRelation [main, income_band], false, false
++- 'UnresolvedInlineTable [col1, col2, col3], [List(16, 26, 84)]
+
+== Analyzed Logical Plan ==
+
+InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band, false, Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band), Append, CatalogTable(
+Database: main
+Table: income_band
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:36 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 68194 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Schema: root
+-- ib_income_band_sk: integer (nullable = true)
+-- ib_lower_bound: integer (nullable = true)
+-- ib_upper_bound: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.InMemoryFileIndex@3cb138bc, [ib_income_band_sk, ib_lower_bound, ib_upper_bound]
++- Project [ansi_cast(col1#2976 as int) AS ib_income_band_sk#2982, ansi_cast(col2#2977 as int) AS ib_lower_bound#2983, ansi_cast(col3#2978 as int) AS ib_upper_bound#2984]
+   +- LocalRelation [col1#2976, col2#2977, col3#2978]
+
+== Optimized Logical Plan ==
+InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band, false, Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band), Append, CatalogTable(
+Database: main
+Table: income_band
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:36 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 68194 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Schema: root
+-- ib_income_band_sk: integer (nullable = true)
+-- ib_lower_bound: integer (nullable = true)
+-- ib_upper_bound: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.InMemoryFileIndex@3cb138bc, [ib_income_band_sk, ib_lower_bound, ib_upper_bound]
++- LocalRelation [ib_income_band_sk#2982, ib_lower_bound#2983, ib_upper_bound#2984]
+
+== Physical Plan ==
+Execute InsertIntoHadoopFsRelationCommand file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band, false, Parquet, Map(path -> file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band), Append, CatalogTable(
+Database: main
+Table: income_band
+Owner: ahmad
+Created Time: Fri Nov 01 22:19:36 EDT 2024
+Last Access: UNKNOWN
+Created By: Spark 3.0.0
+Type: EXTERNAL
+Provider: parquet
+Statistics: 68194 bytes
+Location: file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-main/income_band
+Serde Library: org.apache.hadoop.hive.ql.io.parquet.serde.ParquetHiveSerDe
+InputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetInputFormat
+OutputFormat: org.apache.hadoop.hive.ql.io.parquet.MapredParquetOutputFormat
+Schema: root
+-- ib_income_band_sk: integer (nullable = true)
+-- ib_lower_bound: integer (nullable = true)
+-- ib_upper_bound: integer (nullable = true)
+), org.apache.spark.sql.execution.datasources.InMemoryFileIndex@3cb138bc, [ib_income_band_sk, ib_lower_bound, ib_upper_bound]
++- LocalTableScan [ib_income_band_sk#2982, ib_lower_bound#2983, ib_upper_bound#2984]
+

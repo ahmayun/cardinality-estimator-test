@@ -1,0 +1,71 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 99
+Abs diff: 99
+============================QUERY========================================
+select  
+  ref_1.t_am_pm as c0, 
+  cast(nullif(50,
+    ref_1.t_minute) as INTEGER) as c1, 
+  ref_1.t_time as c2
+from 
+  main.ship_mode as ref_0
+    inner join main.time_dim as ref_1
+    on (ref_0.sm_contract = ref_1.t_time_id )
+where ref_1.t_time_id is NULL
+limit 99
+============================OUTPUT========================================
+[c0: string, c1: int ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 99
++- 'LocalLimit 99
+   +- 'Project ['ref_1.t_am_pm AS c0#3362, cast('nullif(50, 'ref_1.t_minute) as int) AS c1#3363, 'ref_1.t_time AS c2#3364]
+      +- 'Filter isnull('ref_1.t_time_id)
+         +- 'Join Inner, ('ref_0.sm_contract = 'ref_1.t_time_id)
+            :- 'SubqueryAlias ref_0
+            :  +- 'UnresolvedRelation [main, ship_mode]
+            +- 'SubqueryAlias ref_1
+               +- 'UnresolvedRelation [main, time_dim]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: int
+GlobalLimit 99
++- LocalLimit 99
+   +- Project [t_am_pm#1108 AS c0#3362, cast(nullif(50, t_minute#1106) as int) AS c1#3363, t_time#1104 AS c2#3364]
+      +- Filter isnull(t_time_id#1103)
+         +- Join Inner, (sm_contract#853 = t_time_id#1103)
+            :- SubqueryAlias ref_0
+            :  +- SubqueryAlias spark_catalog.main.ship_mode
+            :     +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+            +- SubqueryAlias ref_1
+               +- SubqueryAlias spark_catalog.main.time_dim
+                  +- Relation[t_time_sk#1102,t_time_id#1103,t_time#1104,t_hour#1105,t_minute#1106,t_second#1107,t_am_pm#1108,t_shift#1109,t_sub_shift#1110,t_meal_time#1111] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 99
++- LocalLimit 99
+   +- Project [t_am_pm#1108 AS c0#3362, if ((50 = t_minute#1106)) null else 50 AS c1#3363, t_time#1104 AS c2#3364]
+      +- Join Inner, (sm_contract#853 = t_time_id#1103)
+         :- Project [sm_contract#853]
+         :  +- Filter (isnull(sm_contract#853) AND isnotnull(sm_contract#853))
+         :     +- Relation[sm_ship_mode_sk#848,sm_ship_mode_id#849,sm_type#850,sm_code#851,sm_carrier#852,sm_contract#853] parquet
+         +- Project [t_time_id#1103, t_time#1104, t_minute#1106, t_am_pm#1108]
+            +- Filter (isnull(t_time_id#1103) AND isnotnull(t_time_id#1103))
+               +- Relation[t_time_sk#1102,t_time_id#1103,t_time#1104,t_hour#1105,t_minute#1106,t_second#1107,t_am_pm#1108,t_shift#1109,t_sub_shift#1110,t_meal_time#1111] parquet
+
+== Physical Plan ==
+CollectLimit 99
++- *(2) Project [t_am_pm#1108 AS c0#3362, if ((50 = t_minute#1106)) null else 50 AS c1#3363, t_time#1104 AS c2#3364]
+   +- *(2) BroadcastHashJoin [sm_contract#853], [t_time_id#1103], Inner, BuildLeft
+      :- BroadcastExchange HashedRelationBroadcastMode(List(input[0, string, true])), [id=#2828]
+      :  +- *(1) Project [sm_contract#853]
+      :     +- *(1) Filter (isnull(sm_contract#853) AND isnotnull(sm_contract#853))
+      :        +- *(1) ColumnarToRow
+      :           +- FileScan parquet main.ship_mode[sm_contract#853] Batched: true, DataFilters: [isnull(sm_contract#853), isnotnull(sm_contract#853)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(sm_contract), IsNotNull(sm_contract)], ReadSchema: struct<sm_contract:string>
+      +- *(2) Project [t_time_id#1103, t_time#1104, t_minute#1106, t_am_pm#1108]
+         +- *(2) Filter (isnull(t_time_id#1103) AND isnotnull(t_time_id#1103))
+            +- *(2) ColumnarToRow
+               +- FileScan parquet main.time_dim[t_time_id#1103,t_time#1104,t_minute#1106,t_am_pm#1108] Batched: true, DataFilters: [isnull(t_time_id#1103), isnotnull(t_time_id#1103)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(t_time_id), IsNotNull(t_time_id)], ReadSchema: struct<t_time_id:string,t_time:int,t_minute:int,t_am_pm:string>
+

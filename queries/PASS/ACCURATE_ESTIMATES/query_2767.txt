@@ -1,0 +1,64 @@
+
+============================STATS========================================
+Actual Count: 96
+Estimated Count: 96
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.ss_net_profit as c0, 
+  ref_0.ss_ext_list_price as c1, 
+  ref_0.ss_ext_discount_amt as c2, 
+  case when ref_0.ss_net_paid is not NULL then case when ref_0.ss_ext_sales_price is not NULL then ref_0.ss_wholesale_cost else ref_0.ss_wholesale_cost end
+       else case when ref_0.ss_ext_sales_price is not NULL then ref_0.ss_wholesale_cost else ref_0.ss_wholesale_cost end
+       end
+     as c3, 
+  ref_0.ss_sales_price as c4, 
+  ref_0.ss_quantity as c5, 
+  ref_0.ss_ext_wholesale_cost as c6, 
+  ref_0.ss_sales_price as c7, 
+  ref_0.ss_cdemo_sk as c8, 
+  ref_0.ss_net_paid_inc_tax as c9, 
+  ref_0.ss_net_paid_inc_tax as c10, 
+  ref_0.ss_net_paid_inc_tax as c11, 
+  ref_0.ss_coupon_amt as c12, 
+  ref_0.ss_ext_list_price as c13, 
+  ref_0.ss_promo_sk as c14
+from 
+  main.store_sales as ref_0
+where ref_0.ss_cdemo_sk is not NULL
+limit 96
+============================OUTPUT========================================
+[c0: decimal(7,2), c1: decimal(7,2) ... 13 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 96
++- 'LocalLimit 96
+   +- 'Project ['ref_0.ss_net_profit AS c0#3858, 'ref_0.ss_ext_list_price AS c1#3859, 'ref_0.ss_ext_discount_amt AS c2#3860, CASE WHEN isnotnull('ref_0.ss_net_paid) THEN CASE WHEN isnotnull('ref_0.ss_ext_sales_price) THEN 'ref_0.ss_wholesale_cost ELSE 'ref_0.ss_wholesale_cost END ELSE CASE WHEN isnotnull('ref_0.ss_ext_sales_price) THEN 'ref_0.ss_wholesale_cost ELSE 'ref_0.ss_wholesale_cost END END AS c3#3861, 'ref_0.ss_sales_price AS c4#3862, 'ref_0.ss_quantity AS c5#3863, 'ref_0.ss_ext_wholesale_cost AS c6#3864, 'ref_0.ss_sales_price AS c7#3865, 'ref_0.ss_cdemo_sk AS c8#3866, 'ref_0.ss_net_paid_inc_tax AS c9#3867, 'ref_0.ss_net_paid_inc_tax AS c10#3868, 'ref_0.ss_net_paid_inc_tax AS c11#3869, 'ref_0.ss_coupon_amt AS c12#3870, 'ref_0.ss_ext_list_price AS c13#3871, 'ref_0.ss_promo_sk AS c14#3872]
+      +- 'Filter isnotnull('ref_0.ss_cdemo_sk)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, store_sales]
+
+== Analyzed Logical Plan ==
+c0: decimal(7,2), c1: decimal(7,2), c2: decimal(7,2), c3: decimal(7,2), c4: decimal(7,2), c5: int, c6: decimal(7,2), c7: decimal(7,2), c8: int, c9: decimal(7,2), c10: decimal(7,2), c11: decimal(7,2), c12: decimal(7,2), c13: decimal(7,2), c14: int
+GlobalLimit 96
++- LocalLimit 96
+   +- Project [ss_net_profit#1049 AS c0#3858, ss_ext_list_price#1044 AS c1#3859, ss_ext_discount_amt#1041 AS c2#3860, CASE WHEN isnotnull(ss_net_paid#1047) THEN CASE WHEN isnotnull(ss_ext_sales_price#1042) THEN ss_wholesale_cost#1038 ELSE ss_wholesale_cost#1038 END ELSE CASE WHEN isnotnull(ss_ext_sales_price#1042) THEN ss_wholesale_cost#1038 ELSE ss_wholesale_cost#1038 END END AS c3#3861, ss_sales_price#1040 AS c4#3862, ss_quantity#1037 AS c5#3863, ss_ext_wholesale_cost#1043 AS c6#3864, ss_sales_price#1040 AS c7#3865, ss_cdemo_sk#1031 AS c8#3866, ss_net_paid_inc_tax#1048 AS c9#3867, ss_net_paid_inc_tax#1048 AS c10#3868, ss_net_paid_inc_tax#1048 AS c11#3869, ss_coupon_amt#1046 AS c12#3870, ss_ext_list_price#1044 AS c13#3871, ss_promo_sk#1035 AS c14#3872]
+      +- Filter isnotnull(ss_cdemo_sk#1031)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.store_sales
+               +- Relation[ss_sold_time_sk#1028,ss_item_sk#1029,ss_customer_sk#1030,ss_cdemo_sk#1031,ss_hdemo_sk#1032,ss_addr_sk#1033,ss_store_sk#1034,ss_promo_sk#1035,ss_ticket_number#1036L,ss_quantity#1037,ss_wholesale_cost#1038,ss_list_price#1039,ss_sales_price#1040,ss_ext_discount_amt#1041,ss_ext_sales_price#1042,ss_ext_wholesale_cost#1043,ss_ext_list_price#1044,ss_ext_tax#1045,ss_coupon_amt#1046,ss_net_paid#1047,ss_net_paid_inc_tax#1048,ss_net_profit#1049,ss_sold_date_sk#1050] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 96
++- LocalLimit 96
+   +- Project [ss_net_profit#1049 AS c0#3858, ss_ext_list_price#1044 AS c1#3859, ss_ext_discount_amt#1041 AS c2#3860, ss_wholesale_cost#1038 AS c3#3861, ss_sales_price#1040 AS c4#3862, ss_quantity#1037 AS c5#3863, ss_ext_wholesale_cost#1043 AS c6#3864, ss_sales_price#1040 AS c7#3865, ss_cdemo_sk#1031 AS c8#3866, ss_net_paid_inc_tax#1048 AS c9#3867, ss_net_paid_inc_tax#1048 AS c10#3868, ss_net_paid_inc_tax#1048 AS c11#3869, ss_coupon_amt#1046 AS c12#3870, ss_ext_list_price#1044 AS c13#3871, ss_promo_sk#1035 AS c14#3872]
+      +- Filter isnotnull(ss_cdemo_sk#1031)
+         +- Relation[ss_sold_time_sk#1028,ss_item_sk#1029,ss_customer_sk#1030,ss_cdemo_sk#1031,ss_hdemo_sk#1032,ss_addr_sk#1033,ss_store_sk#1034,ss_promo_sk#1035,ss_ticket_number#1036L,ss_quantity#1037,ss_wholesale_cost#1038,ss_list_price#1039,ss_sales_price#1040,ss_ext_discount_amt#1041,ss_ext_sales_price#1042,ss_ext_wholesale_cost#1043,ss_ext_list_price#1044,ss_ext_tax#1045,ss_coupon_amt#1046,ss_net_paid#1047,ss_net_paid_inc_tax#1048,ss_net_profit#1049,ss_sold_date_sk#1050] parquet
+
+== Physical Plan ==
+CollectLimit 96
++- *(1) Project [ss_net_profit#1049 AS c0#3858, ss_ext_list_price#1044 AS c1#3859, ss_ext_discount_amt#1041 AS c2#3860, ss_wholesale_cost#1038 AS c3#3861, ss_sales_price#1040 AS c4#3862, ss_quantity#1037 AS c5#3863, ss_ext_wholesale_cost#1043 AS c6#3864, ss_sales_price#1040 AS c7#3865, ss_cdemo_sk#1031 AS c8#3866, ss_net_paid_inc_tax#1048 AS c9#3867, ss_net_paid_inc_tax#1048 AS c10#3868, ss_net_paid_inc_tax#1048 AS c11#3869, ss_coupon_amt#1046 AS c12#3870, ss_ext_list_price#1044 AS c13#3871, ss_promo_sk#1035 AS c14#3872]
+   +- *(1) Filter isnotnull(ss_cdemo_sk#1031)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.store_sales[ss_cdemo_sk#1031,ss_promo_sk#1035,ss_quantity#1037,ss_wholesale_cost#1038,ss_sales_price#1040,ss_ext_discount_amt#1041,ss_ext_wholesale_cost#1043,ss_ext_list_price#1044,ss_coupon_amt#1046,ss_net_paid_inc_tax#1048,ss_net_profit#1049,ss_sold_date_sk#1050] Batched: true, DataFilters: [isnotnull(ss_cdemo_sk#1031)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNotNull(ss_cdemo_sk)], ReadSchema: struct<ss_cdemo_sk:int,ss_promo_sk:int,ss_quantity:int,ss_wholesale_cost:decimal(7,2),ss_sales_pr...
+

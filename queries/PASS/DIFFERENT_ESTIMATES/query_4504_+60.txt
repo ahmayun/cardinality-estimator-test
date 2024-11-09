@@ -1,0 +1,41 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 60
+Abs diff: 60
+============================QUERY========================================
+select  
+  ref_0.wp_web_page_id as c0, 
+  ref_0.wp_web_page_sk as c1, 
+  ref_0.wp_web_page_id as c2
+from 
+  main.web_page as ref_0
+where ref_0.wp_image_count is NULL
+============================OUTPUT========================================
+[c0: string, c1: int ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.wp_web_page_id AS c0#4821, 'ref_0.wp_web_page_sk AS c1#4822, 'ref_0.wp_web_page_id AS c2#4823]
++- 'Filter isnull('ref_0.wp_image_count)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, web_page]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: string
+Project [wp_web_page_id#1208 AS c0#4821, wp_web_page_sk#1207 AS c1#4822, wp_web_page_id#1208 AS c2#4823]
++- Filter isnull(wp_image_count#1219)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.web_page
+         +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Optimized Logical Plan ==
+Project [wp_web_page_id#1208 AS c0#4821, wp_web_page_sk#1207 AS c1#4822, wp_web_page_id#1208 AS c2#4823]
++- Filter isnull(wp_image_count#1219)
+   +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Physical Plan ==
+*(1) Project [wp_web_page_id#1208 AS c0#4821, wp_web_page_sk#1207 AS c1#4822, wp_web_page_id#1208 AS c2#4823]
++- *(1) Filter isnull(wp_image_count#1219)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.web_page[wp_web_page_sk#1207,wp_web_page_id#1208,wp_image_count#1219] Batched: true, DataFilters: [isnull(wp_image_count#1219)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNull(wp_image_count)], ReadSchema: struct<wp_web_page_sk:int,wp_web_page_id:string,wp_image_count:int>
+

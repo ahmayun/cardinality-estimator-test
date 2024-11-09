@@ -1,0 +1,56 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: No Estimate
+Abs diff: 1
+============================QUERY========================================
+select  
+  subq_0.c1 as c0, 
+  subq_0.c0 as c1
+from 
+  (select  
+        ref_0.sr_return_amt as c0, 
+        ref_0.sr_reason_sk as c1
+      from 
+        main.store_returns as ref_0
+      where ref_0.sr_return_amt is not NULL
+      limit 112) as subq_0
+where 80 is NULL
+limit 82
+============================OUTPUT========================================
+[c0: int, c1: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 82
++- 'LocalLimit 82
+   +- 'Project ['subq_0.c1 AS c0#4061, 'subq_0.c0 AS c1#4062]
+      +- 'Filter isnull(80)
+         +- 'SubqueryAlias subq_0
+            +- 'GlobalLimit 112
+               +- 'LocalLimit 112
+                  +- 'Project ['ref_0.sr_return_amt AS c0#4059, 'ref_0.sr_reason_sk AS c1#4060]
+                     +- 'Filter isnotnull('ref_0.sr_return_amt)
+                        +- 'SubqueryAlias ref_0
+                           +- 'UnresolvedRelation [main, store_returns]
+
+== Analyzed Logical Plan ==
+c0: int, c1: decimal(7,2)
+GlobalLimit 82
++- LocalLimit 82
+   +- Project [c1#4060 AS c0#4061, c0#4059 AS c1#4062]
+      +- Filter isnull(80)
+         +- SubqueryAlias subq_0
+            +- GlobalLimit 112
+               +- LocalLimit 112
+                  +- Project [sr_return_amt#1840 AS c0#4059, sr_reason_sk#1837 AS c1#4060]
+                     +- Filter isnotnull(sr_return_amt#1840)
+                        +- SubqueryAlias ref_0
+                           +- SubqueryAlias spark_catalog.main.store_returns
+                              +- Relation[sr_return_time_sk#1830,sr_item_sk#1831,sr_customer_sk#1832,sr_cdemo_sk#1833,sr_hdemo_sk#1834,sr_addr_sk#1835,sr_store_sk#1836,sr_reason_sk#1837,sr_ticket_number#1838L,sr_return_quantity#1839,sr_return_amt#1840,sr_return_tax#1841,sr_return_amt_inc_tax#1842,sr_fee#1843,sr_return_ship_cost#1844,sr_refunded_cash#1845,sr_reversed_charge#1846,sr_store_credit#1847,sr_net_loss#1848,sr_returned_date_sk#1849] parquet
+
+== Optimized Logical Plan ==
+LocalRelation <empty>, [c0#4061, c1#4062]
+
+== Physical Plan ==
+LocalTableScan <empty>, [c0#4061, c1#4062]
+

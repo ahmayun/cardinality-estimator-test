@@ -1,0 +1,58 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 60
+Abs diff: 60
+============================QUERY========================================
+select  
+  subq_0.c0 as c0, 
+  subq_0.c0 as c1
+from 
+  (select  
+        ref_0.wp_image_count as c0
+      from 
+        main.web_page as ref_0
+      where ref_0.wp_creation_date_sk is not NULL) as subq_0
+where subq_0.c0 is NULL
+limit 95
+============================OUTPUT========================================
+[c0: int, c1: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 95
++- 'LocalLimit 95
+   +- 'Project ['subq_0.c0 AS c0#2923, 'subq_0.c0 AS c1#2924]
+      +- 'Filter isnull('subq_0.c0)
+         +- 'SubqueryAlias subq_0
+            +- 'Project ['ref_0.wp_image_count AS c0#2922]
+               +- 'Filter isnotnull('ref_0.wp_creation_date_sk)
+                  +- 'SubqueryAlias ref_0
+                     +- 'UnresolvedRelation [main, web_page]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int
+GlobalLimit 95
++- LocalLimit 95
+   +- Project [c0#2922 AS c0#2923, c0#2922 AS c1#2924]
+      +- Filter isnull(c0#2922)
+         +- SubqueryAlias subq_0
+            +- Project [wp_image_count#1219 AS c0#2922]
+               +- Filter isnotnull(wp_creation_date_sk#1211)
+                  +- SubqueryAlias ref_0
+                     +- SubqueryAlias spark_catalog.main.web_page
+                        +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 95
++- LocalLimit 95
+   +- Project [wp_image_count#1219 AS c0#2923, wp_image_count#1219 AS c1#2924]
+      +- Filter (isnotnull(wp_creation_date_sk#1211) AND isnull(wp_image_count#1219))
+         +- Relation[wp_web_page_sk#1207,wp_web_page_id#1208,wp_rec_start_date#1209,wp_rec_end_date#1210,wp_creation_date_sk#1211,wp_access_date_sk#1212,wp_autogen_flag#1213,wp_customer_sk#1214,wp_url#1215,wp_type#1216,wp_char_count#1217,wp_link_count#1218,wp_image_count#1219,wp_max_ad_count#1220] parquet
+
+== Physical Plan ==
+CollectLimit 95
++- *(1) Project [wp_image_count#1219 AS c0#2923, wp_image_count#1219 AS c1#2924]
+   +- *(1) Filter (isnotnull(wp_creation_date_sk#1211) AND isnull(wp_image_count#1219))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.web_page[wp_creation_date_sk#1211,wp_image_count#1219] Batched: true, DataFilters: [isnotnull(wp_creation_date_sk#1211), isnull(wp_image_count#1219)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(wp_creation_date_sk), IsNull(wp_image_count)], ReadSchema: struct<wp_creation_date_sk:int,wp_image_count:int>
+

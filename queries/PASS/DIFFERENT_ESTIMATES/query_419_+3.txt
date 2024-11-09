@@ -1,0 +1,40 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 3
+Abs diff: 3
+============================QUERY========================================
+select  
+  ref_0.id as c0, 
+  ref_0.c3 as c1
+from 
+  main.orders as ref_0
+where ref_0.c2 is NULL
+============================OUTPUT========================================
+[c0: int, c1: string]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.id AS c0#2302, 'ref_0.c3 AS c1#2303]
++- 'Filter isnull('ref_0.c2)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, orders]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string
+Project [id#744 AS c0#2302, c3#749 AS c1#2303]
++- Filter isnull(c2#747)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.orders
+         +- Relation[c0#743,id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] parquet
+
+== Optimized Logical Plan ==
+Project [id#744 AS c0#2302, c3#749 AS c1#2303]
++- Filter isnull(c2#747)
+   +- Relation[c0#743,id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] parquet
+
+== Physical Plan ==
+*(1) Project [id#744 AS c0#2302, c3#749 AS c1#2303]
++- *(1) Filter isnull(c2#747)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.orders[id#744,c2#747,c3#749] Batched: true, DataFilters: [isnull(c2#747)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/spark-warehouse/m..., PartitionFilters: [], PushedFilters: [IsNull(c2)], ReadSchema: struct<id:int,c2:double,c3:string>
+

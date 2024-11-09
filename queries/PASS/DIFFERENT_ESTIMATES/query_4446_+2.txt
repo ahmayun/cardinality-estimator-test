@@ -1,0 +1,48 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 2
+Abs diff: 2
+============================QUERY========================================
+select  
+  ref_0.id as c0, 
+  96 as c1
+from 
+  main.users as ref_0
+where ref_0.c2 is NULL
+limit 194
+============================OUTPUT========================================
+[c0: int, c1: int]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 194
++- 'LocalLimit 194
+   +- 'Project ['ref_0.id AS c0#4804, 96 AS c1#4805]
+      +- 'Filter isnull('ref_0.c2)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, users]
+
+== Analyzed Logical Plan ==
+c0: int, c1: int
+GlobalLimit 194
++- LocalLimit 194
+   +- Project [id#1138 AS c0#4804, 96 AS c1#4805]
+      +- Filter isnull(c2#1141)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.users
+               +- Relation[c0#1137,id#1138,c1#1139,name#1140,c2#1141,email#1142] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 194
++- LocalLimit 194
+   +- Project [id#1138 AS c0#4804, 96 AS c1#4805]
+      +- Filter isnull(c2#1141)
+         +- Relation[c0#1137,id#1138,c1#1139,name#1140,c2#1141,email#1142] parquet
+
+== Physical Plan ==
+CollectLimit 194
++- *(1) Project [id#1138 AS c0#4804, 96 AS c1#4805]
+   +- *(1) Filter isnull(c2#1141)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.users[id#1138,c2#1141] Batched: true, DataFilters: [isnull(c2#1141)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/spark-warehouse/m..., PartitionFilters: [], PushedFilters: [IsNull(c2)], ReadSchema: struct<id:int,c2:string>
+

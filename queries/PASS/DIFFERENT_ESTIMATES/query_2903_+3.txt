@@ -1,0 +1,61 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 3
+Abs diff: 3
+============================QUERY========================================
+select  
+  ref_0.user_id as c0, 
+  ref_0.date as c1, 
+  ref_0.user_id as c2, 
+  ref_0.c1 as c3, 
+  ref_0.user_id as c4, 
+  ref_0.c3 as c5, 
+  ref_0.date as c6, 
+  ref_0.amount as c7, 
+  ref_0.user_id as c8, 
+  ref_0.amount as c9, 
+  cast(nullif(case when (ref_0.user_id is not NULL) 
+        and (ref_0.amount is NULL) then ref_0.c1 else ref_0.c1 end
+      ,
+    ref_0.id) as INTEGER) as c10, 
+  ref_0.c1 as c11
+from 
+  main.orders as ref_0
+where ref_0.c2 is NULL
+limit 100
+============================OUTPUT========================================
+[c0: int, c1: string ... 10 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 100
++- 'LocalLimit 100
+   +- 'Project ['ref_0.user_id AS c0#3961, 'ref_0.date AS c1#3962, 'ref_0.user_id AS c2#3963, 'ref_0.c1 AS c3#3964, 'ref_0.user_id AS c4#3965, 'ref_0.c3 AS c5#3966, 'ref_0.date AS c6#3967, 'ref_0.amount AS c7#3968, 'ref_0.user_id AS c8#3969, 'ref_0.amount AS c9#3970, cast('nullif(CASE WHEN (isnotnull('ref_0.user_id) AND isnull('ref_0.amount)) THEN 'ref_0.c1 ELSE 'ref_0.c1 END, 'ref_0.id) as int) AS c10#3971, 'ref_0.c1 AS c11#3972]
+      +- 'Filter isnull('ref_0.c2)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, orders]
+
+== Analyzed Logical Plan ==
+c0: int, c1: string, c2: int, c3: int, c4: int, c5: string, c6: string, c7: double, c8: int, c9: double, c10: int, c11: int
+GlobalLimit 100
++- LocalLimit 100
+   +- Project [user_id#746 AS c0#3961, date#750 AS c1#3962, user_id#746 AS c2#3963, c1#745 AS c3#3964, user_id#746 AS c4#3965, c3#749 AS c5#3966, date#750 AS c6#3967, amount#748 AS c7#3968, user_id#746 AS c8#3969, amount#748 AS c9#3970, cast(nullif(CASE WHEN (isnotnull(user_id#746) AND isnull(amount#748)) THEN c1#745 ELSE c1#745 END, id#744) as int) AS c10#3971, c1#745 AS c11#3972]
+      +- Filter isnull(c2#747)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.orders
+               +- Relation[c0#743,id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 100
++- LocalLimit 100
+   +- Project [user_id#746 AS c0#3961, date#750 AS c1#3962, user_id#746 AS c2#3963, c1#745 AS c3#3964, user_id#746 AS c4#3965, c3#749 AS c5#3966, date#750 AS c6#3967, amount#748 AS c7#3968, user_id#746 AS c8#3969, amount#748 AS c9#3970, if ((c1#745 = id#744)) null else c1#745 AS c10#3971, c1#745 AS c11#3972]
+      +- Filter isnull(c2#747)
+         +- Relation[c0#743,id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] parquet
+
+== Physical Plan ==
+CollectLimit 100
++- *(1) Project [user_id#746 AS c0#3961, date#750 AS c1#3962, user_id#746 AS c2#3963, c1#745 AS c3#3964, user_id#746 AS c4#3965, c3#749 AS c5#3966, date#750 AS c6#3967, amount#748 AS c7#3968, user_id#746 AS c8#3969, amount#748 AS c9#3970, if ((c1#745 = id#744)) null else c1#745 AS c10#3971, c1#745 AS c11#3972]
+   +- *(1) Filter isnull(c2#747)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.orders[id#744,c1#745,user_id#746,c2#747,amount#748,c3#749,date#750] Batched: true, DataFilters: [isnull(c2#747)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/spark-warehouse/m..., PartitionFilters: [], PushedFilters: [IsNull(c2)], ReadSchema: struct<id:int,c1:int,user_id:int,c2:double,amount:double,c3:string,date:string>
+

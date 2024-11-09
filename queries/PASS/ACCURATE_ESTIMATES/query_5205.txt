@@ -1,0 +1,55 @@
+
+============================STATS========================================
+Actual Count: 122
+Estimated Count: 122
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.cd_credit_rating as c0, 
+  94 as c1, 
+  ref_0.cd_dep_count as c2, 
+  ref_0.cd_education_status as c3, 
+  ref_0.cd_credit_rating as c4, 
+  ref_0.cd_purchase_estimate as c5, 
+  ref_0.cd_dep_employed_count as c6, 
+  case when ref_0.cd_dep_college_count is not NULL then ref_0.cd_dep_employed_count else ref_0.cd_dep_employed_count end
+     as c7
+from 
+  main.customer_demographics as ref_0
+where ref_0.cd_dep_college_count is not NULL
+limit 122
+============================OUTPUT========================================
+[c0: string, c1: int ... 6 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 122
++- 'LocalLimit 122
+   +- 'Project ['ref_0.cd_credit_rating AS c0#5022, 94 AS c1#5023, 'ref_0.cd_dep_count AS c2#5024, 'ref_0.cd_education_status AS c3#5025, 'ref_0.cd_credit_rating AS c4#5026, 'ref_0.cd_purchase_estimate AS c5#5027, 'ref_0.cd_dep_employed_count AS c6#5028, CASE WHEN isnotnull('ref_0.cd_dep_college_count) THEN 'ref_0.cd_dep_employed_count ELSE 'ref_0.cd_dep_employed_count END AS c7#5029]
+      +- 'Filter isnotnull('ref_0.cd_dep_college_count)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, customer_demographics]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: int, c3: string, c4: string, c5: int, c6: int, c7: int
+GlobalLimit 122
++- LocalLimit 122
+   +- Project [cd_credit_rating#505 AS c0#5022, 94 AS c1#5023, cd_dep_count#506 AS c2#5024, cd_education_status#503 AS c3#5025, cd_credit_rating#505 AS c4#5026, cd_purchase_estimate#504 AS c5#5027, cd_dep_employed_count#507 AS c6#5028, CASE WHEN isnotnull(cd_dep_college_count#508) THEN cd_dep_employed_count#507 ELSE cd_dep_employed_count#507 END AS c7#5029]
+      +- Filter isnotnull(cd_dep_college_count#508)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.customer_demographics
+               +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 122
++- LocalLimit 122
+   +- Project [cd_credit_rating#505 AS c0#5022, 94 AS c1#5023, cd_dep_count#506 AS c2#5024, cd_education_status#503 AS c3#5025, cd_credit_rating#505 AS c4#5026, cd_purchase_estimate#504 AS c5#5027, cd_dep_employed_count#507 AS c6#5028, cd_dep_employed_count#507 AS c7#5029]
+      +- Filter isnotnull(cd_dep_college_count#508)
+         +- Relation[cd_demo_sk#500,cd_gender#501,cd_marital_status#502,cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] parquet
+
+== Physical Plan ==
+CollectLimit 122
++- *(1) Project [cd_credit_rating#505 AS c0#5022, 94 AS c1#5023, cd_dep_count#506 AS c2#5024, cd_education_status#503 AS c3#5025, cd_credit_rating#505 AS c4#5026, cd_purchase_estimate#504 AS c5#5027, cd_dep_employed_count#507 AS c6#5028, cd_dep_employed_count#507 AS c7#5029]
+   +- *(1) Filter isnotnull(cd_dep_college_count#508)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.customer_demographics[cd_education_status#503,cd_purchase_estimate#504,cd_credit_rating#505,cd_dep_count#506,cd_dep_employed_count#507,cd_dep_college_count#508] Batched: true, DataFilters: [isnotnull(cd_dep_college_count#508)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(cd_dep_college_count)], ReadSchema: struct<cd_education_status:string,cd_purchase_estimate:int,cd_credit_rating:string,cd_dep_count:i...
+

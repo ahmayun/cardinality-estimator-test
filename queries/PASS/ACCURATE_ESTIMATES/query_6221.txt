@@ -1,0 +1,42 @@
+
+============================STATS========================================
+Actual Count: 73049
+Estimated Count: 73049
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.d_weekend as c0, 
+  ref_0.d_week_seq as c1, 
+  ref_0.d_holiday as c2, 
+  ref_0.d_same_day_lq as c3
+from 
+  main.date_dim as ref_0
+where ref_0.d_first_dom is not NULL
+============================OUTPUT========================================
+[c0: string, c1: int ... 2 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.d_weekend AS c0#5660, 'ref_0.d_week_seq AS c1#5661, 'ref_0.d_holiday AS c2#5662, 'ref_0.d_same_day_lq AS c3#5663]
++- 'Filter isnotnull('ref_0.d_first_dom)
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, date_dim]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: string, c3: int
+Project [d_weekend#549 AS c0#5660, d_week_seq#536 AS c1#5661, d_holiday#548 AS c2#5662, d_same_day_lq#554 AS c3#5663]
++- Filter isnotnull(d_first_dom#551)
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.date_dim
+         +- Relation[d_date_sk#532,d_date_id#533,d_date#534,d_month_seq#535,d_week_seq#536,d_quarter_seq#537,d_year#538,d_dow#539,d_moy#540,d_dom#541,d_qoy#542,d_fy_year#543,d_fy_quarter_seq#544,d_fy_week_seq#545,d_day_name#546,d_quarter_name#547,d_holiday#548,d_weekend#549,d_following_holiday#550,d_first_dom#551,d_last_dom#552,d_same_day_ly#553,d_same_day_lq#554,d_current_day#555,... 4 more fields] parquet
+
+== Optimized Logical Plan ==
+Project [d_weekend#549 AS c0#5660, d_week_seq#536 AS c1#5661, d_holiday#548 AS c2#5662, d_same_day_lq#554 AS c3#5663]
++- Filter isnotnull(d_first_dom#551)
+   +- Relation[d_date_sk#532,d_date_id#533,d_date#534,d_month_seq#535,d_week_seq#536,d_quarter_seq#537,d_year#538,d_dow#539,d_moy#540,d_dom#541,d_qoy#542,d_fy_year#543,d_fy_quarter_seq#544,d_fy_week_seq#545,d_day_name#546,d_quarter_name#547,d_holiday#548,d_weekend#549,d_following_holiday#550,d_first_dom#551,d_last_dom#552,d_same_day_ly#553,d_same_day_lq#554,d_current_day#555,... 4 more fields] parquet
+
+== Physical Plan ==
+*(1) Project [d_weekend#549 AS c0#5660, d_week_seq#536 AS c1#5661, d_holiday#548 AS c2#5662, d_same_day_lq#554 AS c3#5663]
++- *(1) Filter isnotnull(d_first_dom#551)
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.date_dim[d_week_seq#536,d_holiday#548,d_weekend#549,d_first_dom#551,d_same_day_lq#554] Batched: true, DataFilters: [isnotnull(d_first_dom#551)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(d_first_dom)], ReadSchema: struct<d_week_seq:int,d_holiday:string,d_weekend:string,d_first_dom:int,d_same_day_lq:int>
+

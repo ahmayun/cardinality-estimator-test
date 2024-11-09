@@ -1,0 +1,48 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 45
+Abs diff: 45
+============================QUERY========================================
+select  
+  ref_0.cs_sold_date_sk as c0, 
+  ref_0.cs_ext_tax as c1
+from 
+  main.catalog_sales as ref_0
+where ref_0.cs_net_paid_inc_ship is NULL
+limit 45
+============================OUTPUT========================================
+[c0: int, c1: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 45
++- 'LocalLimit 45
+   +- 'Project ['ref_0.cs_sold_date_sk AS c0#4111, 'ref_0.cs_ext_tax AS c1#4112]
+      +- 'Filter isnull('ref_0.cs_net_paid_inc_ship)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, catalog_sales]
+
+== Analyzed Logical Plan ==
+c0: int, c1: decimal(7,2)
+GlobalLimit 45
++- LocalLimit 45
+   +- Project [cs_sold_date_sk#1621 AS c0#4111, cs_ext_tax#1613 AS c1#4112]
+      +- Filter isnull(cs_net_paid_inc_ship#1618)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.catalog_sales
+               +- Relation[cs_sold_time_sk#1588,cs_ship_date_sk#1589,cs_bill_customer_sk#1590,cs_bill_cdemo_sk#1591,cs_bill_hdemo_sk#1592,cs_bill_addr_sk#1593,cs_ship_customer_sk#1594,cs_ship_cdemo_sk#1595,cs_ship_hdemo_sk#1596,cs_ship_addr_sk#1597,cs_call_center_sk#1598,cs_catalog_page_sk#1599,cs_ship_mode_sk#1600,cs_warehouse_sk#1601,cs_item_sk#1602,cs_promo_sk#1603,cs_order_number#1604L,cs_quantity#1605,cs_wholesale_cost#1606,cs_list_price#1607,cs_sales_price#1608,cs_ext_discount_amt#1609,cs_ext_sales_price#1610,cs_ext_wholesale_cost#1611,... 10 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 45
++- LocalLimit 45
+   +- Project [cs_sold_date_sk#1621 AS c0#4111, cs_ext_tax#1613 AS c1#4112]
+      +- Filter isnull(cs_net_paid_inc_ship#1618)
+         +- Relation[cs_sold_time_sk#1588,cs_ship_date_sk#1589,cs_bill_customer_sk#1590,cs_bill_cdemo_sk#1591,cs_bill_hdemo_sk#1592,cs_bill_addr_sk#1593,cs_ship_customer_sk#1594,cs_ship_cdemo_sk#1595,cs_ship_hdemo_sk#1596,cs_ship_addr_sk#1597,cs_call_center_sk#1598,cs_catalog_page_sk#1599,cs_ship_mode_sk#1600,cs_warehouse_sk#1601,cs_item_sk#1602,cs_promo_sk#1603,cs_order_number#1604L,cs_quantity#1605,cs_wholesale_cost#1606,cs_list_price#1607,cs_sales_price#1608,cs_ext_discount_amt#1609,cs_ext_sales_price#1610,cs_ext_wholesale_cost#1611,... 10 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 45
++- *(1) Project [cs_sold_date_sk#1621 AS c0#4111, cs_ext_tax#1613 AS c1#4112]
+   +- *(1) Filter isnull(cs_net_paid_inc_ship#1618)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.catalog_sales[cs_ext_tax#1613,cs_net_paid_inc_ship#1618,cs_sold_date_sk#1621] Batched: true, DataFilters: [isnull(cs_net_paid_inc_ship#1618)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNull(cs_net_paid_inc_ship)], ReadSchema: struct<cs_ext_tax:decimal(7,2),cs_net_paid_inc_ship:decimal(7,2)>
+

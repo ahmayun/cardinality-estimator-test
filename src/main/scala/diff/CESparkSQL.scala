@@ -1,52 +1,63 @@
 package diff
-
-import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.{SparkSession, DataFrame}
+import java.util.Properties
 
 object CESparkSQL {
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession.builder
-      .appName("SparkSQL CE Example")
+    // Create Spark session
+    val spark = SparkSession.builder()
+      .appName("PostgresSparkApp")
+      .master("local[*]")
       .getOrCreate()
 
-    val jdbcDF = spark.read
-      .format("jdbc")
-      .option("url", "jdbc:postgresql://localhost:5432/Adventureworks")
-      .option("dbtable", "<schema>.<table>")
-      .option("user", "ahmad")
-      .option("password", "1212")
-      .load()
+    val jdbcUrl = "jdbc:postgresql://localhost:5432/Adventureworks"
+    val connectionProperties = new Properties()
+    connectionProperties.put("user", "ahmad")
+    connectionProperties.put("password", "1212")
+    connectionProperties.put("driver", "org.postgresql.Driver")
 
-    // Sample data creation
-    import spark.implicits._
+    val query = """(select p.BusinessEntityID AS PersonBusinessEntityID,
+      be.BusinessEntityID AS BusinessEntityBusinessEntityID,
+      p.persontype
+      from person.person p
+      inner join person.BusinessEntity be
+      on p.BusinessEntityID = be.BusinessEntityID
+      where p.BusinessEntityID <= 120 AND p.persontype = 'EM')
+      AS subquery"""
 
-    val data = Seq(
-      ("Alice", 29),
-      ("Bob", 31),
-      ("Charlie", 35)
-    )
+    println(s"Original Query:\n$query")
 
-    val df = data.toDF("name", "age")
+    try {
+      // Load data from PostgreSQL
+      val df: DataFrame = spark.read
+        .jdbc(jdbcUrl, query, connectionProperties)
 
-    // Register DataFrame as a temporary view
-    df.createOrReplaceTempView("people")
+      // Create a temporary view for SQL querying in Spark
+      val viewName = "view2"
+      df.createOrReplaceTempView(viewName)
 
-    // Write the SQL query
-    val query = "SELECT name FROM people WHERE age > 30"
+      // Execute Spark SQL queries
+      println("Explaining query:")
+      df.explain("cost")
 
-    // Get the DataFrame for the query
-    val queryDF = spark.sql(query)
+      // Getting cardinality (count of rows)
+      println("Getting cardinality:")
+      val cardinality = spark.sql(s"SELECT COUNT(*) AS count FROM $viewName")
+      cardinality.show()
 
-    // Explain the plan, which includes cardinality estimation
-    queryDF.explain(true) // Use "true" to get a detailed physical plan with stats
+      // Counting rows directly
+      println("Counting:")
+      val count = df.count()
+      println(s"Count: $count")
 
-    // Retrieve the logical plan and its stats
-    val logicalPlan = queryDF.queryExecution.optimizedPlan
-    val stats = logicalPlan.stats
+      // Since Spark does not drop temporary views automatically, we can unpersist it
+      spark.catalog.dropTempView(viewName)
+      println(s"Dropped temporary view $viewName")
 
-    println(s"Estimated number of rows: ${stats.rowCount.getOrElse("No estimate available")}")
-
-    // Stop Spark Session
-    spark.stop()
+    } finally {
+      // Stop the Spark session
+      spark.stop()
+    }
   }
-
 }
+

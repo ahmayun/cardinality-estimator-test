@@ -1,0 +1,61 @@
+
+============================STATS========================================
+Actual Count: 0
+Estimated Count: 154
+Abs diff: 154
+============================QUERY========================================
+select  
+  subq_0.c2 as c0
+from 
+  (select  
+        ref_0.cr_order_number as c0, 
+        ref_0.cr_warehouse_sk as c1, 
+        ref_0.cr_return_tax as c2, 
+        ref_0.cr_returning_customer_sk as c3, 
+        ref_0.cr_reason_sk as c4
+      from 
+        main.catalog_returns as ref_0
+      where ref_0.cr_warehouse_sk is not NULL) as subq_0
+where subq_0.c0 is NULL
+limit 154
+============================OUTPUT========================================
+[c0: decimal(7,2)]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 154
++- 'LocalLimit 154
+   +- 'Project ['subq_0.c2 AS c0#7376]
+      +- 'Filter isnull('subq_0.c0)
+         +- 'SubqueryAlias subq_0
+            +- 'Project ['ref_0.cr_order_number AS c0#7371, 'ref_0.cr_warehouse_sk AS c1#7372, 'ref_0.cr_return_tax AS c2#7373, 'ref_0.cr_returning_customer_sk AS c3#7374, 'ref_0.cr_reason_sk AS c4#7375]
+               +- 'Filter isnotnull('ref_0.cr_warehouse_sk)
+                  +- 'SubqueryAlias ref_0
+                     +- 'UnresolvedRelation [main, catalog_returns]
+
+== Analyzed Logical Plan ==
+c0: decimal(7,2)
+GlobalLimit 154
++- LocalLimit 154
+   +- Project [c2#7373 AS c0#7376]
+      +- Filter isnull(c0#7371L)
+         +- SubqueryAlias subq_0
+            +- Project [cr_order_number#219L AS c0#7371L, cr_warehouse_sk#217 AS c1#7372, cr_return_tax#222 AS c2#7373, cr_returning_customer_sk#210 AS c3#7374, cr_reason_sk#218 AS c4#7375]
+               +- Filter isnotnull(cr_warehouse_sk#217)
+                  +- SubqueryAlias ref_0
+                     +- SubqueryAlias spark_catalog.main.catalog_returns
+                        +- Relation[cr_returned_time_sk#204,cr_item_sk#205,cr_refunded_customer_sk#206,cr_refunded_cdemo_sk#207,cr_refunded_hdemo_sk#208,cr_refunded_addr_sk#209,cr_returning_customer_sk#210,cr_returning_cdemo_sk#211,cr_returning_hdemo_sk#212,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_catalog_page_sk#215,cr_ship_mode_sk#216,cr_warehouse_sk#217,cr_reason_sk#218,cr_order_number#219L,cr_return_quantity#220,cr_return_amount#221,cr_return_tax#222,cr_return_amt_inc_tax#223,cr_fee#224,cr_return_ship_cost#225,cr_refunded_cash#226,cr_reversed_charge#227,... 3 more fields] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 154
++- LocalLimit 154
+   +- Project [cr_return_tax#222 AS c0#7376]
+      +- Filter (isnotnull(cr_warehouse_sk#217) AND isnull(cr_order_number#219L))
+         +- Relation[cr_returned_time_sk#204,cr_item_sk#205,cr_refunded_customer_sk#206,cr_refunded_cdemo_sk#207,cr_refunded_hdemo_sk#208,cr_refunded_addr_sk#209,cr_returning_customer_sk#210,cr_returning_cdemo_sk#211,cr_returning_hdemo_sk#212,cr_returning_addr_sk#213,cr_call_center_sk#214,cr_catalog_page_sk#215,cr_ship_mode_sk#216,cr_warehouse_sk#217,cr_reason_sk#218,cr_order_number#219L,cr_return_quantity#220,cr_return_amount#221,cr_return_tax#222,cr_return_amt_inc_tax#223,cr_fee#224,cr_return_ship_cost#225,cr_refunded_cash#226,cr_reversed_charge#227,... 3 more fields] parquet
+
+== Physical Plan ==
+CollectLimit 154
++- *(1) Project [cr_return_tax#222 AS c0#7376]
+   +- *(1) Filter (isnotnull(cr_warehouse_sk#217) AND isnull(cr_order_number#219L))
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.catalog_returns[cr_warehouse_sk#217,cr_order_number#219L,cr_return_tax#222,cr_returned_date_sk#230] Batched: true, DataFilters: [isnotnull(cr_warehouse_sk#217), isnull(cr_order_number#219L)], Format: Parquet, Location: CatalogFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-mai..., PartitionFilters: [], PushedFilters: [IsNotNull(cr_warehouse_sk), IsNull(cr_order_number)], ReadSchema: struct<cr_warehouse_sk:int,cr_order_number:bigint,cr_return_tax:decimal(7,2)>
+

@@ -73,14 +73,9 @@ object CEPostgreSQL {
     connectionProperties.put("password", "1212")
     connectionProperties.put("driver", "org.postgresql.Driver")
 
-    val query = "select p.BusinessEntityID AS PersonBusinessEntityID, be.BusinessEntityID AS BusinessEntityBusinessEntityID, p.persontype from person.person p inner join person.BusinessEntity be on p.BusinessEntityID=be.BusinessEntityID where p.BusinessEntityID <= 120 AND p.persontype = 'EM';"
     val conn = DriverManager.getConnection(jdbcUrl, "ahmad", "1212")
-/*
-select p.BusinessEntityID AS PersonBusinessEntityID,
-be.BusinessEntityID AS BusinessEntityBusinessEntityID,
-p.persontype from person.person p
-inner join person.BusinessEntity be on p.BusinessEntityID=be.BusinessEntityID where p.BusinessEntityID <= 120 AND p.persontype = 'EM';
- */
+    val query = "select p.BusinessEntityID AS PersonBusinessEntityID, be.BusinessEntityID AS BusinessEntityBusinessEntityID, p.persontype from person.person p inner join person.BusinessEntity be on p.BusinessEntityID=be.BusinessEntityID where p.BusinessEntityID <= 120 AND p.persontype = 'EM';"
+
     println(s"Original Query:\n$query")
 
     try {

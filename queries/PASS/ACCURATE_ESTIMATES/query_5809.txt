@@ -1,0 +1,52 @@
+
+============================STATS========================================
+Actual Count: 2
+Estimated Count: 2
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.name as c0, 
+  ref_0.email as c1, 
+  ref_0.name as c2, 
+  ref_0.name as c3, 
+  ref_0.c2 as c4, 
+  ref_0.c1 as c5
+from 
+  main.users as ref_0
+where ref_0.c2 is not NULL
+limit 135
+============================OUTPUT========================================
+[c0: string, c1: string ... 4 more fields]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'GlobalLimit 135
++- 'LocalLimit 135
+   +- 'Project ['ref_0.name AS c0#5513, 'ref_0.email AS c1#5514, 'ref_0.name AS c2#5515, 'ref_0.name AS c3#5516, 'ref_0.c2 AS c4#5517, 'ref_0.c1 AS c5#5518]
+      +- 'Filter isnotnull('ref_0.c2)
+         +- 'SubqueryAlias ref_0
+            +- 'UnresolvedRelation [main, users]
+
+== Analyzed Logical Plan ==
+c0: string, c1: string, c2: string, c3: string, c4: string, c5: string
+GlobalLimit 135
++- LocalLimit 135
+   +- Project [name#1140 AS c0#5513, email#1142 AS c1#5514, name#1140 AS c2#5515, name#1140 AS c3#5516, c2#1141 AS c4#5517, c1#1139 AS c5#5518]
+      +- Filter isnotnull(c2#1141)
+         +- SubqueryAlias ref_0
+            +- SubqueryAlias spark_catalog.main.users
+               +- Relation[c0#1137,id#1138,c1#1139,name#1140,c2#1141,email#1142] parquet
+
+== Optimized Logical Plan ==
+GlobalLimit 135
++- LocalLimit 135
+   +- Project [name#1140 AS c0#5513, email#1142 AS c1#5514, name#1140 AS c2#5515, name#1140 AS c3#5516, c2#1141 AS c4#5517, c1#1139 AS c5#5518]
+      +- Filter isnotnull(c2#1141)
+         +- Relation[c0#1137,id#1138,c1#1139,name#1140,c2#1141,email#1142] parquet
+
+== Physical Plan ==
+CollectLimit 135
++- *(1) Project [name#1140 AS c0#5513, email#1142 AS c1#5514, name#1140 AS c2#5515, name#1140 AS c3#5516, c2#1141 AS c4#5517, c1#1139 AS c5#5518]
+   +- *(1) Filter isnotnull(c2#1141)
+      +- *(1) ColumnarToRow
+         +- FileScan parquet main.users[c1#1139,name#1140,c2#1141,email#1142] Batched: true, DataFilters: [isnotnull(c2#1141)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/spark-warehouse/m..., PartitionFilters: [], PushedFilters: [IsNotNull(c2)], ReadSchema: struct<c1:string,name:string,c2:string,email:string>
+

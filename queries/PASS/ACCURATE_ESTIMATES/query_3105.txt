@@ -1,0 +1,42 @@
+
+============================STATS========================================
+Actual Count: 12
+Estimated Count: 12
+Abs diff: 0
+============================QUERY========================================
+select  
+  ref_0.s_city as c0, 
+  50 as c1, 
+  ref_0.s_closed_date_sk as c2
+from 
+  main.store as ref_0
+where (ref_0.s_zip is not NULL) 
+  and (ref_0.s_market_desc is not NULL)
+============================OUTPUT========================================
+[c0: string, c1: int ... 1 more field]
+============================PLAN========================================
+== Parsed Logical Plan ==
+'Project ['ref_0.s_city AS c0#4093, 50 AS c1#4094, 'ref_0.s_closed_date_sk AS c2#4095]
++- 'Filter (isnotnull('ref_0.s_zip) AND isnotnull('ref_0.s_market_desc))
+   +- 'SubqueryAlias ref_0
+      +- 'UnresolvedRelation [main, store]
+
+== Analyzed Logical Plan ==
+c0: string, c1: int, c2: int
+Project [s_city#893 AS c0#4093, 50 AS c1#4094, s_closed_date_sk#875 AS c2#4095]
++- Filter (isnotnull(s_zip#896) AND isnotnull(s_market_desc#883))
+   +- SubqueryAlias ref_0
+      +- SubqueryAlias spark_catalog.main.store
+         +- Relation[s_store_sk#871,s_store_id#872,s_rec_start_date#873,s_rec_end_date#874,s_closed_date_sk#875,s_store_name#876,s_number_employees#877,s_floor_space#878,s_hours#879,s_manager#880,s_market_id#881,s_geography_class#882,s_market_desc#883,s_market_manager#884,s_division_id#885,s_division_name#886,s_company_id#887,s_company_name#888,s_street_number#889,s_street_name#890,s_street_type#891,s_suite_number#892,s_city#893,s_county#894,... 5 more fields] parquet
+
+== Optimized Logical Plan ==
+Project [s_city#893 AS c0#4093, 50 AS c1#4094, s_closed_date_sk#875 AS c2#4095]
++- Filter (isnotnull(s_zip#896) AND isnotnull(s_market_desc#883))
+   +- Relation[s_store_sk#871,s_store_id#872,s_rec_start_date#873,s_rec_end_date#874,s_closed_date_sk#875,s_store_name#876,s_number_employees#877,s_floor_space#878,s_hours#879,s_manager#880,s_market_id#881,s_geography_class#882,s_market_desc#883,s_market_manager#884,s_division_id#885,s_division_name#886,s_company_id#887,s_company_name#888,s_street_number#889,s_street_name#890,s_street_type#891,s_suite_number#892,s_city#893,s_county#894,... 5 more fields] parquet
+
+== Physical Plan ==
+*(1) Project [s_city#893 AS c0#4093, 50 AS c1#4094, s_closed_date_sk#875 AS c2#4095]
++- *(1) Filter (isnotnull(s_zip#896) AND isnotnull(s_market_desc#883))
+   +- *(1) ColumnarToRow
+      +- FileScan parquet main.store[s_closed_date_sk#875,s_market_desc#883,s_city#893,s_zip#896] Batched: true, DataFilters: [isnotnull(s_zip#896), isnotnull(s_market_desc#883)], Format: Parquet, Location: InMemoryFileIndex[file:/home/ahmad/Documents/project/cardinality-estimator-test/tpcds-data-for-ma..., PartitionFilters: [], PushedFilters: [IsNotNull(s_zip), IsNotNull(s_market_desc)], ReadSchema: struct<s_closed_date_sk:int,s_market_desc:string,s_city:string,s_zip:string>
+
