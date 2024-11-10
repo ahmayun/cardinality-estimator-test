@@ -3,9 +3,24 @@ package gendata
 import com.databricks.spark.sql.perf.mllib.MLBenchmarks.sqlContext
 import com.databricks.spark.sql.perf.tpcds.TPCDSTables
 import org.apache.spark.sql.SparkSession
+import java.io.File
 
 object TPCDSGenData {
+  def printCurrentDirectory(): Unit = {
+    val currentDir = new File(".").getCanonicalPath
+    println(s"Current Working Directory: $currentDir")
+  }
 
+  def printDirectoryContents(dirPath: String): Unit = {
+    val directory = new File(dirPath)
+    if (directory.exists && directory.isDirectory) {
+      val files = directory.listFiles
+      println(s"Contents of Directory '$dirPath':")
+      files.foreach(file => println(file.getName))
+    } else {
+      println(s"The path '$dirPath' is not a valid directory.")
+    }
+  }
   def main(args: Array[String]): Unit = {
 
     if(args.isEmpty) {
@@ -19,6 +34,10 @@ object TPCDSGenData {
     val rootDirArg = args(1)
     val dsdgenDirPath = args(2)
     val scaleFactor = args(3)
+
+    printCurrentDirectory()
+    printDirectoryContents(dsdgenDirPath)
+    sys.exit(0)
 
     val spark = SparkSession.builder()
       .appName("QueryOptTester")
