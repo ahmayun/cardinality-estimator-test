@@ -25,7 +25,9 @@ object Test {
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
-    spark.sql("select * from main.customer").show(5)
+    val df = spark.sql("select * from main.customer")
+    df.show(5)
+    println(s"total rows: ${df.count()}")
 
   }
 }
