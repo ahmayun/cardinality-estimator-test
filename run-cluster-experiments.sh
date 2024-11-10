@@ -14,16 +14,16 @@ function main() {
     local results_dir="results" # TODO: provide as arg
     local diff_est_dir="$results_dir/queries/PASS/DIFFERENT_ESTIMATES"
     local max_time_diff_file="$results_dir/time-experiments/max-diff"
-    local class=$2 # TODO: provide as arg
-    local master=$1 # TODO: provide as arg
+    local class=$2
+    local master=$1
     local jar=target/scala-2.12/CardinalityEstimatorTest-assembly-0.1.0-SNAPSHOT.jar # TODO: provide as arg
-    local args="$results_dir $master" # TODO: provide as arg
+    shift 2
+    local args=$@
 
 
     debug "Submitting spark application..."
+    echo $args
     spark-submit --class $class --master $master $jar $args
-
-
 
 
     local num_discrep=$(ls -1 $diff_est_dir | wc -l)
@@ -35,4 +35,5 @@ function main() {
 
 MASTER=$1
 CLASS=$2
-main $MASTER $CLASS
+shift 2
+main $MASTER $CLASS $@

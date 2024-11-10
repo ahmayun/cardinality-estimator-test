@@ -1,3 +1,5 @@
+package gendata
+
 //package misc
 //
 //import com.databricks.spark.sql.perf.mllib.MLBenchmarks.sqlContext

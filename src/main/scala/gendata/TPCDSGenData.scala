@@ -1,19 +1,30 @@
-package misc
+package gendata
 
 import com.databricks.spark.sql.perf.mllib.MLBenchmarks.sqlContext
-import com.databricks.spark.sql.perf.tpcds.{TPCDS, TPCDSTables}
+import com.databricks.spark.sql.perf.tpcds.TPCDSTables
 import org.apache.spark.sql.SparkSession
 
 object TPCDSGenData {
 
   def main(args: Array[String]): Unit = {
+
+    if(args.isEmpty) {
+      args(0) = "local[*]"
+      args(1) = "tpcds-data-for-main"
+      args(2) = "/home/ahmad/Documents/project/tpcds-kit/tools"
+    }
+
+    val master = args(0)
+    val rootDirArg = args(1)
+    val dsdgenDirPath = args(2)
+
     val spark = SparkSession.builder()
       .appName("QueryOptTester")
       .config("spark.sql.cbo.enabled", "true")
       .config("spark.sql.cbo.joinReorder.enabled", "true")
       .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
       .config("spark.sql.statistics.histogram.enabled", "true")
-      .master("local[*]")
+      .master(master)
       .enableHiveSupport()
       .getOrCreate()
 
@@ -22,14 +33,14 @@ object TPCDSGenData {
     // Set:
     // Note: Here my env is using MapRFS, so I changed it to "hdfs:///tpcds".
     // Note: If you are using HDFS, the format should be like "hdfs://namenode:9000/tpcds"
-    val rootDir = "tpcds-data-for-main" // root directory of location to create data in.
+    val rootDir = rootDirArg // root directory of location to create data in.
 
     val databaseName = "main" // name of database to create.
     val scaleFactor = "1" // scaleFactor defines the size of the dataset to generate (in GB).
     val format = "parquet" // valid spark format like parquet "parquet".
     // Run:
     val tables = new TPCDSTables(sqlContext,
-      dsdgenDir = "/home/ahmad/Documents/project/tpcds-kit/tools", // location of dsdgen
+      dsdgenDir = dsdgenDirPath, // location of dsdgen
       scaleFactor = scaleFactor,
       useDoubleForDecimal = false, // true to replace DecimalType with DoubleType
       useStringForDate = false) // true to replace DateType with StringType
