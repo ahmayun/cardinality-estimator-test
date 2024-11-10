@@ -162,6 +162,7 @@ object FuzzTests {
       .enableHiveSupport()
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
+    Class.forName("org.sqlite.JDBC")
 
     val targetTables = {
       spark.catalog.listDatabases().collect().flatMap(db => spark.catalog.listTables(db.name).collect())
