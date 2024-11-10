@@ -68,20 +68,20 @@ object TPCDSGenData {
       useStringForDate = false) // true to replace DateType with StringType
 
 
-    tables.genData(
-      location = rootDir,
-      format = format,
-      overwrite = true, // overwrite the data that is already there
-      partitionTables = true, // create the partitioned fact tables
-      clusterByPartitionColumns = true, // shuffle to get partitions coalesced into single files.
-      filterOutNullPartitionValues = false, // true to filter out the partition with NULL key value
-      tableFilter = "", // "" means generate all tables
-      numPartitions = partitions) // how many dsdgen partitions to run - number of input tasks.
+//    tables.genData(
+//      location = rootDir,
+//      format = format,
+//      overwrite = true, // overwrite the data that is already there
+//      partitionTables = true, // create the partitioned fact tables
+//      clusterByPartitionColumns = true, // shuffle to get partitions coalesced into single files.
+//      filterOutNullPartitionValues = false, // true to filter out the partition with NULL key value
+//      tableFilter = "", // "" means generate all tables
+//      numPartitions = partitions) // how many dsdgen partitions to run - number of input tasks.
 
     // Create the specified database
 //    sqlContext.sql(s"CREATE DATABASE IF NOT EXISTS $databaseName")
 
-//    tables.createExternalTables(rootDir, "parquet", databaseName, overwrite = true, discoverPartitions = true)
+    tables.createExternalTables(rootDir, "parquet", databaseName, overwrite = true, discoverPartitions = true)
 
     // Or, if you want to create temporary tables
     // tables.createTemporaryTables(location, format)
