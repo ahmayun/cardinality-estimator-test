@@ -143,7 +143,7 @@ object FuzzTests {
   }
 
   def main(args: Array[String]): Unit = {
-    val arguments = new FuzzerArguments(args)
+    val arguments = new FuzzerArguments(args.tail)
     val outputDir = new File(arguments.outputLocation)
     if (!outputDir.exists()) {
       outputDir.mkdir()
