@@ -286,8 +286,6 @@ object FuzzTests {
                 |Abs diff: $absDiff
                 |${makeDivider("QUERY")}
                 |$sqlFuzz
-                |${makeDivider("OUTPUT")}
-                |${df.toString()}
                 |${makeDivider("PLAN")}
                 |${df.queryExecution.toString()}
                 |""".stripMargin
