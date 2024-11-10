@@ -28,19 +28,21 @@ object TPCDSGenData {
       args(1) = "tpcds-data-for-main"
       args(2) = "/home/ahmad/Documents/project/tpcds-kit/tools"
       args(3) = "1"
+      args(4) = "2"
     }
 
     val master = args(0)
     val rootDirArg = args(1)
     val dsdgenDirPath = args(2)
     val scaleFactor = args(3)
+    val partitions = args(4).toInt
 
     printCurrentDirectory()
     printDirectoryContents(dsdgenDirPath)
 //    sys.exit(0)
 
     val spark = SparkSession.builder()
-      .appName("QueryOptTester")
+      .appName("TPC-DS Data Gen")
       .config("spark.sql.cbo.enabled", "true")
       .config("spark.sql.cbo.joinReorder.enabled", "true")
       .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
@@ -74,7 +76,7 @@ object TPCDSGenData {
       clusterByPartitionColumns = true, // shuffle to get partitions coalesced into single files.
       filterOutNullPartitionValues = false, // true to filter out the partition with NULL key value
       tableFilter = "", // "" means generate all tables
-      numPartitions = 2) // how many dsdgen partitions to run - number of input tasks.
+      numPartitions = partitions) // how many dsdgen partitions to run - number of input tasks.
 
     // Create the specified database
 //    sqlContext.sql(s"CREATE DATABASE IF NOT EXISTS $databaseName")
