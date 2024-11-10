@@ -37,7 +37,7 @@ object TPCDSGenData {
 
     printCurrentDirectory()
     printDirectoryContents(dsdgenDirPath)
-    sys.exit(0)
+//    sys.exit(0)
 
     val spark = SparkSession.builder()
       .appName("QueryOptTester")
