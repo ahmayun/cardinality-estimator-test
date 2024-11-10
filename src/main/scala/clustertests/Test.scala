@@ -25,7 +25,7 @@ object Test {
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
 
-    spark.sql("select * from call_center").show(5)
+    spark.sql("select * from customer").show(5)
 
   }
 }
