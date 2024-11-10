@@ -17,7 +17,7 @@ object SetupHiveTables {
     spark.sparkContext.setLogLevel("ERROR")
 
     spark.sql("CREATE DATABASE IF NOT EXISTS main")
-    spark.sql("CREATE EXTERNAL TABLE IF NOT EXISTS customer (id INT, name STRING, ...)\nSTORED AS PARQUET\nLOCATION 'hdfs://path/to/customer';")
+    spark.sql("CREATE EXTERNAL TABLE IF NOT EXISTS call_center STORED AS PARQUET LOCATION 'hdfs://tpcds/call_center';")
 
   }
 
