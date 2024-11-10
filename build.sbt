@@ -16,6 +16,8 @@ lazy val root = (project in file("."))
   )
 
 ThisBuild / assemblyMergeStrategy := {
+  case x if x.endsWith("module-info.class") => MergeStrategy.discard
+  case x if x.startsWith("META-INF/") => MergeStrategy.discard
   case PathList("META-INF", xs @ _*) => MergeStrategy.discard
   case PathList("META-INF", "services", "org.apache.hadoop.fs.FileSystem") => MergeStrategy.filterDistinctLines
   case _ => MergeStrategy.first
