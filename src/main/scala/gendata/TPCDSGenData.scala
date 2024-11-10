@@ -11,7 +11,7 @@ object TPCDSGenData {
     if(args.isEmpty) {
       args(0) = "local[*]"
       args(1) = "tpcds-data-for-main"
-      args(2) = "/home/ahmad/Documents/project/tpcds-kit/tools",
+      args(2) = "/home/ahmad/Documents/project/tpcds-kit/tools"
       args(3) = "1"
     }
 
@@ -58,10 +58,10 @@ object TPCDSGenData {
       numPartitions = 2) // how many dsdgen partitions to run - number of input tasks.
 
     // Create the specified database
-    sqlContext.sql(s"CREATE DATABASE IF NOT EXISTS $databaseName")
-    // Create metastore tables in a specified database for your data.
-    // Once tables are created, the current database will be switched to the specified database.
-    tables.createExternalTables(rootDir, "parquet", databaseName, overwrite = true, discoverPartitions = true)
+//    sqlContext.sql(s"CREATE DATABASE IF NOT EXISTS $databaseName")
+
+//    tables.createExternalTables(rootDir, "parquet", databaseName, overwrite = true, discoverPartitions = true)
+
     // Or, if you want to create temporary tables
     // tables.createTemporaryTables(location, format)
 
