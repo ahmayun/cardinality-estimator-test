@@ -158,7 +158,7 @@ object FuzzTests {
       .config("spark.sql.cbo.joinReorder.enabled", "true")
       .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
       .config("spark.sql.statistics.histogram.enabled", "true")
-      .master("local[*]")
+      .master(args(0))
       .enableHiveSupport()
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
