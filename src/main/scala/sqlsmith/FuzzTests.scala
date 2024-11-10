@@ -149,7 +149,7 @@ object FuzzTests {
       outputDir.mkdir()
     }
 
-    val results_dir = "tmp"
+    val results_dir = arguments.outputLocation
 
     // TODO: Makes this code independent from the Spark version
     val spark = SparkSession.builder()
