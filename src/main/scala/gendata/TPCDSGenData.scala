@@ -11,12 +11,14 @@ object TPCDSGenData {
     if(args.isEmpty) {
       args(0) = "local[*]"
       args(1) = "tpcds-data-for-main"
-      args(2) = "/home/ahmad/Documents/project/tpcds-kit/tools"
+      args(2) = "/home/ahmad/Documents/project/tpcds-kit/tools",
+      args(3) = "1"
     }
 
     val master = args(0)
     val rootDirArg = args(1)
     val dsdgenDirPath = args(2)
+    val scaleFactor = args(3)
 
     val spark = SparkSession.builder()
       .appName("QueryOptTester")
@@ -36,7 +38,6 @@ object TPCDSGenData {
     val rootDir = rootDirArg // root directory of location to create data in.
 
     val databaseName = "main" // name of database to create.
-    val scaleFactor = "1" // scaleFactor defines the size of the dataset to generate (in GB).
     val format = "parquet" // valid spark format like parquet "parquet".
     // Run:
     val tables = new TPCDSTables(sqlContext,
