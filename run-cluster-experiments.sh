@@ -18,7 +18,7 @@ function main() {
     local master=$1
     local jar=target/scala-2.12/CardinalityEstimatorTest-assembly-0.1.0-SNAPSHOT.jar # TODO: provide as arg
     shift 2
-    local args=$@
+    local args="$@"
 
 
     debug "Submitting spark application..."
