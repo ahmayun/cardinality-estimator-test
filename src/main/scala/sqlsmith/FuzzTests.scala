@@ -172,10 +172,10 @@ object FuzzTests {
 //
 //    sys.exit(0)
 
-    targetTables.foreach { t =>
-      println(s"Analyzing ${t.database}.${t.name}...")
-      spark.sql(s"ANALYZE TABLE ${t.database}.${t.name} COMPUTE STATISTICS")
-    }
+//    targetTables.foreach { t =>
+//      println(s"Analyzing ${t.database}.${t.name}...")
+//      spark.sql(s"ANALYZE TABLE ${t.database}.${t.name} COMPUTE STATISTICS")
+//    }
 
 
 
