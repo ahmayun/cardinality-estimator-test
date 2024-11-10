@@ -22,8 +22,8 @@ function main() {
 
 
     debug "Submitting spark application..."
-    echo $args
-    spark-submit --class $class --master $master $jar $args
+#    echo $args
+    spark-submit --class $class --master $master $jar $@
 
 
     local num_discrep=$(ls -1 $diff_est_dir | wc -l)
