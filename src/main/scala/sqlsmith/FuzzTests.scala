@@ -270,14 +270,21 @@ object FuzzTests {
 //                println(sqlFuzz)
                 BigInt(-1)
             }
+
+            val startTime = System.nanoTime()
             val df = spark.sql(sqlFuzz)
             val actualCount = df.count()
+            val endTime = System.nanoTime()
+            val duration = (endTime - startTime) / 1e9  // Convert to seconds if using nanoTime, or to milliseconds if using currentTimeMillis
+
             val sign = if (estCount-actualCount >= 0) "+" else "-"
             val absDiff = (estCount-actualCount).abs
 
             println(s"Estimated count: $estCount")
             println(s"Actual count: $actualCount")
             println(s"Abs diff: $absDiff")
+            println(s"Exec time: $duration seconds")
+            println(s"Time diff: TBC")
 
             val output =
               s"""
@@ -285,6 +292,7 @@ object FuzzTests {
                 |Actual Count: $actualCount
                 |Estimated Count: ${if (estCount < 0) "No Estimate" else estCount}
                 |Abs diff: $absDiff
+                |Exec time: $duration seconds
                 |${makeDivider("QUERY")}
                 |$sqlFuzz
                 |${makeDivider("PLAN")}
