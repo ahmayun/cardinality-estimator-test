@@ -1,0 +1,1 @@
+git pull && sbt assembly && ./run-cluster-experiments.sh spark://zion-headnode:7077 sqlsmith.FuzzTests spark://zion-headnode:7077 --output-location target/fuzz-tests-output --max-stmts 10000
