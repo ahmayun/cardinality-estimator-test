@@ -1,6 +1,7 @@
 package misc
 
 import org.apache.spark.sql.SparkSession
+import sqlsmith.FuzzTests.metricComputers
 import org.apache.spark.sql.functions.udf
 
 
@@ -27,31 +28,45 @@ object SingleQueryRunner {
 //    spark.udf.register("myScalaFunction", myUDF)
 //    spark.sql("SELECT myScalaFunction(cc_mkt_class) FROM main.customer_demographics")
 
-    val q1 = spark.sql(
-      """
+    val q1 ="""
         |select
-        |  12 as c0
+        |  ref_0.ss_ticket_number as c0,
+        |  ref_0.ss_net_profit as c1,
+        |  ref_0.ss_store_sk as c2,
+        |  ref_0.ss_list_price as c3,
+        |  ref_0.ss_net_profit as c4,
+        |  ref_0.ss_net_paid as c5,
+        |  ref_0.ss_sold_time_sk as c6,
+        |  ref_0.ss_ext_tax as c7,
+        |  ref_0.ss_ticket_number as c8,
+        |  ref_0.ss_net_paid_inc_tax as c9,
+        |  ref_0.ss_ticket_number as c10,
+        |  ref_0.ss_promo_sk as c11,
+        |  (select sm_ship_mode_sk from main.ship_mode limit 1 offset 1)
+        |     as c12,
+        |  ref_0.ss_net_paid_inc_tax as c13,
+        |  ref_0.ss_sales_price as c14,
+        |  (select (inv_date_sk + inv_item_sk) as c20 from main.inventory limit 1 offset 4)
+        |     as c15,
+        |  ref_0.ss_wholesale_cost as c16,
+        |  ref_0.ss_net_paid_inc_tax as c17,
+        |  ref_0.ss_hdemo_sk as c18
         |from
-        |  main.customer_demographics as ref_0
-        |where ref_0.cd_credit_rating is NULL
-        |""".stripMargin)
+        |  main.store_sales as ref_0
+        |where ref_0.ss_cdemo_sk is NULL
+        |limit 100
+        |""".stripMargin
+    val df1 = spark.sql(q1)
 
-    q1.explain("cost")
-    println(s"Estimated count: ${q1.queryExecution.optimizedPlan.stats.rowCount}")
-    println(s"Actual count: ${q1.count()}")
+    df1.explain("cost")
+    println(s"Estimated count: ${df1.queryExecution.optimizedPlan.stats.rowCount}")
+    println(s"Actual count: ${df1.count()}")
 
-    val q2 = spark.sql(
-      """
-        |select
-        |  ref_0.cc_mkt_class as c0
-        |from
-        |  main.call_center as ref_0
-        |where ref_0.cc_division_name is NULL
-        |limit 95
-        |""".stripMargin)
-
-    q2.explain("cost")
-    println(s"Estimated count: ${q2.queryExecution.optimizedPlan.stats.rowCount}")
-    println(s"Actual count: ${q2.count()}")
+    metricComputers.foreach {f =>
+      val (name, value) = f(q1)
+      val s = s"$name:\n$value"
+      println(s)
+      s
+    }
   }
 }
