@@ -24,6 +24,7 @@ import java.util.UUID
 import scala.collection.mutable
 import scala.util.control.NonFatal
 import com.google.common.io.Files
+import org.apache.spark.scheduler.SparkListener
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.internal.{SQLConf, StaticSQLConf}
 import org.apache.spark.sql.types._
@@ -305,12 +306,6 @@ object FuzzTests {
       .filter(_.database == "main") // sqlsmith will only reference main so others not needed
   }
 
-
-  def addSparkListeners(spark: SparkSession): Unit = {
-//    spark.sparkContext.addSparkListener(memoryUsageListener)
-//    spark.sparkContext.addSparkListener(cpuTimeListener)
-  }
-
   def generateSqlSmithQuery(sqlSmithSchema: Long): String = {
     try{
       sqlSmithApi.getSQLFuzz(sqlSmithSchema)
@@ -337,8 +332,8 @@ object FuzzTests {
   def printAndWriteStats(fail: Boolean,
                          resultsDir: String,
                          queryStr: String,
-                         df: DataFrame,
                          numStmtGenerated: Long,
+                         df: DataFrame,
                          metrics: Array[String],
                          estCount: BigInt,
                          actualCount: Long,
@@ -375,7 +370,7 @@ object FuzzTests {
       writeQueryToFile(output, s"${numStmtGenerated}", s"$resultsDir/queries/$status/ACCURATE_ESTIMATES")
     }
 
-    println(output)
+//    println(output)
     println(makeDivider())
   }
 
@@ -388,6 +383,23 @@ object FuzzTests {
       case _ =>
         "ERR_OTHER"
     }
+  }
+
+  def applyOracles(fail: Boolean,
+                   resultsDir: String,
+                   queryStr: String,
+                   numStmtGenerated: Long,
+                   df: DataFrame,
+                   metrics: Array[String],
+                   estCount: BigInt,
+                   actualCount: Long,
+                   startTime: Long,
+                   endTime: Long): Unit = {
+
+
+
+
+
   }
 
   def main(args: Array[String]): Unit = {
@@ -432,7 +444,28 @@ object FuzzTests {
       override def run(): Unit = dumpTestingStats()
     })
 
-    addSparkListeners(spark)
+    // ========= LISTENERS ========================
+
+    var cpuTime: Long = 0L
+    val cpuTimeListener: SparkListener = new org.apache.spark.scheduler.SparkListener {
+
+      override def onTaskEnd(taskEnd: org.apache.spark.scheduler.SparkListenerTaskEnd): Unit = {
+        cpuTime += taskEnd.taskMetrics.executorCpuTime // CPU time in nanoseconds
+      }
+    }
+
+    var memoryUsage: Long = 0L
+    val memoryUsageListener: SparkListener = new org.apache.spark.scheduler.SparkListener {
+
+      override def onTaskEnd(taskEnd: org.apache.spark.scheduler.SparkListenerTaskEnd): Unit = {
+        memoryUsage += taskEnd.taskMetrics.memoryBytesSpilled
+      }
+    }
+
+
+    spark.sparkContext.addSparkListener(memoryUsageListener)
+    spark.sparkContext.addSparkListener(cpuTimeListener)
+    // ============================================
 
     while (isInfinite || numStmtGenerated < maxStmts) {
       val queryStr = generateSqlSmithQuery(sqlSmithSchema)
@@ -457,12 +490,32 @@ object FuzzTests {
           s
         }
 
+        val peakMemoryUsage = df.queryExecution.executedPlan.metrics
+          .filterKeys(_.toLowerCase.contains("peak"))
+          .values.map(_.value).sum
+
+        println("++++++++++++++++++++++")
+        println(peakMemoryUsage)
+        println(cpuTime)
+        println("++++++++++++++++++++++")
+        applyOracles(
+          fail=false,
+          resultsDir,
+          queryStr,
+          numStmtGenerated,
+          df,
+          metrics,
+          estCount,
+          actualCount,
+          startTime,
+          endTime)
+
         printAndWriteStats(
           fail=false,
           resultsDir,
           queryStr,
-          df,
           numStmtGenerated,
+          df,
           metrics,
           estCount,
           actualCount,
@@ -481,5 +534,7 @@ object FuzzTests {
           throw new RuntimeException(s"Fuzz testing stopped because: $e")
       }
     }
+
+    sqlSmithApi.free(sqlSmithSchema)
   }
 }
