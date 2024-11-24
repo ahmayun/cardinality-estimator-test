@@ -45,8 +45,8 @@ object TestSparkListeners {
       |select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk
       |""".stripMargin
 
-    spark.sql("select count(*) from main.customer")
-    spark.sql("select count(*) from main.web_sales")
+    spark.sql("select count(*) from main.customer").show(1)
+    spark.sql("select count(*) from main.web_sales").show(1)
     spark.sql(q).show(5)
     println("Job details:")
     println(s"Master: $master")
