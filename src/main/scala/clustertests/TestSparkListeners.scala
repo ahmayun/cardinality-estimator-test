@@ -38,7 +38,7 @@ object TestSparkListeners {
       }
     }
     val cpuListener = new CpuTimeListener()
-    spark.sparkContext.addSparkListener(cpuListener)
+//    spark.sparkContext.addSparkListener(cpuListener)
     // ============================================
 
     val q = """
