@@ -45,6 +45,8 @@ object TestSparkListeners {
       |""".stripMargin
 
     spark.sql(q).show(5)
+    println("Job details:")
+    println(s"Master: $master")
     println(s"Total CPU Time: ${cpuListener.cpuTime} ns")
 
 //    println("Holding job. Press <Enter> to end...")
