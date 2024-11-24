@@ -21,6 +21,7 @@ object TestSparkListeners {
 
     spark.sparkContext.setLogLevel("ERROR")
     val targetTables = gatherTargetTables(spark)
+    println("Printing target tables:")
     targetTables.foreach{t =>
       println(t)
     }
