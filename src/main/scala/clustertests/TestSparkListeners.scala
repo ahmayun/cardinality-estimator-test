@@ -34,7 +34,7 @@ object TestSparkListeners {
         val taskMetrics = taskEnd.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
         cpuTime += executorCpuTime
-        println(s"Stage ${taskInfo.taskId} completed with executor CPU time: $executorCpuTime ns")
+//        println(s"Stage ${taskInfo.taskId} completed with executor CPU time: $executorCpuTime ns")
       }
     }
     val cpuListener = new CpuTimeListener()
