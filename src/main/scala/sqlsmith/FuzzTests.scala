@@ -24,7 +24,7 @@ import java.util.UUID
 import scala.collection.mutable
 import scala.util.control.NonFatal
 import com.google.common.io.Files
-import org.apache.spark.scheduler.SparkListener
+import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.internal.{SQLConf, StaticSQLConf}
 import org.apache.spark.sql.types._
@@ -446,25 +446,18 @@ object FuzzTests {
 
     // ========= LISTENERS ========================
 
-    var cpuTime: Long = 0L
-    val cpuTimeListener: SparkListener = new org.apache.spark.scheduler.SparkListener {
-
-      override def onTaskEnd(taskEnd: org.apache.spark.scheduler.SparkListenerTaskEnd): Unit = {
-        cpuTime += taskEnd.taskMetrics.executorCpuTime // CPU time in nanoseconds
-      }
-    }
-
-    var memoryUsage: Long = 0L
-    val memoryUsageListener: SparkListener = new org.apache.spark.scheduler.SparkListener {
-
-      override def onTaskEnd(taskEnd: org.apache.spark.scheduler.SparkListenerTaskEnd): Unit = {
-        memoryUsage += taskEnd.taskMetrics.memoryBytesSpilled
+    class CpuTimeListener extends SparkListener {
+      override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
+        val stageInfo = stageCompleted.stageInfo
+        val taskMetrics = stageInfo.taskMetrics
+        val executorCpuTime = taskMetrics.executorCpuTime
+        println(s"Stage ${stageInfo.stageId} completed with executor CPU time: $executorCpuTime ns")
       }
     }
 
 
-    spark.sparkContext.addSparkListener(memoryUsageListener)
-    spark.sparkContext.addSparkListener(cpuTimeListener)
+    val cpuListener = new CpuTimeListener()
+    spark.sparkContext.addSparkListener(cpuListener)
     // ============================================
 
     while (isInfinite || numStmtGenerated < maxStmts) {
@@ -496,7 +489,7 @@ object FuzzTests {
 
         println("++++++++++++++++++++++")
         println(peakMemoryUsage)
-        println(cpuTime)
+//        println(cpuTimeListener.cpuTime)
         println("++++++++++++++++++++++")
         applyOracles(
           fail=false,

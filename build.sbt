@@ -7,7 +7,8 @@ libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-hive" % "3.5.0",
   "org.postgresql" % "postgresql" % "42.3.0",
   "com.github.jnr" % "jnr-unixsocket" % "0.38.16",
-  "org.xerial" % "sqlite-jdbc" % "3.36.0.3"
+  "org.xerial" % "sqlite-jdbc" % "3.36.0.3",
+  "ch.cern.sparkmeasure" %% "spark-measure" % "0.24"
 )
 
 lazy val root = (project in file("."))
