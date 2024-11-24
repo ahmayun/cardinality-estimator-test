@@ -24,7 +24,7 @@ import java.util.UUID
 import scala.collection.mutable
 import scala.util.control.NonFatal
 import com.google.common.io.Files
-import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted}
+import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted, SparkListenerTaskEnd}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.internal.{SQLConf, StaticSQLConf}
 import org.apache.spark.sql.types._
@@ -447,11 +447,13 @@ object FuzzTests {
     // ========= LISTENERS ========================
 
     class CpuTimeListener extends SparkListener {
-      override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
-        val stageInfo = stageCompleted.stageInfo
-        val taskMetrics = stageInfo.taskMetrics
+      var cpuTime: Long = -1
+      override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
+        val taskInfo = taskEnd.taskInfo
+        val taskMetrics = taskEnd.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
-        println(s"Stage ${stageInfo.stageId} completed with executor CPU time: $executorCpuTime ns")
+        cpuTime = executorCpuTime
+        println(s"Stage ${taskInfo.taskId} completed with executor CPU time: $executorCpuTime ns")
       }
     }
 
@@ -488,7 +490,7 @@ object FuzzTests {
           .values.map(_.value).sum
 
         println("++++++++++++++++++++++")
-        println(peakMemoryUsage)
+        println(peakMemoryUsage) // giving 0 for everything
 //        println(cpuTimeListener.cpuTime)
         println("++++++++++++++++++++++")
         applyOracles(
