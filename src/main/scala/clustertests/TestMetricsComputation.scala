@@ -1,20 +1,20 @@
-package misc
+package clustertests
 
 import org.apache.spark.sql.SparkSession
 import sqlsmith.FuzzTests.metricComputers
-import org.apache.spark.sql.functions.udf
 
 
-object SingleQueryRunner {
+object TestMetricsComputation {
   def main(args: Array[String]): Unit = {
-    // TODO: Makes this code independent from the Spark version
+    val master = if(args.isEmpty) "local[*]" else args(0)
+
     val spark = SparkSession.builder()
-      .appName("FuzzTest")
+      .appName("TestMetricsComputation")
       .config("spark.sql.cbo.enabled", "true")
       .config("spark.sql.cbo.joinReorder.enabled", "true")
       .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
       .config("spark.sql.statistics.histogram.enabled", "true")
-      .master("local[*]")
+      .master(master)
       .enableHiveSupport()
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
@@ -57,10 +57,6 @@ object SingleQueryRunner {
         |limit 100
         |""".stripMargin
     val df1 = spark.sql(q1)
-
-    df1.explain("cost")
-    println(s"Estimated count: ${df1.queryExecution.optimizedPlan.stats.rowCount}")
-    println(s"Actual count: ${df1.count()}")
 
     metricComputers.foreach {f =>
       val (name, value) = f(q1)

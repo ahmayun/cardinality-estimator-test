@@ -3,9 +3,11 @@ package clustertests
 import org.apache.spark.sql.SparkSession
 import sqlsmith.loader.SQLSmithLoader
 
-object Test {
+object TestEnvironment {
 
   def main(args: Array[String]): Unit = {
+    val master = if(args.isEmpty) "local[*]" else args(0)
+
     lazy val sqlSmithApi = SQLSmithLoader.loadApi()
     val sqlSmithSchema = sqlSmithApi.schemaInit("", 0)
 
@@ -15,12 +17,12 @@ object Test {
     println("Attempting to create external table to check hive setup...")
 
     val spark = SparkSession.builder()
-      .appName("HiveCheck")
+      .appName("TestEnvironment")
       .config("spark.sql.cbo.enabled", "true")
       .config("spark.sql.cbo.joinReorder.enabled", "true")
       .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
       .config("spark.sql.statistics.histogram.enabled", "true")
-      .master(args(0))
+      .master(master)
       .enableHiveSupport()
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
