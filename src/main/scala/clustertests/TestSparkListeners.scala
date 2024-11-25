@@ -45,8 +45,12 @@ object TestSparkListeners {
       |select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk
       |""".stripMargin
 
-    spark.sql("select c_customer_sk from main.customer").show(5)
-    spark.sql("select ws_ship_customer_sk from main.web_sales").show(5)
+    val customer = spark.sql("select c_customer_sk from main.customer")
+    val websales = spark.sql("select distinct ws_ship_customer_sk from main.web_sales sort by ws_ship_customer_sk")
+    customer.show(5)
+    println(s"Count: ${customer.count()}")
+    websales.show(5)
+    println(s"Count: ${websales.count()}")
     spark.sql(q).show(5)
     println("Job details:")
     println(s"Master: $master")
