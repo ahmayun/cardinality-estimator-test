@@ -43,9 +43,13 @@ object TestSparkListeners {
         val taskMetrics = stageInfo.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
         val peakMem = taskMetrics.peakExecutionMemory
-        println(s"Stage ${stageInfo.stageId} [${stageInfo.failureReason}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem}")
+        val status = stageInfo.failureReason match {
+          case None => "Success"
+          case Some(_) => "Failed"
+        }
         cpuTime += executorCpuTime
         peakMemory = math.max(peakMem, peakMem)
+        println(s"Stage ${stageInfo.stageId} [${status}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem} (globalPeak: ${peakMemory})")
       }
     }
     val cpuListener = new CpuTimeListener()
