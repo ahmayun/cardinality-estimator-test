@@ -43,7 +43,7 @@ object TestSparkListeners {
         val taskMetrics = stageInfo.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
         val peakMem = taskMetrics.peakExecutionMemory
-        println(s"Stage ${stageInfo.stageId} - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem}")
+        println(s"Stage ${stageInfo.stageId} [${stageInfo.failureReason}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem}")
         cpuTime += executorCpuTime
         peakMemory = math.max(peakMem, peakMem)
       }
