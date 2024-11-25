@@ -29,6 +29,7 @@ object TestSparkListeners {
     // ========= LISTENERS ========================
     class CpuTimeListener extends SparkListener {
       var cpuTime: Long = 0
+      var peakMemory: Long = 0
 //      override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
 //        val taskInfo = taskEnd.taskInfo
 //        val taskMetrics = taskEnd.taskMetrics
@@ -41,8 +42,10 @@ object TestSparkListeners {
         val stageInfo = stageCompleted.stageInfo
         val taskMetrics = stageInfo.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
-        println(s"Stage ${stageInfo.stageId} completed with executor CPU time: ${executorCpuTime}")
+        val peakMem = taskMetrics.peakExecutionMemory
+        println(s"Stage ${stageInfo.stageId} - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem}")
         cpuTime += executorCpuTime
+        peakMemory = math.max(peakMem, peakMem)
       }
     }
     val cpuListener = new CpuTimeListener()
@@ -67,6 +70,7 @@ object TestSparkListeners {
     df.explain(true)
     println(s"Master: $master")
     println(s"Total CPU Time: ${cpuListener.cpuTime} ns")
+    println(s"Peak Memory Usage: ${cpuListener.peakMemory} bytes")
     println("Holding job. Press <Enter> to end...")
     scala.io.StdIn.readLine()
     spark.sparkContext.removeSparkListener(cpuListener)

@@ -447,17 +447,14 @@ object FuzzTests {
     // ========= LISTENERS ========================
 
     class CpuTimeListener extends SparkListener {
-      var cpuTime: Long = -1
-      override def onTaskEnd(taskEnd: SparkListenerTaskEnd): Unit = {
-        val taskInfo = taskEnd.taskInfo
-        val taskMetrics = taskEnd.taskMetrics
+      var cpuTime: Long = 0
+      override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
+        val stageInfo = stageCompleted.stageInfo
+        val taskMetrics = stageInfo.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
-        cpuTime = executorCpuTime
-        println(s"Stage ${taskInfo.taskId} completed with executor CPU time: $executorCpuTime ns")
+        cpuTime += executorCpuTime
       }
     }
-
-
     val cpuListener = new CpuTimeListener()
     spark.sparkContext.addSparkListener(cpuListener)
     // ============================================
@@ -488,22 +485,6 @@ object FuzzTests {
         val peakMemoryUsage = df.queryExecution.executedPlan.metrics
           .filterKeys(_.toLowerCase.contains("peak"))
           .values.map(_.value).sum
-
-        println("++++++++++++++++++++++")
-        println(peakMemoryUsage) // giving 0 for everything
-//        println(cpuTimeListener.cpuTime)
-        println("++++++++++++++++++++++")
-        applyOracles(
-          fail=false,
-          resultsDir,
-          queryStr,
-          numStmtGenerated,
-          df,
-          metrics,
-          estCount,
-          actualCount,
-          startTime,
-          endTime)
 
         printAndWriteStats(
           fail=false,
