@@ -42,22 +42,23 @@ object TestSparkListeners {
         val taskMetrics = stageInfo.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
         println(s"Stage ${stageInfo.stageId} completed with executor CPU time: ${executorCpuTime}")
+        cpuTime += executorCpuTime
       }
     }
     val cpuListener = new CpuTimeListener()
     spark.sparkContext.addSparkListener(cpuListener)
     // ============================================
 
+    //    val customer = spark.sql("select c_customer_sk from main.customer")
+    //    val websales = spark.sql("select distinct ws_ship_customer_sk from main.web_sales sort by ws_ship_customer_sk")
+    //    customer.show(5)
+    //    println(s"Count: ${customer.count()}")
+    //    websales.show(5)
+    //    println(s"Count: ${websales.count()}")
+
     val q = """
       |select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk
       |""".stripMargin
-
-//    val customer = spark.sql("select c_customer_sk from main.customer")
-//    val websales = spark.sql("select distinct ws_ship_customer_sk from main.web_sales sort by ws_ship_customer_sk")
-//    customer.show(5)
-//    println(s"Count: ${customer.count()}")
-//    websales.show(5)
-//    println(s"Count: ${websales.count()}")
 
     val df = spark.sql(q)
     df.show(5)
