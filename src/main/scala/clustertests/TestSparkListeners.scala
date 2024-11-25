@@ -48,7 +48,7 @@ object TestSparkListeners {
           case Some(_) => "Failed"
         }
         cpuTime += executorCpuTime
-        peakMemory = math.max(peakMem, peakMem)
+        peakMemory = math.max(peakMem, peakMemory)
         println(s"Stage ${stageInfo.stageId} [${status}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem} (globalPeak: ${peakMemory})")
       }
     }
