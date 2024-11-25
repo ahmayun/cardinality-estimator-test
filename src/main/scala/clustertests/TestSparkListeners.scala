@@ -59,9 +59,11 @@ object TestSparkListeners {
 //    websales.show(5)
 //    println(s"Count: ${websales.count()}")
 
-    spark.sql(q).show(5)
+    val df = spark.sql(q)
+    df.show(5)
 
     println("Job details:")
+    df.explain(true)
     println(s"Master: $master")
     println(s"Total CPU Time: ${cpuListener.cpuTime} ns")
     println("Holding job. Press <Enter> to end...")
