@@ -20,11 +20,11 @@ object TestSparkListeners {
       .getOrCreate()
 
     spark.sparkContext.setLogLevel("ERROR")
-    val targetTables = gatherTargetTables(spark)
-    println("Printing target tables:")
-    targetTables.foreach{t =>
-      println(t)
-    }
+//    val targetTables = gatherTargetTables(spark)
+//    println("Printing target tables:")
+//    targetTables.foreach{t =>
+//      println(t)
+//    }
 
     // ========= LISTENERS ========================
     class CpuTimeListener extends SparkListener {
