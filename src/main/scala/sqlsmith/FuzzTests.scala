@@ -330,6 +330,28 @@ object FuzzTests {
     }
   }
 
+  def mkStatsStr(estCount: BigInt,
+                 actualCount: Long,
+                 startTime: Long,
+                 endTime: Long,
+                 cpuTime: Long,
+                 peakMem: Long): String = {
+
+    val duration = (endTime - startTime) / 1e9
+    val absDiff = (estCount-actualCount).abs
+
+    val output =
+      s"""
+         |Actual Count: $actualCount
+         |Estimated Count: ${if (estCount < 0) "No Estimate" else estCount}
+         |Abs diff: $absDiff
+         |Exec time: $duration seconds
+         |CPU Time: $cpuTime
+         |Peak Mem: $peakMem
+         |""".stripMargin
+    output
+  }
+
   def printAndWriteStats(fail: Boolean,
                          resultsDir: String,
                          queryStr: String,
@@ -338,21 +360,18 @@ object FuzzTests {
                          estCount: BigInt,
                          actualCount: Long,
                          startTime: Long,
-                         endTime: Long): Unit = {
-
-    val duration = (endTime - startTime) / 1e9
+                         endTime: Long,
+                         cpuTime: Long,
+                         peakMem: Long): String = {
 
     val sign = if (estCount-actualCount >= 0) "+" else "-"
     val absDiff = (estCount-actualCount).abs
 
+    val statsStr = mkStatsStr(estCount, actualCount, startTime, endTime, cpuTime, peakMem)
     val output =
       s"""
          |${makeDivider("STATS")}
-         |Actual Count: $actualCount
-         |Estimated Count: ${if (estCount < 0) "No Estimate" else estCount}
-         |Abs diff: $absDiff
-         |Exec time: $duration seconds
-         |Time diff: TBC
+         |$statsStr
          |${metrics.mkString("\n")}
          |${makeDivider("QUERY")}
          |$queryStr
@@ -369,8 +388,8 @@ object FuzzTests {
       writeQueryToFile(output, s"${numStmtGenerated}", s"$resultsDir/queries/$status/ACCURATE_ESTIMATES")
     }
 
-//    println(output)
-    println(makeDivider())
+    statsStr
+
   }
 
 
@@ -402,10 +421,10 @@ object FuzzTests {
     val (durationOpt, durationUnOpt) = ((endTimeOpt-startTimeOpt) / 1e9, (endTimeUnOpt-startTimeUnOpt) / 1e9)
     val (countOpt, countUnOpt) = counts
     val (estCountOpt, estCountUnOpt) = estCounts
-    val (cpuTimesOpt, cpuTimesUnOpt) = cpuTimes
+    val (cpuTimeOpt, cpuTimeUnOpt) = cpuTimes
     val (peakMemOpt, peakMemUnOpt) = peakMems
 
-    printAndWriteStats(
+    val optStats = printAndWriteStats(
       fail,
       s"$resultsDir/opt",
       queryStr,
@@ -414,10 +433,12 @@ object FuzzTests {
       estCountOpt,
       countOpt,
       startTimeOpt,
-      endTimeOpt
+      endTimeOpt,
+      cpuTimeOpt,
+      peakMemOpt
     )
 
-    printAndWriteStats(
+    val unOptStats = printAndWriteStats(
       fail,
       s"$resultsDir/unopt",
       queryStr,
@@ -426,8 +447,27 @@ object FuzzTests {
       estCountUnOpt,
       countUnOpt,
       startTimeUnOpt,
-      endTimeUnOpt
+      endTimeUnOpt,
+      cpuTimeUnOpt,
+      peakMemUnOpt
     )
+
+    if(durationOpt > durationUnOpt || peakMemOpt > peakMemUnOpt || cpuTimeOpt > cpuTimeUnOpt) {
+      val diffPeakMem = peakMemOpt - peakMemUnOpt
+      val diffCpuTime = cpuTimeOpt - cpuTimeUnOpt
+
+      val combinedStats =
+        s"""
+          |${makeDivider("Optimized Run Stats")}
+          |$optStats
+          |${makeDivider("Unoptimized Run Stats")}
+          |$unOptStats
+          |${makeDivider("Difference")}
+          |(peakMemOpt - peakMemUnOpt): $diffPeakMem
+          |(cpuTimeOpt - cpuTimeUnOpt): $diffCpuTime
+          |""".stripMargin
+      writeQueryToFile(combinedStats, s"${numStmtGenerated}", s"$resultsDir/opt-discrepancies/")
+    }
   }
 
   def main(args: Array[String]): Unit = {
