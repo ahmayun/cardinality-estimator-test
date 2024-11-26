@@ -308,8 +308,8 @@ object FuzzTests {
 
   def generateSqlSmithQuery(sqlSmithSchema: Long): String = {
     try{
-//      sqlSmithApi.getSQLFuzz(sqlSmithSchema)
-      "select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk"
+      sqlSmithApi.getSQLFuzz(sqlSmithSchema)
+//      "select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk"
     } catch {
       case e: Throwable =>
         sqlSmithApi.free(sqlSmithSchema)
