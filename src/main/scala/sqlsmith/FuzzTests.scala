@@ -465,6 +465,8 @@ object FuzzTests {
           |${makeDivider("Difference")}
           |(peakMemOpt - peakMemUnOpt): $diffPeakMem
           |(cpuTimeOpt - cpuTimeUnOpt): $diffCpuTime
+          |${makeDivider("Query")}
+          |$queryStr
           |""".stripMargin
       writeQueryToFile(combinedStats, s"${numStmtGenerated}", s"$resultsDir/opt-discrepancies/")
     }
