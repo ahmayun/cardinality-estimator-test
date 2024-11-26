@@ -560,7 +560,7 @@ object FuzzTests {
         }
         cpuTime += executorCpuTime
         peakMemory = math.max(peakMem, peakMemory)
-        println(s"Stage ${stageInfo.stageId} [${status}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem} (globalPeak: ${peakMemory})")
+//        println(s"Stage ${stageInfo.stageId} [${status}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem} (globalPeak: ${peakMemory})")
       }
     }
     // ============================================
