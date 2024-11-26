@@ -575,12 +575,12 @@ object FuzzTests {
 
       var status = "ERR_OTHER"
 
-      // warm up
-      spark.sql(queryStr).count()
-      spark.catalog.clearCache()
-
-
       try {
+        // warm up
+        spark.sql(queryStr).count()
+        spark.catalog.clearCache()
+
+
         val (countOpt, estCountOpt, startTimeOpt, endTimeOpt, cpuTimeOpt, peakMemOpt) = withOptimized {
           val optListener = new CpuTimeListener()
           spark.sparkContext.addSparkListener(optListener)
