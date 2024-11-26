@@ -308,10 +308,7 @@ object FuzzTestsOld {
 //    }
 
 
-
-
-
-    //    val sparkOpt = spark.sessionState.optimizer
+//        val sparkOpt = spark.sessionState.optimizer
 //    val excludableRules = {
 //      val defaultRules = sparkOpt.defaultBatches.flatMap(_.rules.map(_.ruleName)).toSet
 //      val rules = defaultRules -- sparkOpt.nonExcludableRules.toSet
@@ -322,7 +319,7 @@ object FuzzTestsOld {
 //         """.stripMargin)
 //      rules
 //    }
-
+//
 //    def withOptimized[T](f: => T): T = {
 //      // Sets up all the configurations for the Catalyst optimizer
 //      val optConfigs = Seq(

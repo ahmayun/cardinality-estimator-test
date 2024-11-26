@@ -282,10 +282,10 @@ object FuzzTests {
   def setupSpark(master: String): SparkSession = {
     val spark = SparkSession.builder()
       .appName("FuzzTest")
-      .config("spark.sql.cbo.enabled", "true")
-      .config("spark.sql.cbo.joinReorder.enabled", "true")
-      .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
-      .config("spark.sql.statistics.histogram.enabled", "true")
+//      .config("spark.sql.cbo.enabled", "true")
+//      .config("spark.sql.cbo.joinReorder.enabled", "true")
+//      .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
+//      .config("spark.sql.statistics.histogram.enabled", "true")
       .master(master)
       .enableHiveSupport()
       .getOrCreate()
@@ -308,7 +308,8 @@ object FuzzTests {
 
   def generateSqlSmithQuery(sqlSmithSchema: Long): String = {
     try{
-      sqlSmithApi.getSQLFuzz(sqlSmithSchema)
+//      sqlSmithApi.getSQLFuzz(sqlSmithSchema)
+      "select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk"
     } catch {
       case e: Throwable =>
         sqlSmithApi.free(sqlSmithSchema)
@@ -333,7 +334,6 @@ object FuzzTests {
                          resultsDir: String,
                          queryStr: String,
                          numStmtGenerated: Long,
-                         df: DataFrame,
                          metrics: Array[String],
                          estCount: BigInt,
                          actualCount: Long,
@@ -357,7 +357,6 @@ object FuzzTests {
          |${makeDivider("QUERY")}
          |$queryStr
          |${makeDivider("PLAN")}
-         |${df.queryExecution.toString()}
          |""".stripMargin
 
 
@@ -374,6 +373,7 @@ object FuzzTests {
     println(makeDivider())
   }
 
+
   def determinErrorType(e: Throwable): String = {
     e match {
       case _: org.apache.spark.sql.catalyst.parser.ParseException =>
@@ -385,21 +385,49 @@ object FuzzTests {
     }
   }
 
-  def applyOracles(fail: Boolean,
-                   resultsDir: String,
-                   queryStr: String,
-                   numStmtGenerated: Long,
-                   df: DataFrame,
-                   metrics: Array[String],
-                   estCount: BigInt,
-                   actualCount: Long,
-                   startTime: Long,
-                   endTime: Long): Unit = {
+  def compareAndWrite(fail: Boolean,
+                      resultsDir: String,
+                      queryStr: String,
+                      numStmtGenerated: Long,
+                      counts: (Long, Long),
+                      estCounts: (BigInt, BigInt),
+                      startTimes: (Long, Long),
+                      endTimes: (Long, Long),
+                      cpuTimes: (Long, Long),
+                      peakMems: (Long, Long)): Unit = {
 
 
+    val (startTimeOpt, startTimeUnOpt) = startTimes
+    val (endTimeOpt, endTimeUnOpt) = endTimes
+    val (durationOpt, durationUnOpt) = ((endTimeOpt-startTimeOpt) / 1e9, (endTimeUnOpt-startTimeUnOpt) / 1e9)
+    val (countOpt, countUnOpt) = counts
+    val (estCountOpt, estCountUnOpt) = estCounts
+    val (cpuTimesOpt, cpuTimesUnOpt) = cpuTimes
+    val (peakMemOpt, peakMemUnOpt) = peakMems
 
+    printAndWriteStats(
+      fail,
+      s"$resultsDir/opt",
+      queryStr,
+      numStmtGenerated,
+      Array(),
+      estCountOpt,
+      countOpt,
+      startTimeOpt,
+      endTimeOpt
+    )
 
-
+    printAndWriteStats(
+      fail,
+      s"$resultsDir/unopt",
+      queryStr,
+      numStmtGenerated,
+      Array(),
+      estCountUnOpt,
+      countUnOpt,
+      startTimeUnOpt,
+      endTimeUnOpt
+    )
   }
 
   def main(args: Array[String]): Unit = {
@@ -415,6 +443,37 @@ object FuzzTests {
     val resultsDir = arguments.outputLocation
 
     val spark = setupSpark(master)
+
+    val sparkOpt = spark.sessionState.optimizer
+    val excludableRules = {
+      val defaultRules = sparkOpt.defaultBatches.flatMap(_.rules.map(_.ruleName)).toSet
+      val rules = defaultRules -- sparkOpt.nonExcludableRules.toSet
+      debugPrint(
+        s"""
+           |excludedRules(${rules.size}):
+           |  ${rules.mkString("\n  ")}
+         """.stripMargin)
+      rules
+    }
+
+    def withOptimized[T](f: => T): T = {
+      // Sets up all the configurations for the Catalyst optimizer
+      val optConfigs = Seq(
+        (SQLConf.CBO_ENABLED.key, "true"),
+        (SQLConf.DYNAMIC_PARTITION_PRUNING_ENABLED.key, "true")
+      )
+      withSQLConf(optConfigs: _*) {
+        f
+      }
+    }
+
+    val excludedRules = excludableRules.mkString(",")
+    def withoutOptimized[T](f: => T): T = {
+      val nonOptConfigs = Seq((SQLConf.OPTIMIZER_EXCLUDED_RULES.key, excludedRules))
+      withSQLConf(nonOptConfigs: _*) {
+        f
+      }
+    }
 
     setupEnv()
 
@@ -448,15 +507,22 @@ object FuzzTests {
 
     class CpuTimeListener extends SparkListener {
       var cpuTime: Long = 0
+      var peakMemory: Long = 0
+
       override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
         val stageInfo = stageCompleted.stageInfo
         val taskMetrics = stageInfo.taskMetrics
         val executorCpuTime = taskMetrics.executorCpuTime
+        val peakMem = taskMetrics.peakExecutionMemory
+        val status = stageInfo.failureReason match {
+          case None => "Success"
+          case Some(_) => "Failed"
+        }
         cpuTime += executorCpuTime
+        peakMemory = math.max(peakMem, peakMemory)
+        println(s"Stage ${stageInfo.stageId} [${status}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem} (globalPeak: ${peakMemory})")
       }
     }
-    val cpuListener = new CpuTimeListener()
-    spark.sparkContext.addSparkListener(cpuListener)
     // ============================================
 
     while (isInfinite || numStmtGenerated < maxStmts) {
@@ -469,34 +535,53 @@ object FuzzTests {
 
       var status = "ERR_OTHER"
 
-      try {
-        val estCount = getEstimatedCount(spark, queryStr)
-        val startTime = System.nanoTime()
-        val df = spark.sql(queryStr)
-        val actualCount = df.count()
-        val endTime = System.nanoTime()
+      // warm up
+      spark.sql(queryStr).count()
+      spark.catalog.clearCache()
 
-        val metrics = metricComputers.map {f =>
-          val (name, value) = f(queryStr)
-          val s = s"$name:\n$value"
-          s
+
+      try {
+        val (countOpt, estCountOpt, startTimeOpt, endTimeOpt, cpuTimeOpt, peakMemOpt) = withOptimized {
+          val optListener = new CpuTimeListener()
+          spark.sparkContext.addSparkListener(optListener)
+          val st = System.nanoTime()
+          val ct = spark.sql(queryStr).count()
+          val et = System.nanoTime()
+          val estCount = getEstimatedCount(spark, queryStr)
+          val cpuTime = optListener.cpuTime
+          val peakMem = optListener.peakMemory
+          val ret = (ct, estCount, st, et, cpuTime, peakMem)
+          spark.sparkContext.removeSparkListener(optListener)
+          ret
         }
 
-        val peakMemoryUsage = df.queryExecution.executedPlan.metrics
-          .filterKeys(_.toLowerCase.contains("peak"))
-          .values.map(_.value).sum
+        val (countUnOpt, estCountUnOpt, startTimeUnOpt, endTimeUnOpt, cpuTimeUnOpt, peakMemUnOpt) = withoutOptimized {
+          val UnOptListener = new CpuTimeListener()
+          spark.sparkContext.addSparkListener(UnOptListener)
+          val st = System.nanoTime()
+          val ct = spark.sql(queryStr).count()
+          val et = System.nanoTime()
+          val estCount = getEstimatedCount(spark, queryStr)
+          val cpuTime = UnOptListener.cpuTime
+          val peakMem = UnOptListener.peakMemory
+          val ret = (ct, estCount, st, et, cpuTime, peakMem)
+          spark.sparkContext.removeSparkListener(UnOptListener)
+          ret
+        }
 
-        printAndWriteStats(
+
+        compareAndWrite(
           fail=false,
           resultsDir,
           queryStr,
           numStmtGenerated,
-          df,
-          metrics,
-          estCount,
-          actualCount,
-          startTime,
-          endTime)
+          (countOpt, countUnOpt),
+          (estCountOpt, estCountUnOpt),
+          (startTimeOpt, startTimeUnOpt),
+          (endTimeOpt, endTimeUnOpt),
+          (cpuTimeOpt, cpuTimeUnOpt),
+          (peakMemOpt, peakMemUnOpt)
+        )
 
       } catch {
         case NonFatal(e) =>
