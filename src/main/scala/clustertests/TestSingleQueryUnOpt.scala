@@ -36,7 +36,6 @@ object TestSingleQueryUnOpt {
       |limit 69
       |""".stripMargin
 
-    val st = System.nanoTime()
     val sparkOpt = spark.sessionState.optimizer
     val excludableRules = {
       val defaultRules = sparkOpt.defaultBatches.flatMap(_.rules.map(_.ruleName)).toSet
@@ -47,6 +46,7 @@ object TestSingleQueryUnOpt {
 
     val excludedRules = excludableRules.mkString(",")
 
+    val st = System.nanoTime()
     withoutOptimized(excludedRules) {
       spark.sql(q).show(5)
     }
