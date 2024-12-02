@@ -41,6 +41,7 @@ object TestSingleQueryUnOpt {
     val excludableRules = {
       val defaultRules = sparkOpt.defaultBatches.flatMap(_.rules.map(_.ruleName)).toSet
       val rules = defaultRules -- sparkOpt.nonExcludableRules.toSet
+      rules.foreach(println)
       rules
     }
 
