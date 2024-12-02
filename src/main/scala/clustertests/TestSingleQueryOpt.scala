@@ -31,7 +31,7 @@ object TestSingleQueryOpt {
       spark.sql(q).show(5)
     }
     val et = System.nanoTime()
-    println(s"Total time (s): ${(et-st) / 1e9}")
+    println(s"Total time Opt (s): ${(et-st) / 1e9}")
 
   }
 }
