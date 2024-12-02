@@ -16,25 +16,15 @@ object TestSingleQueryOpt {
     spark.sparkContext.setLogLevel("ERROR")
 
     val q = """
-      |select
-      |  subq_0.c0 as c0,
-      |  subq_0.c0 as c1,
-      |  ref_0.c_customer_sk as c2,
-      |  subq_0.c0 as c3,
-      |  79 as c4,
-      |  subq_0.c0 as c5,
-      |  ref_0.c_customer_id as c6
-      |from
-      |  main.customer as ref_0,
-      |  lateral (select
-      |        ref_1.wr_order_number as c0
-      |      from
-      |        main.web_returns as ref_1
-      |      where ref_1.wr_account_credit is not NULL
-      |      limit 114) as subq_0
-      |where ref_0.c_first_name is NULL
-      |limit 69
-      |""".stripMargin
+              |select
+              |  ref_0.cs_bill_cdemo_sk as c0,
+              |  ref_0.cs_bill_cdemo_sk as c1
+              |from
+              |  main.catalog_sales as ref_0
+              |where cast(coalesce(ref_0.cs_order_number,
+              |    ref_0.cs_ship_addr_sk) as INTEGER) is NULL
+              |limit 68
+              |""".stripMargin
 
     val st = System.nanoTime()
     withOptimized {
