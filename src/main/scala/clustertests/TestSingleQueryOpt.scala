@@ -17,26 +17,23 @@ object TestSingleQueryOpt {
 
     val q = """
       |select
-      |  ref_0.ws_promo_sk as c0,
-      |  ref_0.ws_order_number as c1,
-      |  subq_0.c0 as c2,
+      |  subq_0.c0 as c0,
+      |  subq_0.c0 as c1,
+      |  ref_0.c_customer_sk as c2,
       |  subq_0.c0 as c3,
-      |  subq_0.c0 as c4,
-      |  ref_0.ws_item_sk as c5,
-      |  subq_0.c0 as c6
+      |  79 as c4,
+      |  subq_0.c0 as c5,
+      |  ref_0.c_customer_id as c6
       |from
-      |  main.web_sales as ref_0,
+      |  main.customer as ref_0,
       |  lateral (select
-      |        ref_1.ca_street_name as c0,
-      |        ref_1.ca_city as c1,
-      |        ref_1.ca_address_sk as c2,
-      |        ref_0.ws_net_paid_inc_ship as c3
+      |        ref_1.wr_order_number as c0
       |      from
-      |        main.customer_address as ref_1
-      |      where ref_1.ca_zip is NULL) as subq_0
-      |where (subq_0.c2 is NULL)
-      |  or (ref_0.ws_list_price is not NULL)
-      |limit 81
+      |        main.web_returns as ref_1
+      |      where ref_1.wr_account_credit is not NULL
+      |      limit 114) as subq_0
+      |where ref_0.c_first_name is NULL
+      |limit 69
       |""".stripMargin
 
     val st = System.nanoTime()
