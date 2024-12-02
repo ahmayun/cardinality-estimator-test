@@ -472,6 +472,22 @@ object FuzzTests {
     }
   }
 
+  def withOptimized[T](f: => T): T = {
+    // Sets up all the configurations for the Catalyst optimizer
+    val optConfigs = Seq(
+      (SQLConf.CBO_ENABLED.key, "true"),
+      (SQLConf.DYNAMIC_PARTITION_PRUNING_ENABLED.key, "true")
+    )
+    withSQLConf(optConfigs: _*) {
+      f
+    }
+  }
+  def withoutOptimized[T](excludedRules: String)(f: => T): T = {
+    val nonOptConfigs = Seq((SQLConf.OPTIMIZER_EXCLUDED_RULES.key, excludedRules))
+    withSQLConf(nonOptConfigs: _*) {
+      f
+    }
+  }
   def main(args: Array[String]): Unit = {
     val master = args(0)
     val arguments = new FuzzerArguments(args.tail)
@@ -498,24 +514,8 @@ object FuzzTests {
       rules
     }
 
-    def withOptimized[T](f: => T): T = {
-      // Sets up all the configurations for the Catalyst optimizer
-      val optConfigs = Seq(
-        (SQLConf.CBO_ENABLED.key, "true"),
-        (SQLConf.DYNAMIC_PARTITION_PRUNING_ENABLED.key, "true")
-      )
-      withSQLConf(optConfigs: _*) {
-        f
-      }
-    }
-
     val excludedRules = excludableRules.mkString(",")
-    def withoutOptimized[T](f: => T): T = {
-      val nonOptConfigs = Seq((SQLConf.OPTIMIZER_EXCLUDED_RULES.key, excludedRules))
-      withSQLConf(nonOptConfigs: _*) {
-        f
-      }
-    }
+
 
     setupEnv()
 
@@ -581,6 +581,8 @@ object FuzzTests {
         // warm up
         spark.sql(queryStr).count()
         spark.catalog.clearCache()
+        spark.sqlContext.clearCache()
+
 
 
         val (countOpt, estCountOpt, startTimeOpt, endTimeOpt, cpuTimeOpt, peakMemOpt) = withOptimized {
@@ -597,7 +599,7 @@ object FuzzTests {
           ret
         }
 
-        val (countUnOpt, estCountUnOpt, startTimeUnOpt, endTimeUnOpt, cpuTimeUnOpt, peakMemUnOpt) = withoutOptimized {
+        val (countUnOpt, estCountUnOpt, startTimeUnOpt, endTimeUnOpt, cpuTimeUnOpt, peakMemUnOpt) = withoutOptimized(excludedRules) {
           val UnOptListener = new CpuTimeListener()
           spark.sparkContext.addSparkListener(UnOptListener)
           val st = System.nanoTime()
