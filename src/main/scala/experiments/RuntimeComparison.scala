@@ -141,14 +141,14 @@ object RuntimeComparison {
 
     def runInterleaved(): ComparisonStats = {
 
-      val statPairs = (0 until maxTrials).map {
+      val statPairs = (1 to maxTrials).map {
         i =>
           val (_, timeA) = envA { time { fA } }
           val (_, timeB) = envB { time { fB } }
 
-//          println(s"---- Trial $i ----")
-//          println(s"Time A: $timeA")
-//          println(s"Time B: $timeB")
+          println(s"---- Trial $i/$maxTrials ----")
+          println(s"Time A: $timeA")
+          println(s"Time B: $timeB")
 
           (timeA, timeB)
       }.toArray.tail
