@@ -1,6 +1,6 @@
 ThisBuild / version := "0.1.0-SNAPSHOT"
 
-ThisBuild / scalaVersion := "2.12.2"
+ThisBuild / scalaVersion := "2.12.8"
 
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql" % "3.0.2",
