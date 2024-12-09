@@ -168,9 +168,9 @@ object RuntimeComparison {
 
       val pValue = tTest.tTest(a.map(_.toDouble), b.map(_.toDouble))
 
-//      println(s"A mean: ${a.sum/a.length}")
-//      println(s"B mean: ${b.sum/a.length}")
-//      println(s"P-value: $pValue")
+      println(s"A mean: ${a.sum/a.length}")
+      println(s"B mean: ${b.sum/a.length}")
+      println(s"P-value: $pValue")
 
       val alpha = 0.01
       pValue <= alpha
@@ -178,8 +178,8 @@ object RuntimeComparison {
     def print(): Unit = {
       val sigDiff = this.checkDiff()
       val (a, b) = statPairs.unzip
-//      println(s"Runtimes A ${a.mkString("[", ",", "]")}")
-//      println(s"Runtimes B ${b.mkString("[", ",", "]")}")
+      println(s"Runtimes A: ${a.mkString("[", ",", "]")}")
+      println(s"Runtimes B: ${b.mkString("[", ",", "]")}")
       println(s"${if (sigDiff) "" else "no "}statistically significant difference in runtimes")
     }
 
@@ -196,6 +196,7 @@ object RuntimeComparison {
     queries.zipWithIndex.foreach {
       case (q, i) =>
         println(s"======= Query ${i} ==========")
+        println(s"QUERY: $q")
 
         val compMan = new ComparisonManager[Long, Long] (
           withEnvA _,
