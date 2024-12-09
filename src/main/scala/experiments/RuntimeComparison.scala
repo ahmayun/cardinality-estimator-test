@@ -180,7 +180,7 @@ object RuntimeComparison {
       val (a, b) = statPairs.unzip
       println(s"Runtimes A: ${a.mkString("[", ",", "]")}")
       println(s"Runtimes B: ${b.mkString("[", ",", "]")}")
-      println(s"${if (sigDiff) "" else "no "}statistically significant difference in runtimes")
+      println(s"Conclusion: Runtime difference is ${if (sigDiff) "SIGNIFICANT" else "NOT significant"}")
     }
 
   }
