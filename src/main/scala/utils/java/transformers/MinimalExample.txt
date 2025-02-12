@@ -1,0 +1,6 @@
+package utils.java.transformers;
+public class MinimalExample {
+    public void main(String[] args) {
+
+    }
+}

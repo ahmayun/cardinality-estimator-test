@@ -1,7 +1,5 @@
 package udfs
 
-import org.apache.spark.sql.SparkSession
-
 object Pairs extends Serializable {
 
   val pairs = Array(

@@ -13,22 +13,26 @@ class UDFs(val spark: SparkSession) {
    * Returns true if all items are unique, otherwise returns false.
    * Example: isListDistinct("a,b,c,a", ',') returns false because "a" repeats.
    */
-  def isListDistinct(list: String, delim: Char): Boolean = {
-    if (list == null || list.isEmpty) return true
-
-    val trimmedList = list.trim + delim
-    val parts = scala.collection.mutable.Set[String]()
-    val splitList = trimmedList.split(delim)
-
-    for (part <- splitList) {
-      val trimmedPart = part.trim
-      if (parts.contains(trimmedPart)) {
-        return false
-      }
-      parts.add(trimmedPart)
-    }
-    true
+  def isListDistinct(list: String, delim: String): Boolean = {
+    val elements = list.split(delim).map(_.trim)
+    elements.distinct.length == elements.length
   }
+
+  def getRandomChar(chars: String, rand: Double): Option[Char] = {
+    if (chars == null || chars.isEmpty) {
+      None
+    } else {
+      val resultIndex = getRandomInt(0, chars.length-1, rand)
+      Some(chars.charAt(resultIndex))
+    }
+  }
+
+  def getRandomInt(lower: Int, upper: Int, rand: Double) = {
+    val range = upper - lower + 1
+    val result = rand * range + lower
+    result.toInt
+  }
+
 
   /**
    * Sudf_20b_GetManufactComplex

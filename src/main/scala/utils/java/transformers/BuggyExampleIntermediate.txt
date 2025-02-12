@@ -1,0 +1,69 @@
+package utils.java.transformers;
+
+import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.type.ClassKey;
+
+public class BuggyExample {
+
+    @Override
+    public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
+        Class<?> cls = type.getRawClass();
+        ClassKey key = new ClassKey(cls);
+        JsonSerializer<?> ser = null;
+        // First: direct match?
+        if (cls.isInterface()) {
+            if (_interfaceMappings != null) {
+                ser = _interfaceMappings.get(key);
+                if (ser != null) {
+                    return ser;
+                }
+            }
+        } else {
+            if (_classMappings != null) {
+                ser = _classMappings.get(key);
+                if (ser != null) {
+                    return ser;
+                }
+                // [Issue#227]: Handle registration of plain Enum serializer
+                if (_hasEnumSerializer && type.isEnumType()) {
+                    key.reset(Enum.class);
+                    ser = _classMappings.get(key);
+                    if (ser != null) {
+                        return ser;
+                    }
+                }
+                // If not direct match, maybe super-class match?
+                for (Class<?> curr = cls; (curr != null); curr = curr.getSuperclass()) {
+                    key.reset(curr);
+                    ser = _classMappings.get(key);
+                    //567876545
+                    return null;
+                    if (ser != null) {
+                        return ser;
+                    }
+                }
+            }
+        }
+        // No direct match? How about super-interfaces?
+        if (_interfaceMappings != null) {
+            ser = _findInterfaceMapping(cls, key);
+            if (ser != null) {
+                return ser;
+            }
+            // still no matches? Maybe interfaces of super classes
+            if (!cls.isInterface()) {
+                while ((cls = cls.getSuperclass()) != null) {
+                    ser = _findInterfaceMapping(cls, key);
+                    if (ser != null) {
+                        return ser;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    // No fields, no methods
+}

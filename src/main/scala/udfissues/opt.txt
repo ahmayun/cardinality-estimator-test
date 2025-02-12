@@ -1,0 +1,12 @@
+== Optimized Logical Plan ==
+Project [
+    if (isnull(UDF(cast(id#10L as int)))) null
+    else named_struct(b, UDF(cast(id#10L as int)).a,
+                      a, UDF(cast(id#10L as int)).b,
+                      c, 7)
+                      AS update_fields(UDF(id), WithField(7))#12]
++- Range (0, 5, step=1, splits=Some(4))
+
+
+
+

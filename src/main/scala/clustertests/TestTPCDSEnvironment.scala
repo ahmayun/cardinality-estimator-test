@@ -1,20 +1,11 @@
 package clustertests
 
 import org.apache.spark.sql.SparkSession
-import sqlsmith.loader.SQLSmithLoader
 
-object TestEnvironment {
+object TestTPCDSEnvironment {
 
   def main(args: Array[String]): Unit = {
     val master = if(args.isEmpty) "local[*]" else args(0)
-
-    lazy val sqlSmithApi = SQLSmithLoader.loadApi()
-    val sqlSmithSchema = sqlSmithApi.schemaInit("", 0)
-
-    println(s"Test ran with ${args.mkString("Array(", ", ", ")")}")
-    println(s"Successfully loaded sqlsmith JNI ${sqlSmithSchema}")
-
-    println("Attempting to create external table to check hive setup...")
 
     val spark = SparkSession.builder()
       .appName("TestEnvironment")
@@ -29,20 +20,16 @@ object TestEnvironment {
 
     val targetTables = {
       spark.catalog.listDatabases().collect().flatMap(db => spark.catalog.listTables(db.name).collect())
+    }.filter(_.database == "tpcds")
+
+    targetTables.foreach { t =>
+//      val df = spark.sql(s"select * from ${t.database}.${t.name}")
+//      println(s"${t.name}: ${df.count()} rows")
+      print(s""""${t.name}",""")
     }
 
-    targetTables.foreach {
-      t =>
-        println(t)
-    }
-
-
-
-    val df = spark.sql("select * from main.customer")
-    df.show(5)
-    println(s"total rows: ${df.count()}")
-
-
+    val df = spark.sql("select * from tpcds.store_returns where sr_return_quantity > 50")
+    df.explain(true)
 
   }
 }
