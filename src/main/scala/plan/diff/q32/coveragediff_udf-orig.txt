@@ -1,0 +1,9 @@
+CollapseProject.canCollapseExpressions.case1
+RemoveNoopOperators.apply.case1
+CollapseProject.apply.case2
+PushPredicateThroughNonJoin.canPushThrough.match13
+RemoveNoopOperators.apply.case24
+CollapseProject.collectReferences.case1
+RemoveNoopOperators.apply.match21
+InferFiltersFromConstraints.inferFilters.match53
+RemoveNoopOperators.apply.then22

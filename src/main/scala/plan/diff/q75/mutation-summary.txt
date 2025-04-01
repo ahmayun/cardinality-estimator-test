@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 75
+	Transformed: ('curr_yr.sales_cnt - 'prev_yr.sales_cnt) => subtract0('curr_yr.sales_cnt, 'prev_yr.sales_cnt)
+	Transformed: ('curr_yr.sales_amt - 'prev_yr.sales_amt) => subtract1('curr_yr.sales_amt, 'prev_yr.sales_amt)
+	Transformed: ('curr_yr.i_brand_id = 'prev_yr.i_brand_id) => equalTo2('curr_yr.i_brand_id, 'prev_yr.i_brand_id)
+	Transformed: ('curr_yr.i_class_id = 'prev_yr.i_class_id) => equalTo3('curr_yr.i_class_id, 'prev_yr.i_class_id)
+	Transformed: ('curr_yr.i_category_id = 'prev_yr.i_category_id) => equalTo4('curr_yr.i_category_id, 'prev_yr.i_category_id)
+	Transformed: ('curr_yr.i_manufact_id = 'prev_yr.i_manufact_id) => equalTo5('curr_yr.i_manufact_id, 'prev_yr.i_manufact_id)
+	Transformed: ('curr_yr.d_year = 2002) => equalTo6('curr_yr.d_year, 2002)
+	Transformed: ('prev_yr.d_year = (2002 - 1)) => equalTo7('prev_yr.d_year, (2002 - 1))
+	Transformed: (2002 - 1) => subtract8(2002, 1)
+	Transformed: ((cast('curr_yr.sales_cnt as decimal(17,2)) / cast('prev_yr.sales_cnt as decimal(17,2))) < 0.9) => lessThan9((cast('curr_yr.sales_cnt as decimal(17,2)) / cast('prev_yr.sales_cnt as decimal(17,2))), 0.9)
+	Transformed: (cast('curr_yr.sales_cnt as decimal(17,2)) / cast('prev_yr.sales_cnt as decimal(17,2))) => divide10(cast('curr_yr.sales_cnt as decimal(17,2)), cast('prev_yr.sales_cnt as decimal(17,2)))
+=======================

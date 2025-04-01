@@ -85,6 +85,10 @@ object UDFInducer {
     println(df2.toDebugString)
     println("==========")
     println(df3.toDebugString)
+    println("==========")
+    println(lp)
+    println("==========")
+    println(spark.sessionState.planner.plan(lp).next())
 
 //    println(newLp)
 

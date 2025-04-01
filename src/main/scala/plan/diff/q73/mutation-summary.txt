@@ -1,0 +1,18 @@
+======MUTATION SUMMARY=============
+QUERY 73
+	Transformed: ('ss_customer_sk = 'c_customer_sk) => equalTo0('ss_customer_sk, 'c_customer_sk)
+	Transformed: (('cnt >= 1) AND ('cnt <= 5)) => between1('cnt, 1, 5)
+	Transformed: ('tpcds.store_sales.ss_sold_date_sk = 'tpcds.date_dim.d_date_sk) => equalTo2('tpcds.store_sales.ss_sold_date_sk, 'tpcds.date_dim.d_date_sk)
+	Transformed: ('tpcds.store_sales.ss_store_sk = 'tpcds.store.s_store_sk) => equalTo3('tpcds.store_sales.ss_store_sk, 'tpcds.store.s_store_sk)
+	Transformed: ('tpcds.store_sales.ss_hdemo_sk = 'tpcds.household_demographics.hd_demo_sk) => equalTo4('tpcds.store_sales.ss_hdemo_sk, 'tpcds.household_demographics.hd_demo_sk)
+	Transformed: (('tpcds.date_dim.d_dom >= 1) AND ('tpcds.date_dim.d_dom <= 2)) => between5('tpcds.date_dim.d_dom, 1, 2)
+	Transformed: ('tpcds.household_demographics.hd_buy_potential = >10000) => equalTo6('tpcds.household_demographics.hd_buy_potential, >10000)
+	Transformed: ('tpcds.household_demographics.hd_buy_potential = unknown) => equalTo7('tpcds.household_demographics.hd_buy_potential, unknown)
+	Transformed: ('tpcds.household_demographics.hd_vehicle_count > 0) => greaterThan8('tpcds.household_demographics.hd_vehicle_count, 0)
+	Transformed: (CASE WHEN ('tpcds.household_demographics.hd_vehicle_count > 0) THEN ('tpcds.household_demographics.hd_dep_count / 'tpcds.household_demographics.hd_vehicle_count) ELSE null END > 1) => greaterThan9(CASE WHEN ('tpcds.household_demographics.hd_vehicle_count > 0) THEN ('tpcds.household_demographics.hd_dep_count / 'tpcds.household_demographics.hd_vehicle_count) ELSE null END, 1)
+	Transformed: ('tpcds.household_demographics.hd_vehicle_count > 0) => greaterThan10('tpcds.household_demographics.hd_vehicle_count, 0)
+	Transformed: ('tpcds.household_demographics.hd_dep_count / 'tpcds.household_demographics.hd_vehicle_count) => divide11('tpcds.household_demographics.hd_dep_count, 'tpcds.household_demographics.hd_vehicle_count)
+	Transformed: (1999 + 1) => add12(1999, 1)
+	Transformed: (1999 + 2) => add13(1999, 2)
+	Transformed: 'tpcds.store.s_county IN (Williamson County,Franklin Parish,Bronx County,Orange County) => inArray14('tpcds.store.s_county, [Williamson County,Franklin Parish,Bronx County,Orange County])
+=======================

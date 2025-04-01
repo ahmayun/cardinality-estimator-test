@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 84
+	Transformed: (('coalesce('c_last_name, ) + , ) + 'coalesce('c_first_name, )) => add0(('coalesce('c_last_name, ) + , ), 'coalesce('c_first_name, ))
+	Transformed: ('coalesce('c_last_name, ) + , ) => add1('coalesce('c_last_name, ), , )
+	Transformed: ('ca_city = Edgewood) => equalTo2('ca_city, Edgewood)
+	Transformed: ('c_current_addr_sk = 'ca_address_sk) => equalTo3('c_current_addr_sk, 'ca_address_sk)
+	Transformed: ('ib_lower_bound >= 38128) => greaterThanOrEqual4('ib_lower_bound, 38128)
+	Transformed: ('ib_upper_bound <= (38128 + 50000)) => lessThanOrEqual5('ib_upper_bound, (38128 + 50000))
+	Transformed: (38128 + 50000) => add6(38128, 50000)
+	Transformed: ('ib_income_band_sk = 'hd_income_band_sk) => equalTo7('ib_income_band_sk, 'hd_income_band_sk)
+	Transformed: ('cd_demo_sk = 'c_current_cdemo_sk) => equalTo8('cd_demo_sk, 'c_current_cdemo_sk)
+	Transformed: ('hd_demo_sk = 'c_current_hdemo_sk) => equalTo9('hd_demo_sk, 'c_current_hdemo_sk)
+	Transformed: ('sr_cdemo_sk = 'cd_demo_sk) => equalTo10('sr_cdemo_sk, 'cd_demo_sk)
+=======================

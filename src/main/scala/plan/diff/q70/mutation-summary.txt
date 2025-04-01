@@ -1,0 +1,16 @@
+======MUTATION SUMMARY=============
+QUERY 70
+	Transformed: ('lochierarchy = 0) => equalTo0('lochierarchy, 0)
+	Transformed: ('grouping('s_state) + 'grouping('s_county)) => add1('grouping('s_state), 'grouping('s_county))
+	Transformed: ('grouping('s_state) + 'grouping('s_county)) => add2('grouping('s_state), 'grouping('s_county))
+	Transformed: ('grouping('s_county) = 0) => equalTo3('grouping('s_county), 0)
+	Transformed: (('d1.d_month_seq >= 1200) AND ('d1.d_month_seq <= (1200 + 11))) => between4('d1.d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add5(1200, 11)
+	Transformed: ('d1.d_date_sk = 'ss_sold_date_sk) => equalTo6('d1.d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('s_store_sk = 'ss_store_sk) => equalTo7('s_store_sk, 'ss_store_sk)
+	Transformed: ('ranking <= 5) => lessThanOrEqual8('ranking, 5)
+	Transformed: (('d_month_seq >= 1200) AND ('d_month_seq <= (1200 + 11))) => between9('d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add10(1200, 11)
+	Transformed: ('d_date_sk = 'ss_sold_date_sk) => equalTo11('d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('s_store_sk = 'ss_store_sk) => equalTo12('s_store_sk, 'ss_store_sk)
+=======================

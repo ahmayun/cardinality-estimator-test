@@ -1,0 +1,130 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [c_last_name#23235 ASC NULLS FIRST, c_first_name#23234 ASC NULLS FIRST, sales#22721 ASC NULLS FIRST], true
+      +- Union false, false
+         :- Aggregate [c_last_name#23235, c_first_name#23234], [c_last_name#23235, c_first_name#23234, sum(multiply0(cs_quantity#565, cs_list_price#567)) AS sales#22721]
+         :  +- Project [cs_quantity#565, cs_list_price#567, c_first_name#23234, c_last_name#23235]
+         :     +- Join Inner, equalTo3(cs_sold_date_sk#581, d_date_sk#23244)
+         :        :- Project [cs_quantity#565, cs_list_price#567, cs_sold_date_sk#581, c_first_name#23234, c_last_name#23235]
+         :        :  +- Join Inner, equalTo4(cs_bill_customer_sk#550, c_customer_sk#23226)
+         :        :     :- Join LeftSemi, (cs_bill_customer_sk#550 = c_customer_sk#23208)
+         :        :     :  :- Project [cs_bill_customer_sk#550, cs_quantity#565, cs_list_price#567, cs_sold_date_sk#581]
+         :        :     :  :  +- Join LeftSemi, (cs_item_sk#562 = item_sk#22728)
+         :        :     :  :     :- Project [cs_bill_customer_sk#550, cs_item_sk#562, cs_quantity#565, cs_list_price#567, cs_sold_date_sk#581]
+         :        :     :  :     :  +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+         :        :     :  :     +- Project [item_sk#22728]
+         :        :     :  :        +- Filter (cnt#22730L > 4)
+         :        :     :  :           +- Aggregate [_groupingexpression#23526, i_item_sk#4214, d_date#26], [i_item_sk#4214 AS item_sk#22728, count(1) AS cnt#22730L]
+         :        :     :  :              +- Project [d_date#26, i_item_sk#4214, substr(i_item_desc#4218, 1, 30) AS _groupingexpression#23526]
+         :        :     :  :                 +- Join Inner, (ss_item_sk#490 = i_item_sk#4214)
+         :        :     :  :                    :- Project [ss_item_sk#490, d_date#26]
+         :        :     :  :                    :  +- Join Inner, (ss_sold_date_sk#511 = d_date_sk#24)
+         :        :     :  :                    :     :- Project [ss_item_sk#490, ss_sold_date_sk#511]
+         :        :     :  :                    :     :  +- Filter ((isnotnull(ss_sold_date_sk#511) AND isnotnull(ss_item_sk#490)) AND dynamicpruning#23715 [ss_sold_date_sk#511])
+         :        :     :  :                    :     :     :  +- Project [d_date_sk#24, d_date#26]
+         :        :     :  :                    :     :     :     +- Filter (d_year#30 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#24))
+         :        :     :  :                    :     :     :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+         :        :     :  :                    :     :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+         :        :     :  :                    :     +- Project [d_date_sk#24, d_date#26]
+         :        :     :  :                    :        +- Filter (d_year#30 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#24))
+         :        :     :  :                    :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+         :        :     :  :                    +- Project [i_item_sk#4214, i_item_desc#4218]
+         :        :     :  :                       +- Filter isnotnull(i_item_sk#4214)
+         :        :     :  :                          +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+         :        :     :  +- Project [c_customer_sk#23208]
+         :        :     :     +- Filter (isnotnull(ssales#22733) AND (cast(ssales#22733 as decimal(38,8)) > (0.950000 * scalar-subquery#22734 [])))
+         :        :     :        :  +- Aggregate [max(csales#22731) AS tpcds_cmax#22732]
+         :        :     :        :     +- Aggregate [c_customer_sk#81], [sum((cast(ss_quantity#23143 as decimal(10,0)) * ss_sales_price#23146)) AS csales#22731]
+         :        :     :        :        +- Project [ss_quantity#23143, ss_sales_price#23146, c_customer_sk#81]
+         :        :     :        :           +- Join Inner, (ss_sold_date_sk#23156 = d_date_sk#23157)
+         :        :     :        :              :- Project [ss_quantity#23143, ss_sales_price#23146, ss_sold_date_sk#23156, c_customer_sk#81]
+         :        :     :        :              :  +- Join Inner, (ss_customer_sk#23136 = c_customer_sk#81)
+         :        :     :        :              :     :- Project [ss_customer_sk#23136, ss_quantity#23143, ss_sales_price#23146, ss_sold_date_sk#23156]
+         :        :     :        :              :     :  +- Filter ((isnotnull(ss_customer_sk#23136) AND isnotnull(ss_sold_date_sk#23156)) AND dynamicpruning#23716 [ss_sold_date_sk#23156])
+         :        :     :        :              :     :     :  +- Project [d_date_sk#23157]
+         :        :     :        :              :     :     :     +- Filter (d_year#23163 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#23157))
+         :        :     :        :              :     :     :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23157,d_date_id#23158,d_date#23159,d_month_seq#23160,d_week_seq#23161,d_quarter_seq#23162,d_year#23163,d_dow#23164,d_moy#23165,d_dom#23166,d_qoy#23167,d_fy_year#23168,d_fy_quarter_seq#23169,d_fy_week_seq#23170,d_day_name#23171,d_quarter_name#23172,d_holiday#23173,d_weekend#23174,d_following_holiday#23175,d_first_dom#23176,d_last_dom#23177,d_same_day_ly#23178,d_same_day_lq#23179,d_current_day#23180,... 4 more fields] parquet
+         :        :     :        :              :     :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#23134,ss_item_sk#23135,ss_customer_sk#23136,ss_cdemo_sk#23137,ss_hdemo_sk#23138,ss_addr_sk#23139,ss_store_sk#23140,ss_promo_sk#23141,ss_ticket_number#23142L,ss_quantity#23143,ss_wholesale_cost#23144,ss_list_price#23145,ss_sales_price#23146,ss_ext_discount_amt#23147,ss_ext_sales_price#23148,ss_ext_wholesale_cost#23149,ss_ext_list_price#23150,ss_ext_tax#23151,ss_coupon_amt#23152,ss_net_paid#23153,ss_net_paid_inc_tax#23154,ss_net_profit#23155,ss_sold_date_sk#23156] parquet
+         :        :     :        :              :     +- Project [c_customer_sk#81]
+         :        :     :        :              :        +- Filter isnotnull(c_customer_sk#81)
+         :        :     :        :              :           +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+         :        :     :        :              +- Project [d_date_sk#23157]
+         :        :     :        :                 +- Filter (d_year#23163 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#23157))
+         :        :     :        :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23157,d_date_id#23158,d_date#23159,d_month_seq#23160,d_week_seq#23161,d_quarter_seq#23162,d_year#23163,d_dow#23164,d_moy#23165,d_dom#23166,d_qoy#23167,d_fy_year#23168,d_fy_quarter_seq#23169,d_fy_week_seq#23170,d_day_name#23171,d_quarter_name#23172,d_holiday#23173,d_weekend#23174,d_following_holiday#23175,d_first_dom#23176,d_last_dom#23177,d_same_day_ly#23178,d_same_day_lq#23179,d_current_day#23180,... 4 more fields] parquet
+         :        :     :        +- Aggregate [c_customer_sk#23208], [c_customer_sk#23208, sum((cast(ss_quantity#23194 as decimal(10,0)) * ss_sales_price#23197)) AS ssales#22733]
+         :        :     :           +- Project [ss_quantity#23194, ss_sales_price#23197, c_customer_sk#23208]
+         :        :     :              +- Join Inner, (ss_customer_sk#23187 = c_customer_sk#23208)
+         :        :     :                 :- Project [ss_customer_sk#23187, ss_quantity#23194, ss_sales_price#23197]
+         :        :     :                 :  +- Filter isnotnull(ss_customer_sk#23187)
+         :        :     :                 :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#23185,ss_item_sk#23186,ss_customer_sk#23187,ss_cdemo_sk#23188,ss_hdemo_sk#23189,ss_addr_sk#23190,ss_store_sk#23191,ss_promo_sk#23192,ss_ticket_number#23193L,ss_quantity#23194,ss_wholesale_cost#23195,ss_list_price#23196,ss_sales_price#23197,ss_ext_discount_amt#23198,ss_ext_sales_price#23199,ss_ext_wholesale_cost#23200,ss_ext_list_price#23201,ss_ext_tax#23202,ss_coupon_amt#23203,ss_net_paid#23204,ss_net_paid_inc_tax#23205,ss_net_profit#23206,ss_sold_date_sk#23207] parquet
+         :        :     :                 +- Project [c_customer_sk#23208]
+         :        :     :                    +- Filter isnotnull(c_customer_sk#23208)
+         :        :     :                       +- Relation spark_catalog.tpcds.customer[c_customer_sk#23208,c_customer_id#23209,c_current_cdemo_sk#23210,c_current_hdemo_sk#23211,c_current_addr_sk#23212,c_first_shipto_date_sk#23213,c_first_sales_date_sk#23214,c_salutation#23215,c_first_name#23216,c_last_name#23217,c_preferred_cust_flag#23218,c_birth_day#23219,c_birth_month#23220,c_birth_year#23221,c_birth_country#23222,c_login#23223,c_email_address#23224,c_last_review_date#23225] parquet
+         :        :     +- Project [c_customer_sk#23226, c_first_name#23234, c_last_name#23235]
+         :        :        +- Relation spark_catalog.tpcds.customer[c_customer_sk#23226,c_customer_id#23227,c_current_cdemo_sk#23228,c_current_hdemo_sk#23229,c_current_addr_sk#23230,c_first_shipto_date_sk#23231,c_first_sales_date_sk#23232,c_salutation#23233,c_first_name#23234,c_last_name#23235,c_preferred_cust_flag#23236,c_birth_day#23237,c_birth_month#23238,c_birth_year#23239,c_birth_country#23240,c_login#23241,c_email_address#23242,c_last_review_date#23243] parquet
+         :        +- Project [d_date_sk#23244]
+         :           +- Filter (equalTo1(d_year#23250, 2000) AND equalTo2(d_moy#23252, 2))
+         :              +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23244,d_date_id#23245,d_date#23246,d_month_seq#23247,d_week_seq#23248,d_quarter_seq#23249,d_year#23250,d_dow#23251,d_moy#23252,d_dom#23253,d_qoy#23254,d_fy_year#23255,d_fy_quarter_seq#23256,d_fy_week_seq#23257,d_day_name#23258,d_quarter_name#23259,d_holiday#23260,d_weekend#23261,d_following_holiday#23262,d_first_dom#23263,d_last_dom#23264,d_same_day_ly#23265,d_same_day_lq#23266,d_current_day#23267,... 4 more fields] parquet
+         +- Aggregate [c_last_name#23281, c_first_name#23280], [c_last_name#23281, c_first_name#23280, sum(multiply5(ws_quantity#530, ws_list_price#532)) AS sales#22724]
+            +- Project [ws_quantity#530, ws_list_price#532, c_first_name#23280, c_last_name#23281]
+               +- Join Inner, equalTo8(ws_sold_date_sk#546, d_date_sk#23290)
+                  :- Project [ws_quantity#530, ws_list_price#532, ws_sold_date_sk#546, c_first_name#23280, c_last_name#23281]
+                  :  +- Join Inner, equalTo9(ws_bill_customer_sk#516, c_customer_sk#23272)
+                  :     :- Join LeftSemi, (ws_bill_customer_sk#516 = c_customer_sk#23627)
+                  :     :  :- Project [ws_bill_customer_sk#516, ws_quantity#530, ws_list_price#532, ws_sold_date_sk#546]
+                  :     :  :  +- Join LeftSemi, (ws_item_sk#515 = item_sk#23601)
+                  :     :  :     :- Project [ws_item_sk#515, ws_bill_customer_sk#516, ws_quantity#530, ws_list_price#532, ws_sold_date_sk#546]
+                  :     :  :     :  +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+                  :     :  :     +- Project [item_sk#23601]
+                  :     :  :        +- Filter (cnt#23603L > 4)
+                  :     :  :           +- Aggregate [_groupingexpression#23526, i_item_sk#23578, d_date#23552], [i_item_sk#23578 AS item_sk#23601, count(1) AS cnt#23603L]
+                  :     :  :              +- Project [d_date#23552, i_item_sk#23578, substr(i_item_desc#23582, 1, 30) AS _groupingexpression#23526]
+                  :     :  :                 +- Join Inner, (ss_item_sk#23528 = i_item_sk#23578)
+                  :     :  :                    :- Project [ss_item_sk#23528, d_date#23552]
+                  :     :  :                    :  +- Join Inner, (ss_sold_date_sk#23549 = d_date_sk#23550)
+                  :     :  :                    :     :- Project [ss_item_sk#23528, ss_sold_date_sk#23549]
+                  :     :  :                    :     :  +- Filter ((isnotnull(ss_sold_date_sk#23549) AND isnotnull(ss_item_sk#23528)) AND dynamicpruning#23717 [ss_sold_date_sk#23549])
+                  :     :  :                    :     :     :  +- Project [d_date_sk#23550, d_date#23552]
+                  :     :  :                    :     :     :     +- Filter (d_year#23556 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#23550))
+                  :     :  :                    :     :     :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23550,d_date_id#23551,d_date#23552,d_month_seq#23553,d_week_seq#23554,d_quarter_seq#23555,d_year#23556,d_dow#23557,d_moy#23558,d_dom#23559,d_qoy#23560,d_fy_year#23561,d_fy_quarter_seq#23562,d_fy_week_seq#23563,d_day_name#23564,d_quarter_name#23565,d_holiday#23566,d_weekend#23567,d_following_holiday#23568,d_first_dom#23569,d_last_dom#23570,d_same_day_ly#23571,d_same_day_lq#23572,d_current_day#23573,... 4 more fields] parquet
+                  :     :  :                    :     :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#23527,ss_item_sk#23528,ss_customer_sk#23529,ss_cdemo_sk#23530,ss_hdemo_sk#23531,ss_addr_sk#23532,ss_store_sk#23533,ss_promo_sk#23534,ss_ticket_number#23535L,ss_quantity#23536,ss_wholesale_cost#23537,ss_list_price#23538,ss_sales_price#23539,ss_ext_discount_amt#23540,ss_ext_sales_price#23541,ss_ext_wholesale_cost#23542,ss_ext_list_price#23543,ss_ext_tax#23544,ss_coupon_amt#23545,ss_net_paid#23546,ss_net_paid_inc_tax#23547,ss_net_profit#23548,ss_sold_date_sk#23549] parquet
+                  :     :  :                    :     +- Project [d_date_sk#23550, d_date#23552]
+                  :     :  :                    :        +- Filter (d_year#23556 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#23550))
+                  :     :  :                    :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23550,d_date_id#23551,d_date#23552,d_month_seq#23553,d_week_seq#23554,d_quarter_seq#23555,d_year#23556,d_dow#23557,d_moy#23558,d_dom#23559,d_qoy#23560,d_fy_year#23561,d_fy_quarter_seq#23562,d_fy_week_seq#23563,d_day_name#23564,d_quarter_name#23565,d_holiday#23566,d_weekend#23567,d_following_holiday#23568,d_first_dom#23569,d_last_dom#23570,d_same_day_ly#23571,d_same_day_lq#23572,d_current_day#23573,... 4 more fields] parquet
+                  :     :  :                    +- Project [i_item_sk#23578, i_item_desc#23582]
+                  :     :  :                       +- Filter isnotnull(i_item_sk#23578)
+                  :     :  :                          +- Relation spark_catalog.tpcds.item[i_item_sk#23578,i_item_id#23579,i_rec_start_date#23580,i_rec_end_date#23581,i_item_desc#23582,i_current_price#23583,i_wholesale_cost#23584,i_brand_id#23585,i_brand#23586,i_class_id#23587,i_class#23588,i_category_id#23589,i_category#23590,i_manufact_id#23591,i_manufact#23592,i_size#23593,i_formulation#23594,i_color#23595,i_units#23596,i_container#23597,i_manager_id#23598,i_product_name#23599] parquet
+                  :     :  +- Project [c_customer_sk#23627]
+                  :     :     +- Filter (isnotnull(ssales#23714) AND (cast(ssales#23714 as decimal(38,8)) > (0.950000 * scalar-subquery#22734 [])))
+                  :     :        :  +- Aggregate [max(csales#22731) AS tpcds_cmax#22732]
+                  :     :        :     +- Aggregate [c_customer_sk#23668], [sum((cast(ss_quantity#23654 as decimal(10,0)) * ss_sales_price#23657)) AS csales#22731]
+                  :     :        :        +- Project [ss_quantity#23654, ss_sales_price#23657, c_customer_sk#23668]
+                  :     :        :           +- Join Inner, (ss_sold_date_sk#23667 = d_date_sk#23686)
+                  :     :        :              :- Project [ss_quantity#23654, ss_sales_price#23657, ss_sold_date_sk#23667, c_customer_sk#23668]
+                  :     :        :              :  +- Join Inner, (ss_customer_sk#23647 = c_customer_sk#23668)
+                  :     :        :              :     :- Project [ss_customer_sk#23647, ss_quantity#23654, ss_sales_price#23657, ss_sold_date_sk#23667]
+                  :     :        :              :     :  +- Filter ((isnotnull(ss_customer_sk#23647) AND isnotnull(ss_sold_date_sk#23667)) AND dynamicpruning#23718 [ss_sold_date_sk#23667])
+                  :     :        :              :     :     :  +- Project [d_date_sk#23686]
+                  :     :        :              :     :     :     +- Filter (d_year#23692 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#23686))
+                  :     :        :              :     :     :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23686,d_date_id#23687,d_date#23688,d_month_seq#23689,d_week_seq#23690,d_quarter_seq#23691,d_year#23692,d_dow#23693,d_moy#23694,d_dom#23695,d_qoy#23696,d_fy_year#23697,d_fy_quarter_seq#23698,d_fy_week_seq#23699,d_day_name#23700,d_quarter_name#23701,d_holiday#23702,d_weekend#23703,d_following_holiday#23704,d_first_dom#23705,d_last_dom#23706,d_same_day_ly#23707,d_same_day_lq#23708,d_current_day#23709,... 4 more fields] parquet
+                  :     :        :              :     :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#23645,ss_item_sk#23646,ss_customer_sk#23647,ss_cdemo_sk#23648,ss_hdemo_sk#23649,ss_addr_sk#23650,ss_store_sk#23651,ss_promo_sk#23652,ss_ticket_number#23653L,ss_quantity#23654,ss_wholesale_cost#23655,ss_list_price#23656,ss_sales_price#23657,ss_ext_discount_amt#23658,ss_ext_sales_price#23659,ss_ext_wholesale_cost#23660,ss_ext_list_price#23661,ss_ext_tax#23662,ss_coupon_amt#23663,ss_net_paid#23664,ss_net_paid_inc_tax#23665,ss_net_profit#23666,ss_sold_date_sk#23667] parquet
+                  :     :        :              :     +- Project [c_customer_sk#23668]
+                  :     :        :              :        +- Filter isnotnull(c_customer_sk#23668)
+                  :     :        :              :           +- Relation spark_catalog.tpcds.customer[c_customer_sk#23668,c_customer_id#23669,c_current_cdemo_sk#23670,c_current_hdemo_sk#23671,c_current_addr_sk#23672,c_first_shipto_date_sk#23673,c_first_sales_date_sk#23674,c_salutation#23675,c_first_name#23676,c_last_name#23677,c_preferred_cust_flag#23678,c_birth_day#23679,c_birth_month#23680,c_birth_year#23681,c_birth_country#23682,c_login#23683,c_email_address#23684,c_last_review_date#23685] parquet
+                  :     :        :              +- Project [d_date_sk#23686]
+                  :     :        :                 +- Filter (d_year#23692 IN (2000,2001,2002,2003) AND isnotnull(d_date_sk#23686))
+                  :     :        :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23686,d_date_id#23687,d_date#23688,d_month_seq#23689,d_week_seq#23690,d_quarter_seq#23691,d_year#23692,d_dow#23693,d_moy#23694,d_dom#23695,d_qoy#23696,d_fy_year#23697,d_fy_quarter_seq#23698,d_fy_week_seq#23699,d_day_name#23700,d_quarter_name#23701,d_holiday#23702,d_weekend#23703,d_following_holiday#23704,d_first_dom#23705,d_last_dom#23706,d_same_day_ly#23707,d_same_day_lq#23708,d_current_day#23709,... 4 more fields] parquet
+                  :     :        +- Aggregate [c_customer_sk#23627], [c_customer_sk#23627, sum((cast(ss_quantity#23613 as decimal(10,0)) * ss_sales_price#23616)) AS ssales#23714]
+                  :     :           +- Project [ss_quantity#23613, ss_sales_price#23616, c_customer_sk#23627]
+                  :     :              +- Join Inner, (ss_customer_sk#23606 = c_customer_sk#23627)
+                  :     :                 :- Project [ss_customer_sk#23606, ss_quantity#23613, ss_sales_price#23616]
+                  :     :                 :  +- Filter isnotnull(ss_customer_sk#23606)
+                  :     :                 :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#23604,ss_item_sk#23605,ss_customer_sk#23606,ss_cdemo_sk#23607,ss_hdemo_sk#23608,ss_addr_sk#23609,ss_store_sk#23610,ss_promo_sk#23611,ss_ticket_number#23612L,ss_quantity#23613,ss_wholesale_cost#23614,ss_list_price#23615,ss_sales_price#23616,ss_ext_discount_amt#23617,ss_ext_sales_price#23618,ss_ext_wholesale_cost#23619,ss_ext_list_price#23620,ss_ext_tax#23621,ss_coupon_amt#23622,ss_net_paid#23623,ss_net_paid_inc_tax#23624,ss_net_profit#23625,ss_sold_date_sk#23626] parquet
+                  :     :                 +- Project [c_customer_sk#23627]
+                  :     :                    +- Filter isnotnull(c_customer_sk#23627)
+                  :     :                       +- Relation spark_catalog.tpcds.customer[c_customer_sk#23627,c_customer_id#23628,c_current_cdemo_sk#23629,c_current_hdemo_sk#23630,c_current_addr_sk#23631,c_first_shipto_date_sk#23632,c_first_sales_date_sk#23633,c_salutation#23634,c_first_name#23635,c_last_name#23636,c_preferred_cust_flag#23637,c_birth_day#23638,c_birth_month#23639,c_birth_year#23640,c_birth_country#23641,c_login#23642,c_email_address#23643,c_last_review_date#23644] parquet
+                  :     +- Project [c_customer_sk#23272, c_first_name#23280, c_last_name#23281]
+                  :        +- Relation spark_catalog.tpcds.customer[c_customer_sk#23272,c_customer_id#23273,c_current_cdemo_sk#23274,c_current_hdemo_sk#23275,c_current_addr_sk#23276,c_first_shipto_date_sk#23277,c_first_sales_date_sk#23278,c_salutation#23279,c_first_name#23280,c_last_name#23281,c_preferred_cust_flag#23282,c_birth_day#23283,c_birth_month#23284,c_birth_year#23285,c_birth_country#23286,c_login#23287,c_email_address#23288,c_last_review_date#23289] parquet
+                  +- Project [d_date_sk#23290]
+                     +- Filter (equalTo6(d_year#23296, 2000) AND equalTo7(d_moy#23298, 2))
+                        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#23290,d_date_id#23291,d_date#23292,d_month_seq#23293,d_week_seq#23294,d_quarter_seq#23295,d_year#23296,d_dow#23297,d_moy#23298,d_dom#23299,d_qoy#23300,d_fy_year#23301,d_fy_quarter_seq#23302,d_fy_week_seq#23303,d_day_name#23304,d_quarter_name#23305,d_holiday#23306,d_weekend#23307,d_following_holiday#23308,d_first_dom#23309,d_last_dom#23310,d_same_day_ly#23311,d_same_day_lq#23312,d_current_day#23313,... 4 more fields] parquet

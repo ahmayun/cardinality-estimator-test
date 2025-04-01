@@ -1,0 +1,2 @@
+ColumnPruning.apply.case2
+ColumnPruning.apply.else40

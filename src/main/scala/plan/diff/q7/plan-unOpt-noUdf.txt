@@ -1,0 +1,19 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [i_item_id#4215 ASC NULLS FIRST], true
+      +- Aggregate [i_item_id#4215], [i_item_id#4215, avg(ss_quantity#498) AS agg1#53557, avg(ss_list_price#500) AS agg2#53558, avg(ss_coupon_amt#507) AS agg3#53559, avg(ss_sales_price#501) AS agg4#53560]
+         +- Filter (((((ss_sold_date_sk#511 = d_date_sk#24) AND (ss_item_sk#490 = i_item_sk#4214)) AND (ss_cdemo_sk#492 = cd_demo_sk#480)) AND ((ss_promo_sk#496 = p_promo_sk#25689) AND (cd_gender#481 = M))) AND (((cd_marital_status#482 = S) AND (cd_education_status#483 = College)) AND (((p_channel_email#25698 = N) OR (p_channel_event#25703 = N)) AND (d_year#30 = 2000))))
+            +- Join Inner
+               :- Join Inner
+               :  :- Join Inner
+               :  :  :- Join Inner
+               :  :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+               :  :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+               :  :  :  +- SubqueryAlias spark_catalog.tpcds.customer_demographics
+               :  :  :     +- Relation spark_catalog.tpcds.customer_demographics[cd_demo_sk#480,cd_gender#481,cd_marital_status#482,cd_education_status#483,cd_purchase_estimate#484,cd_credit_rating#485,cd_dep_count#486,cd_dep_employed_count#487,cd_dep_college_count#488] parquet
+               :  :  +- SubqueryAlias spark_catalog.tpcds.date_dim
+               :  :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+               :  +- SubqueryAlias spark_catalog.tpcds.item
+               :     +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+               +- SubqueryAlias spark_catalog.tpcds.promotion
+                  +- Relation spark_catalog.tpcds.promotion[p_promo_sk#25689,p_promo_id#25690,p_start_date_sk#25691,p_end_date_sk#25692,p_item_sk#25693,p_cost#25694,p_response_target#25695,p_promo_name#25696,p_channel_dmail#25697,p_channel_email#25698,p_channel_catalog#25699,p_channel_tv#25700,p_channel_radio#25701,p_channel_press#25702,p_channel_event#25703,p_channel_demo#25704,p_channel_details#25705,p_purpose#25706,p_discount_active#25707] parquet

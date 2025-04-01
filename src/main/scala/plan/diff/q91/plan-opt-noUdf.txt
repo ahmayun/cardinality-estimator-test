@@ -1,0 +1,38 @@
+Sort [Returns_Loss#69347 DESC NULLS LAST], true
++- Aggregate [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cd_marital_status#482, cd_education_status#483], [cc_call_center_id#17059 AS Call_Center#69344, cc_name#17064 AS Call_Center_Name#69345, cc_manager#17069 AS Manager#69346, MakeDecimal(sum(UnscaledValue(cr_net_loss#17114)),17,2) AS Returns_Loss#69347]
+   +- Project [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cr_net_loss#17114, cd_marital_status#482, cd_education_status#483]
+      +- Join Inner, (hd_demo_sk#4287 = c_current_hdemo_sk#84)
+         :- Project [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cr_net_loss#17114, c_current_hdemo_sk#84, cd_marital_status#482, cd_education_status#483]
+         :  +- Join Inner, (cd_demo_sk#480 = c_current_cdemo_sk#83)
+         :     :- Project [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cr_net_loss#17114, c_current_cdemo_sk#83, c_current_hdemo_sk#84]
+         :     :  +- Join Inner, (ca_address_sk#467 = c_current_addr_sk#85)
+         :     :     :- Project [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cr_net_loss#17114, c_current_cdemo_sk#83, c_current_hdemo_sk#84, c_current_addr_sk#85]
+         :     :     :  +- Join Inner, (cr_returning_customer_sk#17095 = c_customer_sk#81)
+         :     :     :     :- Project [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cr_returning_customer_sk#17095, cr_net_loss#17114]
+         :     :     :     :  +- Join Inner, (cr_returned_date_sk#17115 = d_date_sk#24)
+         :     :     :     :     :- Project [cc_call_center_id#17059, cc_name#17064, cc_manager#17069, cr_returning_customer_sk#17095, cr_net_loss#17114, cr_returned_date_sk#17115]
+         :     :     :     :     :  +- Join Inner, (cr_call_center_sk#17099 = cc_call_center_sk#17058)
+         :     :     :     :     :     :- Project [cc_call_center_sk#17058, cc_call_center_id#17059, cc_name#17064, cc_manager#17069]
+         :     :     :     :     :     :  +- Filter isnotnull(cc_call_center_sk#17058)
+         :     :     :     :     :     :     +- Relation spark_catalog.tpcds.call_center[cc_call_center_sk#17058,cc_call_center_id#17059,cc_rec_start_date#17060,cc_rec_end_date#17061,cc_closed_date_sk#17062,cc_open_date_sk#17063,cc_name#17064,cc_class#17065,cc_employees#17066,cc_sq_ft#17067,cc_hours#17068,cc_manager#17069,cc_mkt_id#17070,cc_mkt_class#17071,cc_mkt_desc#17072,cc_market_manager#17073,cc_division#17074,cc_division_name#17075,cc_company#17076,cc_company_name#17077,cc_street_number#17078,cc_street_name#17079,cc_street_type#17080,cc_suite_number#17081,... 7 more fields] parquet
+         :     :     :     :     :     +- Project [cr_returning_customer_sk#17095, cr_call_center_sk#17099, cr_net_loss#17114, cr_returned_date_sk#17115]
+         :     :     :     :     :        +- Filter (((isnotnull(cr_call_center_sk#17099) AND isnotnull(cr_returned_date_sk#17115)) AND isnotnull(cr_returning_customer_sk#17095)) AND dynamicpruning#69354 [cr_returned_date_sk#17115])
+         :     :     :     :     :           :  +- Project [d_date_sk#24]
+         :     :     :     :     :           :     +- Filter (((isnotnull(d_year#30) AND isnotnull(d_moy#32)) AND ((d_year#30 = 1998) AND (d_moy#32 = 11))) AND isnotnull(d_date_sk#24))
+         :     :     :     :     :           :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+         :     :     :     :     :           +- Relation spark_catalog.tpcds.catalog_returns[cr_returned_time_sk#17089,cr_item_sk#17090,cr_refunded_customer_sk#17091,cr_refunded_cdemo_sk#17092,cr_refunded_hdemo_sk#17093,cr_refunded_addr_sk#17094,cr_returning_customer_sk#17095,cr_returning_cdemo_sk#17096,cr_returning_hdemo_sk#17097,cr_returning_addr_sk#17098,cr_call_center_sk#17099,cr_catalog_page_sk#17100,cr_ship_mode_sk#17101,cr_warehouse_sk#17102,cr_reason_sk#17103,cr_order_number#17104L,cr_return_quantity#17105,cr_return_amount#17106,cr_return_tax#17107,cr_return_amt_inc_tax#17108,cr_fee#17109,cr_return_ship_cost#17110,cr_refunded_cash#17111,cr_reversed_charge#17112,... 3 more fields] parquet
+         :     :     :     :     +- Project [d_date_sk#24]
+         :     :     :     :        +- Filter (((isnotnull(d_year#30) AND isnotnull(d_moy#32)) AND ((d_year#30 = 1998) AND (d_moy#32 = 11))) AND isnotnull(d_date_sk#24))
+         :     :     :     :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+         :     :     :     +- Project [c_customer_sk#81, c_current_cdemo_sk#83, c_current_hdemo_sk#84, c_current_addr_sk#85]
+         :     :     :        +- Filter ((isnotnull(c_customer_sk#81) AND isnotnull(c_current_addr_sk#85)) AND (isnotnull(c_current_cdemo_sk#83) AND isnotnull(c_current_hdemo_sk#84)))
+         :     :     :           +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+         :     :     +- Project [ca_address_sk#467]
+         :     :        +- Filter ((isnotnull(ca_gmt_offset#478) AND (ca_gmt_offset#478 = -7.00)) AND isnotnull(ca_address_sk#467))
+         :     :           +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+         :     +- Project [cd_demo_sk#480, cd_marital_status#482, cd_education_status#483]
+         :        +- Filter ((((cd_marital_status#482 = M) AND (cd_education_status#483 = Unknown)) OR ((cd_marital_status#482 = W) AND (cd_education_status#483 = Advanced Degree))) AND isnotnull(cd_demo_sk#480))
+         :           +- Relation spark_catalog.tpcds.customer_demographics[cd_demo_sk#480,cd_gender#481,cd_marital_status#482,cd_education_status#483,cd_purchase_estimate#484,cd_credit_rating#485,cd_dep_count#486,cd_dep_employed_count#487,cd_dep_college_count#488] parquet
+         +- Project [hd_demo_sk#4287]
+            +- Filter ((isnotnull(hd_buy_potential#4289) AND StartsWith(hd_buy_potential#4289, Unknown)) AND isnotnull(hd_demo_sk#4287))
+               +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#4287,hd_income_band_sk#4288,hd_buy_potential#4289,hd_dep_count#4290,hd_vehicle_count#4291] parquet

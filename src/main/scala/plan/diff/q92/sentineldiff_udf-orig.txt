@@ -1,0 +1,11 @@
+RemoveRedundantAliases.removeRedundantAlias.match1
+CollapseProject.canCollapseExpressions.case1
+ColumnPruning.apply.case2
+CollapseProject.apply.case2
+PushPredicateThroughNonJoin.apply.case6
+PushPredicateThroughNonJoin.canPushThrough.match13
+RemoveNoopOperators.apply.case24
+CollapseProject.collectReferences.case1
+RemoveNoopOperators.apply.match21
+InferFiltersFromConstraints.inferFilters.match53
+RemoveNoopOperators.apply.then22

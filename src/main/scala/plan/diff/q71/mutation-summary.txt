@@ -1,0 +1,17 @@
+======MUTATION SUMMARY=============
+QUERY 71
+	Transformed: ('sold_item_sk = 'i_item_sk) => equalTo0('sold_item_sk, 'i_item_sk)
+	Transformed: ('i_manager_id = 1) => equalTo1('i_manager_id, 1)
+	Transformed: ('time_sk = 't_time_sk) => equalTo2('time_sk, 't_time_sk)
+	Transformed: ('t_meal_time = breakfast) => equalTo3('t_meal_time, breakfast)
+	Transformed: ('t_meal_time = dinner) => equalTo4('t_meal_time, dinner)
+	Transformed: ('d_date_sk = 'ws_sold_date_sk) => equalTo5('d_date_sk, 'ws_sold_date_sk)
+	Transformed: ('d_moy = 11) => equalTo6('d_moy, 11)
+	Transformed: ('d_year = 1999) => equalTo7('d_year, 1999)
+	Transformed: ('d_date_sk = 'cs_sold_date_sk) => equalTo8('d_date_sk, 'cs_sold_date_sk)
+	Transformed: ('d_moy = 11) => equalTo9('d_moy, 11)
+	Transformed: ('d_year = 1999) => equalTo10('d_year, 1999)
+	Transformed: ('d_date_sk = 'ss_sold_date_sk) => equalTo11('d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('d_moy = 11) => equalTo12('d_moy, 11)
+	Transformed: ('d_year = 1999) => equalTo13('d_year, 1999)
+=======================

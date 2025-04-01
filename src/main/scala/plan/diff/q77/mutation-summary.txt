@@ -1,0 +1,8 @@
+======MUTATION SUMMARY=============
+QUERY 77
+	Transformed: ('profit - 'coalesce('profit_loss, 0)) => subtract0('profit, 'coalesce('profit_loss, 0))
+	Transformed: ('ss.s_store_sk = 'sr.s_store_sk) => equalTo1('ss.s_store_sk, 'sr.s_store_sk)
+	Transformed: ('profit - 'profit_loss) => subtract2('profit, 'profit_loss)
+	Transformed: ('profit - 'coalesce('profit_loss, 0)) => subtract3('profit, 'coalesce('profit_loss, 0))
+	Transformed: ('ws.wp_web_page_sk = 'wr.wp_web_page_sk) => equalTo4('ws.wp_web_page_sk, 'wr.wp_web_page_sk)
+=======================

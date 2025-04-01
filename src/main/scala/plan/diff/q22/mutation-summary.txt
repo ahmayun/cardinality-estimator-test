@@ -1,0 +1,8 @@
+======MUTATION SUMMARY=============
+QUERY 22
+	Transformed: ('inv_date_sk = 'd_date_sk) => equalTo0('inv_date_sk, 'd_date_sk)
+	Transformed: ('inv_item_sk = 'i_item_sk) => equalTo1('inv_item_sk, 'i_item_sk)
+	Transformed: ('inv_warehouse_sk = 'w_warehouse_sk) => equalTo2('inv_warehouse_sk, 'w_warehouse_sk)
+	Transformed: (('d_month_seq >= 1200) AND ('d_month_seq <= (1200 + 11))) => between3('d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add4(1200, 11)
+=======================

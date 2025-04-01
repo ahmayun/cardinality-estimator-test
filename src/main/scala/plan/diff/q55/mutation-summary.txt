@@ -1,0 +1,8 @@
+======MUTATION SUMMARY=============
+QUERY 55
+	Transformed: ('d_date_sk = 'ss_sold_date_sk) => equalTo0('d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('ss_item_sk = 'i_item_sk) => equalTo1('ss_item_sk, 'i_item_sk)
+	Transformed: ('i_manager_id = 28) => equalTo2('i_manager_id, 28)
+	Transformed: ('d_moy = 11) => equalTo3('d_moy, 11)
+	Transformed: ('d_year = 1999) => equalTo4('d_year, 1999)
+=======================

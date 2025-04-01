@@ -1,0 +1,21 @@
+======MUTATION SUMMARY=============
+QUERY 72
+	Transformed: ('d1.d_week_seq = 'd2.d_week_seq) => equalTo0('d1.d_week_seq, 'd2.d_week_seq)
+	Transformed: ('inv_quantity_on_hand < 'cs_quantity) => lessThan1('inv_quantity_on_hand, 'cs_quantity)
+	Transformed: ('d3.d_date > (cast('d1.d_date as date) + INTERVAL '5' DAY)) => greaterThan2('d3.d_date, (cast('d1.d_date as date) + INTERVAL '5' DAY))
+	Transformed: (cast('d1.d_date as date) + INTERVAL '5' DAY) => add3(cast('d1.d_date as date), INTERVAL '5' DAY)
+	Transformed: ('hd_buy_potential = >10000) => equalTo4('hd_buy_potential, >10000)
+	Transformed: ('d1.d_year = 1999) => equalTo5('d1.d_year, 1999)
+	Transformed: ('cd_marital_status = D) => equalTo6('cd_marital_status, D)
+	Transformed: ('cr_item_sk = 'cs_item_sk) => equalTo7('cr_item_sk, 'cs_item_sk)
+	Transformed: ('cr_order_number = 'cs_order_number) => equalTo8('cr_order_number, 'cs_order_number)
+	Transformed: ('cs_promo_sk = 'p_promo_sk) => equalTo9('cs_promo_sk, 'p_promo_sk)
+	Transformed: ('cs_ship_date_sk = 'd3.d_date_sk) => equalTo10('cs_ship_date_sk, 'd3.d_date_sk)
+	Transformed: ('inv_date_sk = 'd2.d_date_sk) => equalTo11('inv_date_sk, 'd2.d_date_sk)
+	Transformed: ('cs_sold_date_sk = 'd1.d_date_sk) => equalTo12('cs_sold_date_sk, 'd1.d_date_sk)
+	Transformed: ('cs_bill_hdemo_sk = 'hd_demo_sk) => equalTo13('cs_bill_hdemo_sk, 'hd_demo_sk)
+	Transformed: ('cs_bill_cdemo_sk = 'cd_demo_sk) => equalTo14('cs_bill_cdemo_sk, 'cd_demo_sk)
+	Transformed: ('i_item_sk = 'cs_item_sk) => equalTo15('i_item_sk, 'cs_item_sk)
+	Transformed: ('w_warehouse_sk = 'inv_warehouse_sk) => equalTo16('w_warehouse_sk, 'inv_warehouse_sk)
+	Transformed: ('cs_item_sk = 'inv_item_sk) => equalTo17('cs_item_sk, 'inv_item_sk)
+=======================

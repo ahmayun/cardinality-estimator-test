@@ -1,0 +1,17 @@
+======MUTATION SUMMARY=============
+QUERY 21
+	Transformed: ((CASE WHEN ('inv_before > 0) THEN ('inv_after / 'inv_before) ELSE null END >= (2.0 / 3.0)) AND (CASE WHEN ('inv_before > 0) THEN ('inv_after / 'inv_before) ELSE null END <= (3.0 / 2.0))) => between0(CASE WHEN ('inv_before > 0) THEN ('inv_after / 'inv_before) ELSE null END, (2.0 / 3.0), (3.0 / 2.0))
+	Transformed: ('inv_before > 0) => greaterThan1('inv_before, 0)
+	Transformed: ('inv_after / 'inv_before) => divide2('inv_after, 'inv_before)
+	Transformed: (2.0 / 3.0) => divide3(2.0, 3.0)
+	Transformed: (3.0 / 2.0) => divide4(3.0, 2.0)
+	Transformed: (cast('d_date as date) < cast(2000-03-11 as date)) => lessThan5(cast('d_date as date), cast(2000-03-11 as date))
+	Transformed: (cast('d_date as date) >= cast(2000-03-11 as date)) => greaterThanOrEqual6(cast('d_date as date), cast(2000-03-11 as date))
+	Transformed: (('i_current_price >= 0.99) AND ('i_current_price <= 1.49)) => between7('i_current_price, 0.99, 1.49)
+	Transformed: ('i_item_sk = 'inv_item_sk) => equalTo8('i_item_sk, 'inv_item_sk)
+	Transformed: ('inv_warehouse_sk = 'w_warehouse_sk) => equalTo9('inv_warehouse_sk, 'w_warehouse_sk)
+	Transformed: ('inv_date_sk = 'd_date_sk) => equalTo10('inv_date_sk, 'd_date_sk)
+	Transformed: (('d_date >= (cast(2000-03-11 as date) - INTERVAL '30' DAY)) AND ('d_date <= (cast(2000-03-11 as date) + INTERVAL '30' DAY))) => between11('d_date, (cast(2000-03-11 as date) - INTERVAL '30' DAY), (cast(2000-03-11 as date) + INTERVAL '30' DAY))
+	Transformed: (cast(2000-03-11 as date) - INTERVAL '30' DAY) => subtract12(cast(2000-03-11 as date), INTERVAL '30' DAY)
+	Transformed: (cast(2000-03-11 as date) + INTERVAL '30' DAY) => add13(cast(2000-03-11 as date), INTERVAL '30' DAY)
+=======================

@@ -1,0 +1,5 @@
+======MUTATION SUMMARY=============
+QUERY 97
+	Transformed: ('ssci.customer_sk = 'csci.customer_sk) => equalTo0('ssci.customer_sk, 'csci.customer_sk)
+	Transformed: ('ssci.item_sk = 'csci.item_sk) => equalTo1('ssci.item_sk, 'csci.item_sk)
+=======================

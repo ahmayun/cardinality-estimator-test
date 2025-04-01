@@ -1,0 +1,39 @@
+WithCTE
+:- CTERelationDef 257, false
+:  +- SubqueryAlias ws_wh
+:     +- Project [ws_order_number#529L, ws_warehouse_sk#527 AS wh1#69842, ws_warehouse_sk#69858 AS wh2#69843]
+:        +- Filter ((ws_order_number#529L = ws_order_number#69860L) AND NOT (ws_warehouse_sk#527 = ws_warehouse_sk#69858))
+:           +- Join Inner
+:              :- SubqueryAlias ws1
+:              :  +- SubqueryAlias spark_catalog.tpcds.web_sales
+:              :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+:              +- SubqueryAlias ws2
+:                 +- SubqueryAlias spark_catalog.tpcds.web_sales
+:                    +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#69844,ws_ship_date_sk#69845,ws_item_sk#69846,ws_bill_customer_sk#69847,ws_bill_cdemo_sk#69848,ws_bill_hdemo_sk#69849,ws_bill_addr_sk#69850,ws_ship_customer_sk#69851,ws_ship_cdemo_sk#69852,ws_ship_hdemo_sk#69853,ws_ship_addr_sk#69854,ws_web_page_sk#69855,ws_web_site_sk#69856,ws_ship_mode_sk#69857,ws_warehouse_sk#69858,ws_promo_sk#69859,ws_order_number#69860L,ws_quantity#69861,ws_wholesale_cost#69862,ws_list_price#69863,ws_sales_price#69864,ws_ext_discount_amt#69865,ws_ext_sales_price#69866,ws_ext_wholesale_cost#69867,... 10 more fields] parquet
++- GlobalLimit 100
+   +- LocalLimit 100
+      +- Sort [order count#69837L ASC NULLS FIRST], true
+         +- Aggregate [count(distinct ws_order_number#69894L) AS order count#69837L, sum(ws_ext_ship_cost#69905) AS total shipping cost#69838, sum(ws_net_profit#69910) AS total net profit#69839]
+            +- Filter (((((d_date#26 >= cast(1999-02-01 as date)) AND (d_date#26 <= date_add(cast(1999-02-01 as date), extractansiintervaldays(INTERVAL '60' DAY)))) AND (ws_ship_date_sk#69879 = d_date_sk#24)) AND ((ws_ship_addr_sk#69888 = ca_address_sk#467) AND (ca_state#475 = IL))) AND (((ws_web_site_sk#69890 = web_site_sk#41442) AND (web_company_name#41456 = pri)) AND (ws_order_number#69894L IN (list#69840 []) AND ws_order_number#69894L IN (list#69841 []))))
+               :  :- Project [ws_order_number#529L]
+               :  :  +- SubqueryAlias ws_wh
+               :  :     +- CTERelationRef 257, true, [ws_order_number#529L, wh1#69842, wh2#69843]
+               :  +- Project [wr_order_number#26805L]
+               :     +- Filter (wr_order_number#26805L = ws_order_number#69913L)
+               :        +- Join Inner
+               :           :- SubqueryAlias spark_catalog.tpcds.web_returns
+               :           :  +- Relation spark_catalog.tpcds.web_returns[wr_returned_time_sk#26793,wr_item_sk#26794,wr_refunded_customer_sk#26795,wr_refunded_cdemo_sk#26796,wr_refunded_hdemo_sk#26797,wr_refunded_addr_sk#26798,wr_returning_customer_sk#26799,wr_returning_cdemo_sk#26800,wr_returning_hdemo_sk#26801,wr_returning_addr_sk#26802,wr_web_page_sk#26803,wr_reason_sk#26804,wr_order_number#26805L,wr_return_quantity#26806,wr_return_amt#26807,wr_return_tax#26808,wr_return_amt_inc_tax#26809,wr_fee#26810,wr_return_ship_cost#26811,wr_refunded_cash#26812,wr_reversed_charge#26813,wr_account_credit#26814,wr_net_loss#26815,wr_returned_date_sk#26816] parquet
+               :           +- SubqueryAlias ws_wh
+               :              +- CTERelationRef 257, true, [ws_order_number#69913L, wh1#69914, wh2#69915]
+               +- Join Inner
+                  :- Join Inner
+                  :  :- Join Inner
+                  :  :  :- SubqueryAlias ws1
+                  :  :  :  +- SubqueryAlias spark_catalog.tpcds.web_sales
+                  :  :  :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#69878,ws_ship_date_sk#69879,ws_item_sk#69880,ws_bill_customer_sk#69881,ws_bill_cdemo_sk#69882,ws_bill_hdemo_sk#69883,ws_bill_addr_sk#69884,ws_ship_customer_sk#69885,ws_ship_cdemo_sk#69886,ws_ship_hdemo_sk#69887,ws_ship_addr_sk#69888,ws_web_page_sk#69889,ws_web_site_sk#69890,ws_ship_mode_sk#69891,ws_warehouse_sk#69892,ws_promo_sk#69893,ws_order_number#69894L,ws_quantity#69895,ws_wholesale_cost#69896,ws_list_price#69897,ws_sales_price#69898,ws_ext_discount_amt#69899,ws_ext_sales_price#69900,ws_ext_wholesale_cost#69901,... 10 more fields] parquet
+                  :  :  +- SubqueryAlias spark_catalog.tpcds.date_dim
+                  :  :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+                  :  +- SubqueryAlias spark_catalog.tpcds.customer_address
+                  :     +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+                  +- SubqueryAlias spark_catalog.tpcds.web_site
+                     +- Relation spark_catalog.tpcds.web_site[web_site_sk#41442,web_site_id#41443,web_rec_start_date#41444,web_rec_end_date#41445,web_name#41446,web_open_date_sk#41447,web_close_date_sk#41448,web_class#41449,web_manager#41450,web_mkt_id#41451,web_mkt_class#41452,web_mkt_desc#41453,web_market_manager#41454,web_company_id#41455,web_company_name#41456,web_street_number#41457,web_street_name#41458,web_street_type#41459,web_suite_number#41460,web_city#41461,web_county#41462,web_state#41463,web_zip#41464,web_country#41465,... 2 more fields] parquet

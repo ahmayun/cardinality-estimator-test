@@ -1,0 +1,2 @@
+InferFiltersFromConstraints.inferFilters.then49
+ColumnPruning.apply.else40

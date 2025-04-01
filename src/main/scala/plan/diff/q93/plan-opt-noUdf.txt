@@ -1,0 +1,16 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [sumsales#69651 ASC NULLS FIRST, ss_customer_sk#491 ASC NULLS FIRST], true
+      +- Aggregate [ss_customer_sk#491], [ss_customer_sk#491, sum(act_sales#69650) AS sumsales#69651]
+         +- Project [ss_customer_sk#491, CASE WHEN isnotnull(sr_return_quantity#13) THEN (cast((ss_quantity#498 - sr_return_quantity#13) as decimal(10,0)) * ss_sales_price#501) ELSE (cast(ss_quantity#498 as decimal(10,0)) * ss_sales_price#501) END AS act_sales#69650]
+            +- Join Inner, (sr_reason_sk#11 = r_reason_sk#64745)
+               :- Project [ss_customer_sk#491, ss_quantity#498, ss_sales_price#501, sr_reason_sk#11, sr_return_quantity#13]
+               :  +- Join Inner, ((sr_item_sk#5 = ss_item_sk#490) AND (sr_ticket_number#12L = ss_ticket_number#497L))
+               :     :- Project [ss_item_sk#490, ss_customer_sk#491, ss_ticket_number#497L, ss_quantity#498, ss_sales_price#501]
+               :     :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+               :     +- Project [sr_item_sk#5, sr_reason_sk#11, sr_ticket_number#12L, sr_return_quantity#13]
+               :        +- Filter ((isnotnull(sr_item_sk#5) AND isnotnull(sr_ticket_number#12L)) AND isnotnull(sr_reason_sk#11))
+               :           +- Relation spark_catalog.tpcds.store_returns[sr_return_time_sk#4,sr_item_sk#5,sr_customer_sk#6,sr_cdemo_sk#7,sr_hdemo_sk#8,sr_addr_sk#9,sr_store_sk#10,sr_reason_sk#11,sr_ticket_number#12L,sr_return_quantity#13,sr_return_amt#14,sr_return_tax#15,sr_return_amt_inc_tax#16,sr_fee#17,sr_return_ship_cost#18,sr_refunded_cash#19,sr_reversed_charge#20,sr_store_credit#21,sr_net_loss#22,sr_returned_date_sk#23] parquet
+               +- Project [r_reason_sk#64745]
+                  +- Filter ((isnotnull(r_reason_desc#64747) AND (r_reason_desc#64747 = tpcds.reason 28)) AND isnotnull(r_reason_sk#64745))
+                     +- Relation spark_catalog.tpcds.reason[r_reason_sk#64745,r_reason_id#64746,r_reason_desc#64747] parquet

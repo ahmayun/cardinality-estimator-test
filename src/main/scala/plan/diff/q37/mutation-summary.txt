@@ -1,0 +1,12 @@
+======MUTATION SUMMARY=============
+QUERY 37
+	Transformed: (('i_current_price >= 68) AND ('i_current_price <= (68 + 30))) => between0('i_current_price, 68, (68 + 30))
+	Transformed: (68 + 30) => add1(68, 30)
+	Transformed: ('inv_item_sk = 'i_item_sk) => equalTo2('inv_item_sk, 'i_item_sk)
+	Transformed: ('d_date_sk = 'inv_date_sk) => equalTo3('d_date_sk, 'inv_date_sk)
+	Transformed: (('d_date >= cast(2000-02-01 as date)) AND ('d_date <= (cast(2000-02-01 as date) + INTERVAL '60' DAY))) => between4('d_date, cast(2000-02-01 as date), (cast(2000-02-01 as date) + INTERVAL '60' DAY))
+	Transformed: (cast(2000-02-01 as date) + INTERVAL '60' DAY) => add5(cast(2000-02-01 as date), INTERVAL '60' DAY)
+	Transformed: 'i_manufact_id IN (677,940,694,808) => inArray6('i_manufact_id, [677,940,694,808])
+	Transformed: (('inv_quantity_on_hand >= 100) AND ('inv_quantity_on_hand <= 500)) => between7('inv_quantity_on_hand, 100, 500)
+	Transformed: ('cs_item_sk = 'i_item_sk) => equalTo8('cs_item_sk, 'i_item_sk)
+=======================

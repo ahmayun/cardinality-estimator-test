@@ -1,0 +1,16 @@
+======MUTATION SUMMARY=============
+QUERY 40
+	Transformed: (cast('d_date as date) < cast(2000-03-11 as date)) => lessThan0(cast('d_date as date), cast(2000-03-11 as date))
+	Transformed: ('cs_sales_price - 'coalesce('cr_refunded_cash, 0)) => subtract1('cs_sales_price, 'coalesce('cr_refunded_cash, 0))
+	Transformed: (cast('d_date as date) >= cast(2000-03-11 as date)) => greaterThanOrEqual2(cast('d_date as date), cast(2000-03-11 as date))
+	Transformed: ('cs_sales_price - 'coalesce('cr_refunded_cash, 0)) => subtract3('cs_sales_price, 'coalesce('cr_refunded_cash, 0))
+	Transformed: (('i_current_price >= 0.99) AND ('i_current_price <= 1.49)) => between4('i_current_price, 0.99, 1.49)
+	Transformed: ('i_item_sk = 'cs_item_sk) => equalTo5('i_item_sk, 'cs_item_sk)
+	Transformed: ('cs_warehouse_sk = 'w_warehouse_sk) => equalTo6('cs_warehouse_sk, 'w_warehouse_sk)
+	Transformed: ('cs_sold_date_sk = 'd_date_sk) => equalTo7('cs_sold_date_sk, 'd_date_sk)
+	Transformed: (('d_date >= (cast(2000-03-11 as date) - INTERVAL '30' DAY)) AND ('d_date <= (cast(2000-03-11 as date) + INTERVAL '30' DAY))) => between8('d_date, (cast(2000-03-11 as date) - INTERVAL '30' DAY), (cast(2000-03-11 as date) + INTERVAL '30' DAY))
+	Transformed: (cast(2000-03-11 as date) - INTERVAL '30' DAY) => subtract9(cast(2000-03-11 as date), INTERVAL '30' DAY)
+	Transformed: (cast(2000-03-11 as date) + INTERVAL '30' DAY) => add10(cast(2000-03-11 as date), INTERVAL '30' DAY)
+	Transformed: ('cs_order_number = 'cr_order_number) => equalTo11('cs_order_number, 'cr_order_number)
+	Transformed: ('cs_item_sk = 'cr_item_sk) => equalTo12('cs_item_sk, 'cr_item_sk)
+=======================

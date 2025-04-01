@@ -1,0 +1,41 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [rnk#39317 ASC NULLS FIRST], true
+      +- Project [rnk#39317, i_product_name#4235 AS best_performing#39323, i_product_name#39373 AS worst_performing#39324]
+         +- Join Inner, (i_item_sk#39352 = item_sk#39318)
+            :- Project [rnk#39317, item_sk#39318, i_product_name#4235]
+            :  +- Join Inner, (i_item_sk#4214 = item_sk#39313)
+            :     :- Project [item_sk#39313, rnk#39317, item_sk#39318]
+            :     :  +- Join Inner, (rnk#39317 = rnk#39322)
+            :     :     :- Project [item_sk#39313, rnk#39317]
+            :     :     :  +- Filter ((rnk#39317 < 11) AND isnotnull(item_sk#39313))
+            :     :     :     +- Window [rank(rank_col#39314) windowspecdefinition(rank_col#39314 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rnk#39317], [rank_col#39314 ASC NULLS FIRST]
+            :     :     :        +- WindowGroupLimit [rank_col#39314 ASC NULLS FIRST], rank(rank_col#39314), 10
+            :     :     :           +- Filter (isnotnull(rank_col#39314) AND (cast(rank_col#39314 as decimal(13,7)) > (0.9 * scalar-subquery#39316 [])))
+            :     :     :              :  +- Aggregate [ss_store_sk#39385], [cast((avg(UnscaledValue(ss_net_profit#39400)) / 100.0) as decimal(11,6)) AS rank_col#39315]
+            :     :     :              :     +- Project [ss_store_sk#39385, ss_net_profit#39400]
+            :     :     :              :        +- Filter (isnotnull(ss_store_sk#39385) AND ((ss_store_sk#39385 = 4) AND isnull(ss_addr_sk#39384)))
+            :     :     :              :           +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#39379,ss_item_sk#39380,ss_customer_sk#39381,ss_cdemo_sk#39382,ss_hdemo_sk#39383,ss_addr_sk#39384,ss_store_sk#39385,ss_promo_sk#39386,ss_ticket_number#39387L,ss_quantity#39388,ss_wholesale_cost#39389,ss_list_price#39390,ss_sales_price#39391,ss_ext_discount_amt#39392,ss_ext_sales_price#39393,ss_ext_wholesale_cost#39394,ss_ext_list_price#39395,ss_ext_tax#39396,ss_coupon_amt#39397,ss_net_paid#39398,ss_net_paid_inc_tax#39399,ss_net_profit#39400,ss_sold_date_sk#39401] parquet
+            :     :     :              +- Aggregate [ss_item_sk#490], [ss_item_sk#490 AS item_sk#39313, cast((avg(UnscaledValue(ss_net_profit#510)) / 100.0) as decimal(11,6)) AS rank_col#39314]
+            :     :     :                 +- Project [ss_item_sk#490, ss_net_profit#510]
+            :     :     :                    +- Filter (isnotnull(ss_store_sk#495) AND (ss_store_sk#495 = 4))
+            :     :     :                       +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+            :     :     +- Project [item_sk#39318, rnk#39322]
+            :     :        +- Filter ((rnk#39322 < 11) AND isnotnull(item_sk#39318))
+            :     :           +- Window [rank(rank_col#39319) windowspecdefinition(rank_col#39319 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rnk#39322], [rank_col#39319 DESC NULLS LAST]
+            :     :              +- WindowGroupLimit [rank_col#39319 DESC NULLS LAST], rank(rank_col#39319), 10
+            :     :                 +- Filter (isnotnull(rank_col#39319) AND (cast(rank_col#39319 as decimal(13,7)) > (0.9 * scalar-subquery#39321 [])))
+            :     :                    :  +- Aggregate [ss_store_sk#39385], [cast((avg(UnscaledValue(ss_net_profit#39400)) / 100.0) as decimal(11,6)) AS rank_col#39315]
+            :     :                    :     +- Project [ss_store_sk#39385, ss_net_profit#39400]
+            :     :                    :        +- Filter (isnotnull(ss_store_sk#39385) AND ((ss_store_sk#39385 = 4) AND isnull(ss_addr_sk#39384)))
+            :     :                    :           +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#39379,ss_item_sk#39380,ss_customer_sk#39381,ss_cdemo_sk#39382,ss_hdemo_sk#39383,ss_addr_sk#39384,ss_store_sk#39385,ss_promo_sk#39386,ss_ticket_number#39387L,ss_quantity#39388,ss_wholesale_cost#39389,ss_list_price#39390,ss_sales_price#39391,ss_ext_discount_amt#39392,ss_ext_sales_price#39393,ss_ext_wholesale_cost#39394,ss_ext_list_price#39395,ss_ext_tax#39396,ss_coupon_amt#39397,ss_net_paid#39398,ss_net_paid_inc_tax#39399,ss_net_profit#39400,ss_sold_date_sk#39401] parquet
+            :     :                    +- Aggregate [ss_item_sk#39330], [ss_item_sk#39330 AS item_sk#39318, cast((avg(UnscaledValue(ss_net_profit#39350)) / 100.0) as decimal(11,6)) AS rank_col#39319]
+            :     :                       +- Project [ss_item_sk#39330, ss_net_profit#39350]
+            :     :                          +- Filter (isnotnull(ss_store_sk#39335) AND (ss_store_sk#39335 = 4))
+            :     :                             +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#39329,ss_item_sk#39330,ss_customer_sk#39331,ss_cdemo_sk#39332,ss_hdemo_sk#39333,ss_addr_sk#39334,ss_store_sk#39335,ss_promo_sk#39336,ss_ticket_number#39337L,ss_quantity#39338,ss_wholesale_cost#39339,ss_list_price#39340,ss_sales_price#39341,ss_ext_discount_amt#39342,ss_ext_sales_price#39343,ss_ext_wholesale_cost#39344,ss_ext_list_price#39345,ss_ext_tax#39346,ss_coupon_amt#39347,ss_net_paid#39348,ss_net_paid_inc_tax#39349,ss_net_profit#39350,ss_sold_date_sk#39351] parquet
+            :     +- Project [i_item_sk#4214, i_product_name#4235]
+            :        +- Filter isnotnull(i_item_sk#4214)
+            :           +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+            +- Project [i_item_sk#39352, i_product_name#39373]
+               +- Filter isnotnull(i_item_sk#39352)
+                  +- Relation spark_catalog.tpcds.item[i_item_sk#39352,i_item_id#39353,i_rec_start_date#39354,i_rec_end_date#39355,i_item_desc#39356,i_current_price#39357,i_wholesale_cost#39358,i_brand_id#39359,i_brand#39360,i_class_id#39361,i_class#39362,i_category_id#39363,i_category#39364,i_manufact_id#39365,i_manufact#39366,i_size#39367,i_formulation#39368,i_color#39369,i_units#39370,i_container#39371,i_manager_id#39372,i_product_name#39373] parquet

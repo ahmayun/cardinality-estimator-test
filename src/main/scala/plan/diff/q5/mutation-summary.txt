@@ -1,0 +1,6 @@
+======MUTATION SUMMARY=============
+QUERY 5
+	Transformed: ('profit - 'profit_loss) => subtract0('profit, 'profit_loss)
+	Transformed: ('profit - 'profit_loss) => subtract1('profit, 'profit_loss)
+	Transformed: ('profit - 'profit_loss) => subtract2('profit, 'profit_loss)
+=======================

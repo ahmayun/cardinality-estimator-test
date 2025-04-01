@@ -1,0 +1,10 @@
+======MUTATION SUMMARY=============
+QUERY 98
+	Transformed: (('sum('ss_ext_sales_price) * 100) / 'sum('sum('ss_ext_sales_price)) windowspecdefinition('i_class, unspecifiedframe$())) => divide0(('sum('ss_ext_sales_price) * 100), 'sum('sum('ss_ext_sales_price)) windowspecdefinition('i_class, unspecifiedframe$()))
+	Transformed: ('sum('ss_ext_sales_price) * 100) => multiply1('sum('ss_ext_sales_price), 100)
+	Transformed: ('ss_item_sk = 'i_item_sk) => equalTo2('ss_item_sk, 'i_item_sk)
+	Transformed: 'i_category IN (Sports,Books,Home) => inArray3('i_category, [Sports,Books,Home])
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo4('ss_sold_date_sk, 'd_date_sk)
+	Transformed: (('d_date >= cast(1999-02-22 as date)) AND ('d_date <= (cast(1999-02-22 as date) + INTERVAL '30' DAY))) => between5('d_date, cast(1999-02-22 as date), (cast(1999-02-22 as date) + INTERVAL '30' DAY))
+	Transformed: (cast(1999-02-22 as date) + INTERVAL '30' DAY) => add6(cast(1999-02-22 as date), INTERVAL '30' DAY)
+=======================

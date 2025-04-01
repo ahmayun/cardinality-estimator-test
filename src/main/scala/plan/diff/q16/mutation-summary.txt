@@ -1,0 +1,13 @@
+======MUTATION SUMMARY=============
+QUERY 16
+	Transformed: (('d_date >= cast(2002-02-01 as date)) AND ('d_date <= (cast(2002-02-01 as date) + INTERVAL '60' DAY))) => between0('d_date, cast(2002-02-01 as date), (cast(2002-02-01 as date) + INTERVAL '60' DAY))
+	Transformed: (cast(2002-02-01 as date) + INTERVAL '60' DAY) => add1(cast(2002-02-01 as date), INTERVAL '60' DAY)
+	Transformed: ('cs1.cs_ship_date_sk = 'd_date_sk) => equalTo2('cs1.cs_ship_date_sk, 'd_date_sk)
+	Transformed: ('cs1.cs_ship_addr_sk = 'ca_address_sk) => equalTo3('cs1.cs_ship_addr_sk, 'ca_address_sk)
+	Transformed: ('ca_state = GA) => equalTo4('ca_state, GA)
+	Transformed: ('cs1.cs_call_center_sk = 'cc_call_center_sk) => equalTo5('cs1.cs_call_center_sk, 'cc_call_center_sk)
+	Transformed: 'cc_county IN (Williamson County,Williamson County,Williamson County,Williamson County,Williamson County) => inArray6('cc_county, [Williamson County,Williamson County,Williamson County,Williamson County,Williamson County])
+	Transformed: ('cs1.cs_order_number = 'cs2.cs_order_number) => equalTo7('cs1.cs_order_number, 'cs2.cs_order_number)
+	Transformed: ('cs1.cs_warehouse_sk = 'cs2.cs_warehouse_sk) => equalTo8('cs1.cs_warehouse_sk, 'cs2.cs_warehouse_sk)
+	Transformed: ('cs1.cs_order_number = 'cr1.cr_order_number) => equalTo9('cs1.cs_order_number, 'cr1.cr_order_number)
+=======================

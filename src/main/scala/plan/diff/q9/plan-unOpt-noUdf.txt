@@ -1,0 +1,64 @@
+Project [CASE WHEN (scalar-subquery#67490 [] > cast(74129 as bigint)) THEN scalar-subquery#67491 [] ELSE scalar-subquery#67492 [] END AS bucket1#67493, CASE WHEN (scalar-subquery#67494 [] > cast(122840 as bigint)) THEN scalar-subquery#67495 [] ELSE scalar-subquery#67496 [] END AS bucket2#67497, CASE WHEN (scalar-subquery#67498 [] > cast(56580 as bigint)) THEN scalar-subquery#67499 [] ELSE scalar-subquery#67500 [] END AS bucket3#67501, CASE WHEN (scalar-subquery#67502 [] > cast(10097 as bigint)) THEN scalar-subquery#67503 [] ELSE scalar-subquery#67504 [] END AS bucket4#67505, CASE WHEN (scalar-subquery#67506 [] > cast(165306 as bigint)) THEN scalar-subquery#67507 [] ELSE scalar-subquery#67508 [] END AS bucket5#67509]
+:  :- Aggregate [count(1) AS count(1)#67511L]
+:  :  +- Filter ((ss_quantity#498 >= 1) AND (ss_quantity#498 <= 20))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+:  :- Aggregate [avg(ss_ext_discount_amt#67553) AS avg(ss_ext_discount_amt)#67513]
+:  :  +- Filter ((ss_quantity#67549 >= 1) AND (ss_quantity#67549 <= 20))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67540,ss_item_sk#67541,ss_customer_sk#67542,ss_cdemo_sk#67543,ss_hdemo_sk#67544,ss_addr_sk#67545,ss_store_sk#67546,ss_promo_sk#67547,ss_ticket_number#67548L,ss_quantity#67549,ss_wholesale_cost#67550,ss_list_price#67551,ss_sales_price#67552,ss_ext_discount_amt#67553,ss_ext_sales_price#67554,ss_ext_wholesale_cost#67555,ss_ext_list_price#67556,ss_ext_tax#67557,ss_coupon_amt#67558,ss_net_paid#67559,ss_net_paid_inc_tax#67560,ss_net_profit#67561,ss_sold_date_sk#67562] parquet
+:  :- Aggregate [avg(ss_net_paid#67582) AS avg(ss_net_paid)#67515]
+:  :  +- Filter ((ss_quantity#67572 >= 1) AND (ss_quantity#67572 <= 20))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67563,ss_item_sk#67564,ss_customer_sk#67565,ss_cdemo_sk#67566,ss_hdemo_sk#67567,ss_addr_sk#67568,ss_store_sk#67569,ss_promo_sk#67570,ss_ticket_number#67571L,ss_quantity#67572,ss_wholesale_cost#67573,ss_list_price#67574,ss_sales_price#67575,ss_ext_discount_amt#67576,ss_ext_sales_price#67577,ss_ext_wholesale_cost#67578,ss_ext_list_price#67579,ss_ext_tax#67580,ss_coupon_amt#67581,ss_net_paid#67582,ss_net_paid_inc_tax#67583,ss_net_profit#67584,ss_sold_date_sk#67585] parquet
+:  :- Aggregate [count(1) AS count(1)#67517L]
+:  :  +- Filter ((ss_quantity#67595 >= 21) AND (ss_quantity#67595 <= 40))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67586,ss_item_sk#67587,ss_customer_sk#67588,ss_cdemo_sk#67589,ss_hdemo_sk#67590,ss_addr_sk#67591,ss_store_sk#67592,ss_promo_sk#67593,ss_ticket_number#67594L,ss_quantity#67595,ss_wholesale_cost#67596,ss_list_price#67597,ss_sales_price#67598,ss_ext_discount_amt#67599,ss_ext_sales_price#67600,ss_ext_wholesale_cost#67601,ss_ext_list_price#67602,ss_ext_tax#67603,ss_coupon_amt#67604,ss_net_paid#67605,ss_net_paid_inc_tax#67606,ss_net_profit#67607,ss_sold_date_sk#67608] parquet
+:  :- Aggregate [avg(ss_ext_discount_amt#67622) AS avg(ss_ext_discount_amt)#67519]
+:  :  +- Filter ((ss_quantity#67618 >= 21) AND (ss_quantity#67618 <= 40))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67609,ss_item_sk#67610,ss_customer_sk#67611,ss_cdemo_sk#67612,ss_hdemo_sk#67613,ss_addr_sk#67614,ss_store_sk#67615,ss_promo_sk#67616,ss_ticket_number#67617L,ss_quantity#67618,ss_wholesale_cost#67619,ss_list_price#67620,ss_sales_price#67621,ss_ext_discount_amt#67622,ss_ext_sales_price#67623,ss_ext_wholesale_cost#67624,ss_ext_list_price#67625,ss_ext_tax#67626,ss_coupon_amt#67627,ss_net_paid#67628,ss_net_paid_inc_tax#67629,ss_net_profit#67630,ss_sold_date_sk#67631] parquet
+:  :- Aggregate [avg(ss_net_paid#67651) AS avg(ss_net_paid)#67521]
+:  :  +- Filter ((ss_quantity#67641 >= 21) AND (ss_quantity#67641 <= 40))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67632,ss_item_sk#67633,ss_customer_sk#67634,ss_cdemo_sk#67635,ss_hdemo_sk#67636,ss_addr_sk#67637,ss_store_sk#67638,ss_promo_sk#67639,ss_ticket_number#67640L,ss_quantity#67641,ss_wholesale_cost#67642,ss_list_price#67643,ss_sales_price#67644,ss_ext_discount_amt#67645,ss_ext_sales_price#67646,ss_ext_wholesale_cost#67647,ss_ext_list_price#67648,ss_ext_tax#67649,ss_coupon_amt#67650,ss_net_paid#67651,ss_net_paid_inc_tax#67652,ss_net_profit#67653,ss_sold_date_sk#67654] parquet
+:  :- Aggregate [count(1) AS count(1)#67523L]
+:  :  +- Filter ((ss_quantity#67664 >= 41) AND (ss_quantity#67664 <= 60))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67655,ss_item_sk#67656,ss_customer_sk#67657,ss_cdemo_sk#67658,ss_hdemo_sk#67659,ss_addr_sk#67660,ss_store_sk#67661,ss_promo_sk#67662,ss_ticket_number#67663L,ss_quantity#67664,ss_wholesale_cost#67665,ss_list_price#67666,ss_sales_price#67667,ss_ext_discount_amt#67668,ss_ext_sales_price#67669,ss_ext_wholesale_cost#67670,ss_ext_list_price#67671,ss_ext_tax#67672,ss_coupon_amt#67673,ss_net_paid#67674,ss_net_paid_inc_tax#67675,ss_net_profit#67676,ss_sold_date_sk#67677] parquet
+:  :- Aggregate [avg(ss_ext_discount_amt#67691) AS avg(ss_ext_discount_amt)#67525]
+:  :  +- Filter ((ss_quantity#67687 >= 41) AND (ss_quantity#67687 <= 60))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67678,ss_item_sk#67679,ss_customer_sk#67680,ss_cdemo_sk#67681,ss_hdemo_sk#67682,ss_addr_sk#67683,ss_store_sk#67684,ss_promo_sk#67685,ss_ticket_number#67686L,ss_quantity#67687,ss_wholesale_cost#67688,ss_list_price#67689,ss_sales_price#67690,ss_ext_discount_amt#67691,ss_ext_sales_price#67692,ss_ext_wholesale_cost#67693,ss_ext_list_price#67694,ss_ext_tax#67695,ss_coupon_amt#67696,ss_net_paid#67697,ss_net_paid_inc_tax#67698,ss_net_profit#67699,ss_sold_date_sk#67700] parquet
+:  :- Aggregate [avg(ss_net_paid#67720) AS avg(ss_net_paid)#67527]
+:  :  +- Filter ((ss_quantity#67710 >= 41) AND (ss_quantity#67710 <= 60))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67701,ss_item_sk#67702,ss_customer_sk#67703,ss_cdemo_sk#67704,ss_hdemo_sk#67705,ss_addr_sk#67706,ss_store_sk#67707,ss_promo_sk#67708,ss_ticket_number#67709L,ss_quantity#67710,ss_wholesale_cost#67711,ss_list_price#67712,ss_sales_price#67713,ss_ext_discount_amt#67714,ss_ext_sales_price#67715,ss_ext_wholesale_cost#67716,ss_ext_list_price#67717,ss_ext_tax#67718,ss_coupon_amt#67719,ss_net_paid#67720,ss_net_paid_inc_tax#67721,ss_net_profit#67722,ss_sold_date_sk#67723] parquet
+:  :- Aggregate [count(1) AS count(1)#67529L]
+:  :  +- Filter ((ss_quantity#67733 >= 61) AND (ss_quantity#67733 <= 80))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67724,ss_item_sk#67725,ss_customer_sk#67726,ss_cdemo_sk#67727,ss_hdemo_sk#67728,ss_addr_sk#67729,ss_store_sk#67730,ss_promo_sk#67731,ss_ticket_number#67732L,ss_quantity#67733,ss_wholesale_cost#67734,ss_list_price#67735,ss_sales_price#67736,ss_ext_discount_amt#67737,ss_ext_sales_price#67738,ss_ext_wholesale_cost#67739,ss_ext_list_price#67740,ss_ext_tax#67741,ss_coupon_amt#67742,ss_net_paid#67743,ss_net_paid_inc_tax#67744,ss_net_profit#67745,ss_sold_date_sk#67746] parquet
+:  :- Aggregate [avg(ss_ext_discount_amt#67760) AS avg(ss_ext_discount_amt)#67531]
+:  :  +- Filter ((ss_quantity#67756 >= 61) AND (ss_quantity#67756 <= 80))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67747,ss_item_sk#67748,ss_customer_sk#67749,ss_cdemo_sk#67750,ss_hdemo_sk#67751,ss_addr_sk#67752,ss_store_sk#67753,ss_promo_sk#67754,ss_ticket_number#67755L,ss_quantity#67756,ss_wholesale_cost#67757,ss_list_price#67758,ss_sales_price#67759,ss_ext_discount_amt#67760,ss_ext_sales_price#67761,ss_ext_wholesale_cost#67762,ss_ext_list_price#67763,ss_ext_tax#67764,ss_coupon_amt#67765,ss_net_paid#67766,ss_net_paid_inc_tax#67767,ss_net_profit#67768,ss_sold_date_sk#67769] parquet
+:  :- Aggregate [avg(ss_net_paid#67789) AS avg(ss_net_paid)#67533]
+:  :  +- Filter ((ss_quantity#67779 >= 61) AND (ss_quantity#67779 <= 80))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67770,ss_item_sk#67771,ss_customer_sk#67772,ss_cdemo_sk#67773,ss_hdemo_sk#67774,ss_addr_sk#67775,ss_store_sk#67776,ss_promo_sk#67777,ss_ticket_number#67778L,ss_quantity#67779,ss_wholesale_cost#67780,ss_list_price#67781,ss_sales_price#67782,ss_ext_discount_amt#67783,ss_ext_sales_price#67784,ss_ext_wholesale_cost#67785,ss_ext_list_price#67786,ss_ext_tax#67787,ss_coupon_amt#67788,ss_net_paid#67789,ss_net_paid_inc_tax#67790,ss_net_profit#67791,ss_sold_date_sk#67792] parquet
+:  :- Aggregate [count(1) AS count(1)#67535L]
+:  :  +- Filter ((ss_quantity#67802 >= 81) AND (ss_quantity#67802 <= 100))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67793,ss_item_sk#67794,ss_customer_sk#67795,ss_cdemo_sk#67796,ss_hdemo_sk#67797,ss_addr_sk#67798,ss_store_sk#67799,ss_promo_sk#67800,ss_ticket_number#67801L,ss_quantity#67802,ss_wholesale_cost#67803,ss_list_price#67804,ss_sales_price#67805,ss_ext_discount_amt#67806,ss_ext_sales_price#67807,ss_ext_wholesale_cost#67808,ss_ext_list_price#67809,ss_ext_tax#67810,ss_coupon_amt#67811,ss_net_paid#67812,ss_net_paid_inc_tax#67813,ss_net_profit#67814,ss_sold_date_sk#67815] parquet
+:  :- Aggregate [avg(ss_ext_discount_amt#67829) AS avg(ss_ext_discount_amt)#67537]
+:  :  +- Filter ((ss_quantity#67825 >= 81) AND (ss_quantity#67825 <= 100))
+:  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+:  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67816,ss_item_sk#67817,ss_customer_sk#67818,ss_cdemo_sk#67819,ss_hdemo_sk#67820,ss_addr_sk#67821,ss_store_sk#67822,ss_promo_sk#67823,ss_ticket_number#67824L,ss_quantity#67825,ss_wholesale_cost#67826,ss_list_price#67827,ss_sales_price#67828,ss_ext_discount_amt#67829,ss_ext_sales_price#67830,ss_ext_wholesale_cost#67831,ss_ext_list_price#67832,ss_ext_tax#67833,ss_coupon_amt#67834,ss_net_paid#67835,ss_net_paid_inc_tax#67836,ss_net_profit#67837,ss_sold_date_sk#67838] parquet
+:  +- Aggregate [avg(ss_net_paid#67858) AS avg(ss_net_paid)#67539]
+:     +- Filter ((ss_quantity#67848 >= 81) AND (ss_quantity#67848 <= 100))
+:        +- SubqueryAlias spark_catalog.tpcds.store_sales
+:           +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#67839,ss_item_sk#67840,ss_customer_sk#67841,ss_cdemo_sk#67842,ss_hdemo_sk#67843,ss_addr_sk#67844,ss_store_sk#67845,ss_promo_sk#67846,ss_ticket_number#67847L,ss_quantity#67848,ss_wholesale_cost#67849,ss_list_price#67850,ss_sales_price#67851,ss_ext_discount_amt#67852,ss_ext_sales_price#67853,ss_ext_wholesale_cost#67854,ss_ext_list_price#67855,ss_ext_tax#67856,ss_coupon_amt#67857,ss_net_paid#67858,ss_net_paid_inc_tax#67859,ss_net_profit#67860,ss_sold_date_sk#67861] parquet
++- Filter (r_reason_sk#64745 = 1)
+   +- SubqueryAlias spark_catalog.tpcds.reason
+      +- Relation spark_catalog.tpcds.reason[r_reason_sk#64745,r_reason_id#64746,r_reason_desc#64747] parquet

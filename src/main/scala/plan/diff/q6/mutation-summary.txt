@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 6
+	Transformed: ('cnt >= 10) => greaterThanOrEqual0('cnt, 10)
+	Transformed: ('a.ca_address_sk = 'c.c_current_addr_sk) => equalTo1('a.ca_address_sk, 'c.c_current_addr_sk)
+	Transformed: ('c.c_customer_sk = 's.ss_customer_sk) => equalTo2('c.c_customer_sk, 's.ss_customer_sk)
+	Transformed: ('s.ss_sold_date_sk = 'd.d_date_sk) => equalTo3('s.ss_sold_date_sk, 'd.d_date_sk)
+	Transformed: ('s.ss_item_sk = 'i.i_item_sk) => equalTo4('s.ss_item_sk, 'i.i_item_sk)
+	Transformed: ('d.d_month_seq = scalar-subquery#47405 []) => equalTo5('d.d_month_seq, scalar-subquery#47405 [])
+	Transformed: ('i.i_current_price > (1.2 * scalar-subquery#47406 [])) => greaterThan6('i.i_current_price, (1.2 * scalar-subquery#47406 []))
+	Transformed: (1.2 * scalar-subquery#47406 []) => multiply7(1.2, scalar-subquery#47406 [])
+	Transformed: ('d_year = 2001) => equalTo8('d_year, 2001)
+	Transformed: ('d_moy = 1) => equalTo9('d_moy, 1)
+	Transformed: ('j.i_category = 'i.i_category) => equalTo10('j.i_category, 'i.i_category)
+=======================

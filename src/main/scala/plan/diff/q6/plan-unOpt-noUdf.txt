@@ -1,0 +1,37 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [cnt#47285L ASC NULLS FIRST], true
+      +- Project [state#47284, cnt#47285L]
+         +- Filter (cnt#47285L >= cast(10 as bigint))
+            +- SubqueryAlias x
+               +- Aggregate [ca_state#475], [ca_state#475 AS state#47284, count(1) AS cnt#47285L]
+                  +- Filter ((((ca_address_sk#467 = c_current_addr_sk#85) AND (c_customer_sk#81 = ss_customer_sk#491)) AND (ss_sold_date_sk#511 = d_date_sk#24)) AND (((ss_item_sk#490 = i_item_sk#4214) AND (d_month_seq#27 = scalar-subquery#47286 [])) AND (cast(i_current_price#4219 as decimal(14,7)) > (1.2 * scalar-subquery#47287 [i_category#4226]))))
+                     :  :- Distinct
+                     :  :  +- Project [d_month_seq#47294]
+                     :  :     +- Filter ((d_year#47297 = 2001) AND (d_moy#47299 = 1))
+                     :  :        +- SubqueryAlias spark_catalog.tpcds.date_dim
+                     :  :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#47291,d_date_id#47292,d_date#47293,d_month_seq#47294,d_week_seq#47295,d_quarter_seq#47296,d_year#47297,d_dow#47298,d_moy#47299,d_dom#47300,d_qoy#47301,d_fy_year#47302,d_fy_quarter_seq#47303,d_fy_week_seq#47304,d_day_name#47305,d_quarter_name#47306,d_holiday#47307,d_weekend#47308,d_following_holiday#47309,d_first_dom#47310,d_last_dom#47311,d_same_day_ly#47312,d_same_day_lq#47313,d_current_day#47314,... 4 more fields] parquet
+                     :  +- Aggregate [avg(i_current_price#47324) AS avg(i_current_price)#47290]
+                     :     +- Filter (i_category#47331 = outer(i_category#4226))
+                     :        +- SubqueryAlias j
+                     :           +- SubqueryAlias spark_catalog.tpcds.item
+                     :              +- Relation spark_catalog.tpcds.item[i_item_sk#47319,i_item_id#47320,i_rec_start_date#47321,i_rec_end_date#47322,i_item_desc#47323,i_current_price#47324,i_wholesale_cost#47325,i_brand_id#47326,i_brand#47327,i_class_id#47328,i_class#47329,i_category_id#47330,i_category#47331,i_manufact_id#47332,i_manufact#47333,i_size#47334,i_formulation#47335,i_color#47336,i_units#47337,i_container#47338,i_manager_id#47339,i_product_name#47340] parquet
+                     +- Join Inner
+                        :- Join Inner
+                        :  :- Join Inner
+                        :  :  :- Join Inner
+                        :  :  :  :- SubqueryAlias a
+                        :  :  :  :  +- SubqueryAlias spark_catalog.tpcds.customer_address
+                        :  :  :  :     +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+                        :  :  :  +- SubqueryAlias c
+                        :  :  :     +- SubqueryAlias spark_catalog.tpcds.customer
+                        :  :  :        +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+                        :  :  +- SubqueryAlias s
+                        :  :     +- SubqueryAlias spark_catalog.tpcds.store_sales
+                        :  :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+                        :  +- SubqueryAlias d
+                        :     +- SubqueryAlias spark_catalog.tpcds.date_dim
+                        :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+                        +- SubqueryAlias i
+                           +- SubqueryAlias spark_catalog.tpcds.item
+                              +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet

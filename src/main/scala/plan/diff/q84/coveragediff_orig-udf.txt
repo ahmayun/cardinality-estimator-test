@@ -1,0 +1,14 @@
+PushPredicateThroughJoin.apply.match83
+ColumnPruning.prunedChild.else2
+InferFiltersFromConstraints.inferFilters.then49
+CollapseProject.canCollapseExpressions.case1
+PushPredicateThroughNonJoin.canPushThroughCondition.case2
+ColumnPruning.apply.case1
+CombineFilters.apply.case1
+InferFiltersFromConstraints.inferNewFilter.else2
+CollapseProject.apply.case1
+PushPredicateThroughJoin.apply.else88
+PushPredicateThroughJoin.apply.case1
+CollapseProject.collectReferences.case1
+PushPredicateThroughNonJoin.apply.case1
+CombineFilters.apply.match55

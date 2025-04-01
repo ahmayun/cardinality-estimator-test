@@ -39,7 +39,8 @@ object TestSingleQuery {
               |""".stripMargin
 
     val st = System.nanoTime()
-    spark.sql(q).show(5)
+    val df = spark.sql(q)
+    df.show(4)
     val et = System.nanoTime()
 
     println(s"Total time (s): ${(et-st) / 1e9}")

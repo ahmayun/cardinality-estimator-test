@@ -1,0 +1,16 @@
+======MUTATION SUMMARY=============
+QUERY 44
+	Transformed: ('asceding.rnk = 'descending.rnk) => equalTo0('asceding.rnk, 'descending.rnk)
+	Transformed: ('i1.i_item_sk = 'asceding.item_sk) => equalTo1('i1.i_item_sk, 'asceding.item_sk)
+	Transformed: ('i2.i_item_sk = 'descending.item_sk) => equalTo2('i2.i_item_sk, 'descending.item_sk)
+	Transformed: ('rnk < 11) => lessThan3('rnk, 11)
+	Transformed: ('avg('ss_net_profit) > (0.9 * scalar-subquery#39446 [])) => greaterThan4('avg('ss_net_profit), (0.9 * scalar-subquery#39446 []))
+	Transformed: (0.9 * scalar-subquery#39446 []) => multiply5(0.9, scalar-subquery#39446 [])
+	Transformed: ('ss_store_sk = 4) => equalTo6('ss_store_sk, 4)
+	Transformed: ('ss_store_sk = 4) => equalTo7('ss_store_sk, 4)
+	Transformed: ('rnk < 11) => lessThan8('rnk, 11)
+	Transformed: ('avg('ss_net_profit) > (0.9 * scalar-subquery#39451 [])) => greaterThan9('avg('ss_net_profit), (0.9 * scalar-subquery#39451 []))
+	Transformed: (0.9 * scalar-subquery#39451 []) => multiply10(0.9, scalar-subquery#39451 [])
+	Transformed: ('ss_store_sk = 4) => equalTo11('ss_store_sk, 4)
+	Transformed: ('ss_store_sk = 4) => equalTo12('ss_store_sk, 4)
+=======================

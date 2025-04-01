@@ -1,0 +1,6 @@
+======MUTATION SUMMARY=============
+QUERY 24a
+	Transformed: ('sum('netpaid) > scalar-subquery#24151 []) => greaterThan0('sum('netpaid), scalar-subquery#24151 [])
+	Transformed: (0.05 * 'avg('netpaid)) => multiply1(0.05, 'avg('netpaid))
+	Transformed: ('i_color = pale) => equalTo2('i_color, pale)
+=======================

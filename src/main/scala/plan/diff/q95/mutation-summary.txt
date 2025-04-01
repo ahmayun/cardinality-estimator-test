@@ -1,0 +1,11 @@
+======MUTATION SUMMARY=============
+QUERY 95
+	Transformed: (('d_date >= cast(1999-02-01 as date)) AND ('d_date <= (cast(1999-02-01 as date) + INTERVAL '60' DAY))) => between0('d_date, cast(1999-02-01 as date), (cast(1999-02-01 as date) + INTERVAL '60' DAY))
+	Transformed: (cast(1999-02-01 as date) + INTERVAL '60' DAY) => add1(cast(1999-02-01 as date), INTERVAL '60' DAY)
+	Transformed: ('ws1.ws_ship_date_sk = 'd_date_sk) => equalTo2('ws1.ws_ship_date_sk, 'd_date_sk)
+	Transformed: ('ws1.ws_ship_addr_sk = 'ca_address_sk) => equalTo3('ws1.ws_ship_addr_sk, 'ca_address_sk)
+	Transformed: ('ca_state = IL) => equalTo4('ca_state, IL)
+	Transformed: ('ws1.ws_web_site_sk = 'web_site_sk) => equalTo5('ws1.ws_web_site_sk, 'web_site_sk)
+	Transformed: ('web_company_name = pri) => equalTo6('web_company_name, pri)
+	Transformed: ('wr_order_number = 'ws_wh.ws_order_number) => equalTo7('wr_order_number, 'ws_wh.ws_order_number)
+=======================

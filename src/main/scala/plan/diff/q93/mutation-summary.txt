@@ -1,0 +1,10 @@
+======MUTATION SUMMARY=============
+QUERY 93
+	Transformed: (('ss_quantity - 'sr_return_quantity) * 'ss_sales_price) => multiply0(('ss_quantity - 'sr_return_quantity), 'ss_sales_price)
+	Transformed: ('ss_quantity - 'sr_return_quantity) => subtract1('ss_quantity, 'sr_return_quantity)
+	Transformed: ('ss_quantity * 'ss_sales_price) => multiply2('ss_quantity, 'ss_sales_price)
+	Transformed: ('sr_reason_sk = 'r_reason_sk) => equalTo3('sr_reason_sk, 'r_reason_sk)
+	Transformed: ('r_reason_desc = tpcds.reason 28) => equalTo4('r_reason_desc, tpcds.reason 28)
+	Transformed: ('sr_item_sk = 'ss_item_sk) => equalTo5('sr_item_sk, 'ss_item_sk)
+	Transformed: ('sr_ticket_number = 'ss_ticket_number) => equalTo6('sr_ticket_number, 'ss_ticket_number)
+=======================

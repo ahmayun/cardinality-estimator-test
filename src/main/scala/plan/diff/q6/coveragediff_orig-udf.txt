@@ -1,0 +1,7 @@
+InferFiltersFromConstraints.inferFilters.then49
+PushPredicateThroughNonJoin.apply.then64
+InferFiltersFromConstraints.inferNewFilter.else2
+PushPredicateThroughNonJoin.canPushThroughCondition.case1
+CombineFilters.apply.match55
+PushPredicateThroughNonJoin.apply.else67
+CombineFilters.apply.case1

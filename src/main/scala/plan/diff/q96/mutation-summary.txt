@@ -1,0 +1,10 @@
+======MUTATION SUMMARY=============
+QUERY 96
+	Transformed: ('ss_sold_time_sk = 'tpcds.time_dim.t_time_sk) => equalTo0('ss_sold_time_sk, 'tpcds.time_dim.t_time_sk)
+	Transformed: ('ss_hdemo_sk = 'tpcds.household_demographics.hd_demo_sk) => equalTo1('ss_hdemo_sk, 'tpcds.household_demographics.hd_demo_sk)
+	Transformed: ('ss_store_sk = 's_store_sk) => equalTo2('ss_store_sk, 's_store_sk)
+	Transformed: ('tpcds.time_dim.t_hour = 20) => equalTo3('tpcds.time_dim.t_hour, 20)
+	Transformed: ('tpcds.time_dim.t_minute >= 30) => greaterThanOrEqual4('tpcds.time_dim.t_minute, 30)
+	Transformed: ('tpcds.household_demographics.hd_dep_count = 7) => equalTo5('tpcds.household_demographics.hd_dep_count, 7)
+	Transformed: ('tpcds.store.s_store_name = ese) => equalTo6('tpcds.store.s_store_name, ese)
+=======================

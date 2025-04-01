@@ -1,0 +1,120 @@
+Project [h8_30_to_9#65375L, h9_to_9_30#65376L, h9_30_to_10#65377L, h10_to_10_30#65378L, h10_30_to_11#65379L, h11_to_11_30#65380L, h11_30_to_12#65381L, h12_to_12_30#65382L]
++- Join Cross
+   :- Join Cross
+   :  :- Join Cross
+   :  :  :- Join Cross
+   :  :  :  :- Join Cross
+   :  :  :  :  :- Join Cross
+   :  :  :  :  :  :- Join Cross
+   :  :  :  :  :  :  :- SubqueryAlias s1
+   :  :  :  :  :  :  :  +- Aggregate [count(1) AS h8_30_to_9#65375L]
+   :  :  :  :  :  :  :     +- Filter ((((ss_sold_time_sk#489 = t_time_sk#52125) AND (ss_hdemo_sk#493 = hd_demo_sk#4287)) AND ((ss_store_sk#495 = s_store_sk#52) AND (t_hour#52128 = 8))) AND (((t_minute#52129 >= 30) AND ((((hd_dep_count#4290 = 4) AND (hd_vehicle_count#4291 <= (4 + 2))) OR ((hd_dep_count#4290 = 2) AND (hd_vehicle_count#4291 <= (2 + 2)))) OR ((hd_dep_count#4290 = 0) AND (hd_vehicle_count#4291 <= (0 + 2))))) AND (s_store_name#57 = ese)))
+   :  :  :  :  :  :  :        +- Join Inner
+   :  :  :  :  :  :  :           :- Join Inner
+   :  :  :  :  :  :  :           :  :- Join Inner
+   :  :  :  :  :  :  :           :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :  :  :  :  :  :  :           :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+   :  :  :  :  :  :  :           :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :  :  :  :  :  :  :           :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#4287,hd_income_band_sk#4288,hd_buy_potential#4289,hd_dep_count#4290,hd_vehicle_count#4291] parquet
+   :  :  :  :  :  :  :           :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :  :  :  :  :  :  :           :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#52125,t_time_id#52126,t_time#52127,t_hour#52128,t_minute#52129,t_second#52130,t_am_pm#52131,t_shift#52132,t_sub_shift#52133,t_meal_time#52134] parquet
+   :  :  :  :  :  :  :           +- SubqueryAlias spark_catalog.tpcds.store
+   :  :  :  :  :  :  :              +- Relation spark_catalog.tpcds.store[s_store_sk#52,s_store_id#53,s_rec_start_date#54,s_rec_end_date#55,s_closed_date_sk#56,s_store_name#57,s_number_employees#58,s_floor_space#59,s_hours#60,s_manager#61,s_market_id#62,s_geography_class#63,s_market_desc#64,s_market_manager#65,s_division_id#66,s_division_name#67,s_company_id#68,s_company_name#69,s_street_number#70,s_street_name#71,s_street_type#72,s_suite_number#73,s_city#74,s_county#75,... 5 more fields] parquet
+   :  :  :  :  :  :  +- SubqueryAlias s2
+   :  :  :  :  :  :     +- Aggregate [count(1) AS h9_to_9_30#65376L]
+   :  :  :  :  :  :        +- Filter ((((ss_sold_time_sk#65391 = t_time_sk#65419) AND (ss_hdemo_sk#65395 = hd_demo_sk#65414)) AND ((ss_store_sk#65397 = s_store_sk#65429) AND (t_hour#65422 = 9))) AND (((t_minute#65423 < 30) AND ((((hd_dep_count#65417 = 4) AND (hd_vehicle_count#65418 <= (4 + 2))) OR ((hd_dep_count#65417 = 2) AND (hd_vehicle_count#65418 <= (2 + 2)))) OR ((hd_dep_count#65417 = 0) AND (hd_vehicle_count#65418 <= (0 + 2))))) AND (s_store_name#65434 = ese)))
+   :  :  :  :  :  :           +- Join Inner
+   :  :  :  :  :  :              :- Join Inner
+   :  :  :  :  :  :              :  :- Join Inner
+   :  :  :  :  :  :              :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :  :  :  :  :  :              :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65391,ss_item_sk#65392,ss_customer_sk#65393,ss_cdemo_sk#65394,ss_hdemo_sk#65395,ss_addr_sk#65396,ss_store_sk#65397,ss_promo_sk#65398,ss_ticket_number#65399L,ss_quantity#65400,ss_wholesale_cost#65401,ss_list_price#65402,ss_sales_price#65403,ss_ext_discount_amt#65404,ss_ext_sales_price#65405,ss_ext_wholesale_cost#65406,ss_ext_list_price#65407,ss_ext_tax#65408,ss_coupon_amt#65409,ss_net_paid#65410,ss_net_paid_inc_tax#65411,ss_net_profit#65412,ss_sold_date_sk#65413] parquet
+   :  :  :  :  :  :              :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :  :  :  :  :  :              :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65414,hd_income_band_sk#65415,hd_buy_potential#65416,hd_dep_count#65417,hd_vehicle_count#65418] parquet
+   :  :  :  :  :  :              :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :  :  :  :  :  :              :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65419,t_time_id#65420,t_time#65421,t_hour#65422,t_minute#65423,t_second#65424,t_am_pm#65425,t_shift#65426,t_sub_shift#65427,t_meal_time#65428] parquet
+   :  :  :  :  :  :              +- SubqueryAlias spark_catalog.tpcds.store
+   :  :  :  :  :  :                 +- Relation spark_catalog.tpcds.store[s_store_sk#65429,s_store_id#65430,s_rec_start_date#65431,s_rec_end_date#65432,s_closed_date_sk#65433,s_store_name#65434,s_number_employees#65435,s_floor_space#65436,s_hours#65437,s_manager#65438,s_market_id#65439,s_geography_class#65440,s_market_desc#65441,s_market_manager#65442,s_division_id#65443,s_division_name#65444,s_company_id#65445,s_company_name#65446,s_street_number#65447,s_street_name#65448,s_street_type#65449,s_suite_number#65450,s_city#65451,s_county#65452,... 5 more fields] parquet
+   :  :  :  :  :  +- SubqueryAlias s3
+   :  :  :  :  :     +- Aggregate [count(1) AS h9_30_to_10#65377L]
+   :  :  :  :  :        +- Filter ((((ss_sold_time_sk#65458 = t_time_sk#65486) AND (ss_hdemo_sk#65462 = hd_demo_sk#65481)) AND ((ss_store_sk#65464 = s_store_sk#65496) AND (t_hour#65489 = 9))) AND (((t_minute#65490 >= 30) AND ((((hd_dep_count#65484 = 4) AND (hd_vehicle_count#65485 <= (4 + 2))) OR ((hd_dep_count#65484 = 2) AND (hd_vehicle_count#65485 <= (2 + 2)))) OR ((hd_dep_count#65484 = 0) AND (hd_vehicle_count#65485 <= (0 + 2))))) AND (s_store_name#65501 = ese)))
+   :  :  :  :  :           +- Join Inner
+   :  :  :  :  :              :- Join Inner
+   :  :  :  :  :              :  :- Join Inner
+   :  :  :  :  :              :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :  :  :  :  :              :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65458,ss_item_sk#65459,ss_customer_sk#65460,ss_cdemo_sk#65461,ss_hdemo_sk#65462,ss_addr_sk#65463,ss_store_sk#65464,ss_promo_sk#65465,ss_ticket_number#65466L,ss_quantity#65467,ss_wholesale_cost#65468,ss_list_price#65469,ss_sales_price#65470,ss_ext_discount_amt#65471,ss_ext_sales_price#65472,ss_ext_wholesale_cost#65473,ss_ext_list_price#65474,ss_ext_tax#65475,ss_coupon_amt#65476,ss_net_paid#65477,ss_net_paid_inc_tax#65478,ss_net_profit#65479,ss_sold_date_sk#65480] parquet
+   :  :  :  :  :              :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :  :  :  :  :              :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65481,hd_income_band_sk#65482,hd_buy_potential#65483,hd_dep_count#65484,hd_vehicle_count#65485] parquet
+   :  :  :  :  :              :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :  :  :  :  :              :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65486,t_time_id#65487,t_time#65488,t_hour#65489,t_minute#65490,t_second#65491,t_am_pm#65492,t_shift#65493,t_sub_shift#65494,t_meal_time#65495] parquet
+   :  :  :  :  :              +- SubqueryAlias spark_catalog.tpcds.store
+   :  :  :  :  :                 +- Relation spark_catalog.tpcds.store[s_store_sk#65496,s_store_id#65497,s_rec_start_date#65498,s_rec_end_date#65499,s_closed_date_sk#65500,s_store_name#65501,s_number_employees#65502,s_floor_space#65503,s_hours#65504,s_manager#65505,s_market_id#65506,s_geography_class#65507,s_market_desc#65508,s_market_manager#65509,s_division_id#65510,s_division_name#65511,s_company_id#65512,s_company_name#65513,s_street_number#65514,s_street_name#65515,s_street_type#65516,s_suite_number#65517,s_city#65518,s_county#65519,... 5 more fields] parquet
+   :  :  :  :  +- SubqueryAlias s4
+   :  :  :  :     +- Aggregate [count(1) AS h10_to_10_30#65378L]
+   :  :  :  :        +- Filter ((((ss_sold_time_sk#65525 = t_time_sk#65553) AND (ss_hdemo_sk#65529 = hd_demo_sk#65548)) AND ((ss_store_sk#65531 = s_store_sk#65563) AND (t_hour#65556 = 10))) AND (((t_minute#65557 < 30) AND ((((hd_dep_count#65551 = 4) AND (hd_vehicle_count#65552 <= (4 + 2))) OR ((hd_dep_count#65551 = 2) AND (hd_vehicle_count#65552 <= (2 + 2)))) OR ((hd_dep_count#65551 = 0) AND (hd_vehicle_count#65552 <= (0 + 2))))) AND (s_store_name#65568 = ese)))
+   :  :  :  :           +- Join Inner
+   :  :  :  :              :- Join Inner
+   :  :  :  :              :  :- Join Inner
+   :  :  :  :              :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :  :  :  :              :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65525,ss_item_sk#65526,ss_customer_sk#65527,ss_cdemo_sk#65528,ss_hdemo_sk#65529,ss_addr_sk#65530,ss_store_sk#65531,ss_promo_sk#65532,ss_ticket_number#65533L,ss_quantity#65534,ss_wholesale_cost#65535,ss_list_price#65536,ss_sales_price#65537,ss_ext_discount_amt#65538,ss_ext_sales_price#65539,ss_ext_wholesale_cost#65540,ss_ext_list_price#65541,ss_ext_tax#65542,ss_coupon_amt#65543,ss_net_paid#65544,ss_net_paid_inc_tax#65545,ss_net_profit#65546,ss_sold_date_sk#65547] parquet
+   :  :  :  :              :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :  :  :  :              :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65548,hd_income_band_sk#65549,hd_buy_potential#65550,hd_dep_count#65551,hd_vehicle_count#65552] parquet
+   :  :  :  :              :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :  :  :  :              :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65553,t_time_id#65554,t_time#65555,t_hour#65556,t_minute#65557,t_second#65558,t_am_pm#65559,t_shift#65560,t_sub_shift#65561,t_meal_time#65562] parquet
+   :  :  :  :              +- SubqueryAlias spark_catalog.tpcds.store
+   :  :  :  :                 +- Relation spark_catalog.tpcds.store[s_store_sk#65563,s_store_id#65564,s_rec_start_date#65565,s_rec_end_date#65566,s_closed_date_sk#65567,s_store_name#65568,s_number_employees#65569,s_floor_space#65570,s_hours#65571,s_manager#65572,s_market_id#65573,s_geography_class#65574,s_market_desc#65575,s_market_manager#65576,s_division_id#65577,s_division_name#65578,s_company_id#65579,s_company_name#65580,s_street_number#65581,s_street_name#65582,s_street_type#65583,s_suite_number#65584,s_city#65585,s_county#65586,... 5 more fields] parquet
+   :  :  :  +- SubqueryAlias s5
+   :  :  :     +- Aggregate [count(1) AS h10_30_to_11#65379L]
+   :  :  :        +- Filter ((((ss_sold_time_sk#65592 = t_time_sk#65620) AND (ss_hdemo_sk#65596 = hd_demo_sk#65615)) AND ((ss_store_sk#65598 = s_store_sk#65630) AND (t_hour#65623 = 10))) AND (((t_minute#65624 >= 30) AND ((((hd_dep_count#65618 = 4) AND (hd_vehicle_count#65619 <= (4 + 2))) OR ((hd_dep_count#65618 = 2) AND (hd_vehicle_count#65619 <= (2 + 2)))) OR ((hd_dep_count#65618 = 0) AND (hd_vehicle_count#65619 <= (0 + 2))))) AND (s_store_name#65635 = ese)))
+   :  :  :           +- Join Inner
+   :  :  :              :- Join Inner
+   :  :  :              :  :- Join Inner
+   :  :  :              :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :  :  :              :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65592,ss_item_sk#65593,ss_customer_sk#65594,ss_cdemo_sk#65595,ss_hdemo_sk#65596,ss_addr_sk#65597,ss_store_sk#65598,ss_promo_sk#65599,ss_ticket_number#65600L,ss_quantity#65601,ss_wholesale_cost#65602,ss_list_price#65603,ss_sales_price#65604,ss_ext_discount_amt#65605,ss_ext_sales_price#65606,ss_ext_wholesale_cost#65607,ss_ext_list_price#65608,ss_ext_tax#65609,ss_coupon_amt#65610,ss_net_paid#65611,ss_net_paid_inc_tax#65612,ss_net_profit#65613,ss_sold_date_sk#65614] parquet
+   :  :  :              :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :  :  :              :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65615,hd_income_band_sk#65616,hd_buy_potential#65617,hd_dep_count#65618,hd_vehicle_count#65619] parquet
+   :  :  :              :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :  :  :              :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65620,t_time_id#65621,t_time#65622,t_hour#65623,t_minute#65624,t_second#65625,t_am_pm#65626,t_shift#65627,t_sub_shift#65628,t_meal_time#65629] parquet
+   :  :  :              +- SubqueryAlias spark_catalog.tpcds.store
+   :  :  :                 +- Relation spark_catalog.tpcds.store[s_store_sk#65630,s_store_id#65631,s_rec_start_date#65632,s_rec_end_date#65633,s_closed_date_sk#65634,s_store_name#65635,s_number_employees#65636,s_floor_space#65637,s_hours#65638,s_manager#65639,s_market_id#65640,s_geography_class#65641,s_market_desc#65642,s_market_manager#65643,s_division_id#65644,s_division_name#65645,s_company_id#65646,s_company_name#65647,s_street_number#65648,s_street_name#65649,s_street_type#65650,s_suite_number#65651,s_city#65652,s_county#65653,... 5 more fields] parquet
+   :  :  +- SubqueryAlias s6
+   :  :     +- Aggregate [count(1) AS h11_to_11_30#65380L]
+   :  :        +- Filter ((((ss_sold_time_sk#65659 = t_time_sk#65687) AND (ss_hdemo_sk#65663 = hd_demo_sk#65682)) AND ((ss_store_sk#65665 = s_store_sk#65697) AND (t_hour#65690 = 11))) AND (((t_minute#65691 < 30) AND ((((hd_dep_count#65685 = 4) AND (hd_vehicle_count#65686 <= (4 + 2))) OR ((hd_dep_count#65685 = 2) AND (hd_vehicle_count#65686 <= (2 + 2)))) OR ((hd_dep_count#65685 = 0) AND (hd_vehicle_count#65686 <= (0 + 2))))) AND (s_store_name#65702 = ese)))
+   :  :           +- Join Inner
+   :  :              :- Join Inner
+   :  :              :  :- Join Inner
+   :  :              :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :  :              :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65659,ss_item_sk#65660,ss_customer_sk#65661,ss_cdemo_sk#65662,ss_hdemo_sk#65663,ss_addr_sk#65664,ss_store_sk#65665,ss_promo_sk#65666,ss_ticket_number#65667L,ss_quantity#65668,ss_wholesale_cost#65669,ss_list_price#65670,ss_sales_price#65671,ss_ext_discount_amt#65672,ss_ext_sales_price#65673,ss_ext_wholesale_cost#65674,ss_ext_list_price#65675,ss_ext_tax#65676,ss_coupon_amt#65677,ss_net_paid#65678,ss_net_paid_inc_tax#65679,ss_net_profit#65680,ss_sold_date_sk#65681] parquet
+   :  :              :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :  :              :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65682,hd_income_band_sk#65683,hd_buy_potential#65684,hd_dep_count#65685,hd_vehicle_count#65686] parquet
+   :  :              :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :  :              :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65687,t_time_id#65688,t_time#65689,t_hour#65690,t_minute#65691,t_second#65692,t_am_pm#65693,t_shift#65694,t_sub_shift#65695,t_meal_time#65696] parquet
+   :  :              +- SubqueryAlias spark_catalog.tpcds.store
+   :  :                 +- Relation spark_catalog.tpcds.store[s_store_sk#65697,s_store_id#65698,s_rec_start_date#65699,s_rec_end_date#65700,s_closed_date_sk#65701,s_store_name#65702,s_number_employees#65703,s_floor_space#65704,s_hours#65705,s_manager#65706,s_market_id#65707,s_geography_class#65708,s_market_desc#65709,s_market_manager#65710,s_division_id#65711,s_division_name#65712,s_company_id#65713,s_company_name#65714,s_street_number#65715,s_street_name#65716,s_street_type#65717,s_suite_number#65718,s_city#65719,s_county#65720,... 5 more fields] parquet
+   :  +- SubqueryAlias s7
+   :     +- Aggregate [count(1) AS h11_30_to_12#65381L]
+   :        +- Filter ((((ss_sold_time_sk#65726 = t_time_sk#65754) AND (ss_hdemo_sk#65730 = hd_demo_sk#65749)) AND ((ss_store_sk#65732 = s_store_sk#65764) AND (t_hour#65757 = 11))) AND (((t_minute#65758 >= 30) AND ((((hd_dep_count#65752 = 4) AND (hd_vehicle_count#65753 <= (4 + 2))) OR ((hd_dep_count#65752 = 2) AND (hd_vehicle_count#65753 <= (2 + 2)))) OR ((hd_dep_count#65752 = 0) AND (hd_vehicle_count#65753 <= (0 + 2))))) AND (s_store_name#65769 = ese)))
+   :           +- Join Inner
+   :              :- Join Inner
+   :              :  :- Join Inner
+   :              :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+   :              :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65726,ss_item_sk#65727,ss_customer_sk#65728,ss_cdemo_sk#65729,ss_hdemo_sk#65730,ss_addr_sk#65731,ss_store_sk#65732,ss_promo_sk#65733,ss_ticket_number#65734L,ss_quantity#65735,ss_wholesale_cost#65736,ss_list_price#65737,ss_sales_price#65738,ss_ext_discount_amt#65739,ss_ext_sales_price#65740,ss_ext_wholesale_cost#65741,ss_ext_list_price#65742,ss_ext_tax#65743,ss_coupon_amt#65744,ss_net_paid#65745,ss_net_paid_inc_tax#65746,ss_net_profit#65747,ss_sold_date_sk#65748] parquet
+   :              :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+   :              :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65749,hd_income_band_sk#65750,hd_buy_potential#65751,hd_dep_count#65752,hd_vehicle_count#65753] parquet
+   :              :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+   :              :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65754,t_time_id#65755,t_time#65756,t_hour#65757,t_minute#65758,t_second#65759,t_am_pm#65760,t_shift#65761,t_sub_shift#65762,t_meal_time#65763] parquet
+   :              +- SubqueryAlias spark_catalog.tpcds.store
+   :                 +- Relation spark_catalog.tpcds.store[s_store_sk#65764,s_store_id#65765,s_rec_start_date#65766,s_rec_end_date#65767,s_closed_date_sk#65768,s_store_name#65769,s_number_employees#65770,s_floor_space#65771,s_hours#65772,s_manager#65773,s_market_id#65774,s_geography_class#65775,s_market_desc#65776,s_market_manager#65777,s_division_id#65778,s_division_name#65779,s_company_id#65780,s_company_name#65781,s_street_number#65782,s_street_name#65783,s_street_type#65784,s_suite_number#65785,s_city#65786,s_county#65787,... 5 more fields] parquet
+   +- SubqueryAlias s8
+      +- Aggregate [count(1) AS h12_to_12_30#65382L]
+         +- Filter ((((ss_sold_time_sk#65793 = t_time_sk#65821) AND (ss_hdemo_sk#65797 = hd_demo_sk#65816)) AND ((ss_store_sk#65799 = s_store_sk#65831) AND (t_hour#65824 = 12))) AND (((t_minute#65825 < 30) AND ((((hd_dep_count#65819 = 4) AND (hd_vehicle_count#65820 <= (4 + 2))) OR ((hd_dep_count#65819 = 2) AND (hd_vehicle_count#65820 <= (2 + 2)))) OR ((hd_dep_count#65819 = 0) AND (hd_vehicle_count#65820 <= (0 + 2))))) AND (s_store_name#65836 = ese)))
+            +- Join Inner
+               :- Join Inner
+               :  :- Join Inner
+               :  :  :- SubqueryAlias spark_catalog.tpcds.store_sales
+               :  :  :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#65793,ss_item_sk#65794,ss_customer_sk#65795,ss_cdemo_sk#65796,ss_hdemo_sk#65797,ss_addr_sk#65798,ss_store_sk#65799,ss_promo_sk#65800,ss_ticket_number#65801L,ss_quantity#65802,ss_wholesale_cost#65803,ss_list_price#65804,ss_sales_price#65805,ss_ext_discount_amt#65806,ss_ext_sales_price#65807,ss_ext_wholesale_cost#65808,ss_ext_list_price#65809,ss_ext_tax#65810,ss_coupon_amt#65811,ss_net_paid#65812,ss_net_paid_inc_tax#65813,ss_net_profit#65814,ss_sold_date_sk#65815] parquet
+               :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+               :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#65816,hd_income_band_sk#65817,hd_buy_potential#65818,hd_dep_count#65819,hd_vehicle_count#65820] parquet
+               :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+               :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#65821,t_time_id#65822,t_time#65823,t_hour#65824,t_minute#65825,t_second#65826,t_am_pm#65827,t_shift#65828,t_sub_shift#65829,t_meal_time#65830] parquet
+               +- SubqueryAlias spark_catalog.tpcds.store
+                  +- Relation spark_catalog.tpcds.store[s_store_sk#65831,s_store_id#65832,s_rec_start_date#65833,s_rec_end_date#65834,s_closed_date_sk#65835,s_store_name#65836,s_number_employees#65837,s_floor_space#65838,s_hours#65839,s_manager#65840,s_market_id#65841,s_geography_class#65842,s_market_desc#65843,s_market_manager#65844,s_division_id#65845,s_division_name#65846,s_company_id#65847,s_company_name#65848,s_street_number#65849,s_street_name#65850,s_street_type#65851,s_suite_number#65852,s_city#65853,s_county#65854,... 5 more fields] parquet

@@ -1,0 +1,4 @@
+======MUTATION SUMMARY=============
+QUERY 54
+	Transformed: ('segment * 50) => multiply0('segment, 50)
+=======================

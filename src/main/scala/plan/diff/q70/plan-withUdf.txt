@@ -1,0 +1,34 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [lochierarchy#53877 DESC NULLS LAST, CASE WHEN equalTo0(lochierarchy#53877, 0) THEN s_state#54109 END ASC NULLS FIRST, rank_within_parent#53878 ASC NULLS FIRST], true
+      +- Project [total_sum#53876, s_state#54109, s_county#54110, lochierarchy#53877, rank_within_parent#53878]
+         +- Window [rank(_w0#54122) windowspecdefinition(_w1#54126, _w2#54127, _w0#54122 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rank_within_parent#53878], [knownfloatingpointnormalized(normalizenanandzero(_w1#54126)), _w2#54127], [_w0#54122 DESC NULLS LAST]
+            +- Aggregate [s_state#54109, s_county#54110, spark_grouping_id#54108L], [MakeDecimal(sum(UnscaledValue(ss_net_profit#510)),17,2) AS total_sum#53876, s_state#54109, s_county#54110, add1(cast((shiftright(spark_grouping_id#54108L, 1) & 1) as tinyint), cast((shiftright(spark_grouping_id#54108L, 0) & 1) as tinyint)) AS lochierarchy#53877, MakeDecimal(sum(UnscaledValue(ss_net_profit#510)),17,2) AS _w0#54122, add2(cast((shiftright(spark_grouping_id#54108L, 1) & 1) as tinyint), cast((shiftright(spark_grouping_id#54108L, 0) & 1) as tinyint)) AS _w1#54126, CASE WHEN equalTo3(cast((shiftright(spark_grouping_id#54108L, 0) & 1) as tinyint), 0) THEN s_state#54109 END AS _w2#54127]
+               +- Expand [[ss_net_profit#510, s_state#76, s_county#75, 0], [ss_net_profit#510, s_state#76, null, 1], [ss_net_profit#510, null, null, 3]], [ss_net_profit#510, s_state#54109, s_county#54110, spark_grouping_id#54108L]
+                  +- Project [ss_net_profit#510, s_state#76, s_county#75]
+                     +- Join Inner, equalTo7(s_store_sk#52, ss_store_sk#495)
+                        :- Project [ss_store_sk#495, ss_net_profit#510]
+                        :  +- Join Inner, equalTo6(d_date_sk#24, ss_sold_date_sk#511)
+                        :     :- Project [ss_store_sk#495, ss_net_profit#510, ss_sold_date_sk#511]
+                        :     :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+                        :     +- Project [d_date_sk#24]
+                        :        +- Filter between4(d_month_seq#27, 1200, add5(1200, 11))
+                        :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+                        +- Join LeftSemi, (s_state#76 = s_state#54068)
+                           :- Project [s_store_sk#52, s_county#75, s_state#76]
+                           :  +- Relation spark_catalog.tpcds.store[s_store_sk#52,s_store_id#53,s_rec_start_date#54,s_rec_end_date#55,s_closed_date_sk#56,s_store_name#57,s_number_employees#58,s_floor_space#59,s_hours#60,s_manager#61,s_market_id#62,s_geography_class#63,s_market_desc#64,s_market_manager#65,s_division_id#66,s_division_name#67,s_company_id#68,s_company_name#69,s_street_number#70,s_street_name#71,s_street_type#72,s_suite_number#73,s_city#74,s_county#75,... 5 more fields] parquet
+                           +- Project [s_state#54068]
+                              +- Filter lessThanOrEqual8(ranking#53880, 5)
+                                 +- Window [rank(_w0#54014) windowspecdefinition(s_state#54068, _w0#54014 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS ranking#53880], [s_state#54068], [_w0#54014 DESC NULLS LAST]
+                                    +- Aggregate [s_state#54068], [s_state#54068, MakeDecimal(sum(UnscaledValue(ss_net_profit#54042)),17,2) AS _w0#54014, s_state#54068]
+                                       +- Project [ss_net_profit#54042, s_state#54068]
+                                          +- Join Inner, equalTo11(d_date_sk#54073, ss_sold_date_sk#54043)
+                                             :- Project [ss_net_profit#54042, ss_sold_date_sk#54043, s_state#54068]
+                                             :  +- Join Inner, equalTo12(s_store_sk#54044, ss_store_sk#54027)
+                                             :     :- Project [ss_store_sk#54027, ss_net_profit#54042, ss_sold_date_sk#54043]
+                                             :     :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#54021,ss_item_sk#54022,ss_customer_sk#54023,ss_cdemo_sk#54024,ss_hdemo_sk#54025,ss_addr_sk#54026,ss_store_sk#54027,ss_promo_sk#54028,ss_ticket_number#54029L,ss_quantity#54030,ss_wholesale_cost#54031,ss_list_price#54032,ss_sales_price#54033,ss_ext_discount_amt#54034,ss_ext_sales_price#54035,ss_ext_wholesale_cost#54036,ss_ext_list_price#54037,ss_ext_tax#54038,ss_coupon_amt#54039,ss_net_paid#54040,ss_net_paid_inc_tax#54041,ss_net_profit#54042,ss_sold_date_sk#54043] parquet
+                                             :     +- Project [s_store_sk#54044, s_state#54068]
+                                             :        +- Relation spark_catalog.tpcds.store[s_store_sk#54044,s_store_id#54045,s_rec_start_date#54046,s_rec_end_date#54047,s_closed_date_sk#54048,s_store_name#54049,s_number_employees#54050,s_floor_space#54051,s_hours#54052,s_manager#54053,s_market_id#54054,s_geography_class#54055,s_market_desc#54056,s_market_manager#54057,s_division_id#54058,s_division_name#54059,s_company_id#54060,s_company_name#54061,s_street_number#54062,s_street_name#54063,s_street_type#54064,s_suite_number#54065,s_city#54066,s_county#54067,... 5 more fields] parquet
+                                             +- Project [d_date_sk#54073]
+                                                +- Filter between9(d_month_seq#54076, 1200, add10(1200, 11))
+                                                   +- Relation spark_catalog.tpcds.date_dim[d_date_sk#54073,d_date_id#54074,d_date#54075,d_month_seq#54076,d_week_seq#54077,d_quarter_seq#54078,d_year#54079,d_dow#54080,d_moy#54081,d_dom#54082,d_qoy#54083,d_fy_year#54084,d_fy_quarter_seq#54085,d_fy_week_seq#54086,d_day_name#54087,d_quarter_name#54088,d_holiday#54089,d_weekend#54090,d_following_holiday#54091,d_first_dom#54092,d_last_dom#54093,d_same_day_ly#54094,d_same_day_lq#54095,d_current_day#54096,... 4 more fields] parquet

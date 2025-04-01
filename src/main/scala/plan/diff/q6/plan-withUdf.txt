@@ -1,0 +1,39 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [cnt#47404L ASC NULLS FIRST], true
+      +- Filter greaterThanOrEqual0(cnt#47404L, 10)
+         +- Aggregate [ca_state#475], [ca_state#475 AS state#47403, count(1) AS cnt#47404L]
+            +- Project [ca_state#475]
+               +- Join Inner, equalTo4(ss_item_sk#490, i_item_sk#4214)
+                  :- Project [ca_state#475, ss_item_sk#490]
+                  :  +- Join Inner, equalTo3(ss_sold_date_sk#511, d_date_sk#24)
+                  :     :- Project [ca_state#475, ss_item_sk#490, ss_sold_date_sk#511]
+                  :     :  +- Join Inner, equalTo2(c_customer_sk#81, ss_customer_sk#491)
+                  :     :     :- Project [ca_state#475, c_customer_sk#81]
+                  :     :     :  +- Join Inner, equalTo1(ca_address_sk#467, c_current_addr_sk#85)
+                  :     :     :     :- Project [ca_address_sk#467, ca_state#475]
+                  :     :     :     :  +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+                  :     :     :     +- Project [c_customer_sk#81, c_current_addr_sk#85]
+                  :     :     :        +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+                  :     :     +- Project [ss_item_sk#490, ss_customer_sk#491, ss_sold_date_sk#511]
+                  :     :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+                  :     +- Project [d_date_sk#24]
+                  :        +- Filter equalTo5(d_month_seq#27, scalar-subquery#47405 [])
+                  :           :  +- Aggregate [d_month_seq#47468], [d_month_seq#47468]
+                  :           :     +- Project [d_month_seq#47468]
+                  :           :        +- Filter (equalTo8(d_year#47471, 2001) AND equalTo9(d_moy#47473, 1))
+                  :           :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#47465,d_date_id#47466,d_date#47467,d_month_seq#47468,d_week_seq#47469,d_quarter_seq#47470,d_year#47471,d_dow#47472,d_moy#47473,d_dom#47474,d_qoy#47475,d_fy_year#47476,d_fy_quarter_seq#47477,d_fy_week_seq#47478,d_day_name#47479,d_quarter_name#47480,d_holiday#47481,d_weekend#47482,d_following_holiday#47483,d_first_dom#47484,d_last_dom#47485,d_same_day_ly#47486,d_same_day_lq#47487,d_current_day#47488,... 4 more fields] parquet
+                  :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+                  +- Project [i_item_sk#4214]
+                     +- Filter greaterThan6(i_current_price#4219, multiply7(1.2, avg(i_current_price)#47464))
+                        +- Join LeftOuter, (i_category#47515 <=> i_category#4226)
+                           :- Project [i_item_sk#4214, i_current_price#4219, i_category#4226]
+                           :  +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+                           +- Aggregate [i_category#47515], [cast((avg(UnscaledValue(i_current_price#47498)) / 100.0) as decimal(11,6)) AS avg(i_current_price)#47464, i_category#47515]
+                              +- Project [i_category#47515, i_current_price#47498]
+                                 +- Join Inner, equalTo10(i_category#47505, i_category#47515)
+                                    :- Aggregate [i_category#4226], [i_category#4226 AS i_category#47515]
+                                    :  +- Project [i_category#4226]
+                                    :     +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+                                    +- Project [i_current_price#47498, i_category#47505]
+                                       +- Relation spark_catalog.tpcds.item[i_item_sk#47493,i_item_id#47494,i_rec_start_date#47495,i_rec_end_date#47496,i_item_desc#47497,i_current_price#47498,i_wholesale_cost#47499,i_brand_id#47500,i_brand#47501,i_class_id#47502,i_class#47503,i_category_id#47504,i_category#47505,i_manufact_id#47506,i_manufact#47507,i_size#47508,i_formulation#47509,i_color#47510,i_units#47511,i_container#47512,i_manager_id#47513,i_product_name#47514] parquet

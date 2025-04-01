@@ -1,0 +1,8 @@
+======MUTATION SUMMARY=============
+QUERY 39a
+	Transformed: ('inv1.i_item_sk = 'inv2.i_item_sk) => equalTo0('inv1.i_item_sk, 'inv2.i_item_sk)
+	Transformed: ('inv1.w_warehouse_sk = 'inv2.w_warehouse_sk) => equalTo1('inv1.w_warehouse_sk, 'inv2.w_warehouse_sk)
+	Transformed: ('inv1.d_moy = 1) => equalTo2('inv1.d_moy, 1)
+	Transformed: ('inv2.d_moy = (1 + 1)) => equalTo3('inv2.d_moy, (1 + 1))
+	Transformed: (1 + 1) => add4(1, 1)
+=======================

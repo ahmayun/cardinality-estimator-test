@@ -1,0 +1,20 @@
+======MUTATION SUMMARY=============
+QUERY 29
+	Transformed: ('d1.d_moy = 9) => equalTo0('d1.d_moy, 9)
+	Transformed: ('d1.d_year = 1999) => equalTo1('d1.d_year, 1999)
+	Transformed: ('d1.d_date_sk = 'ss_sold_date_sk) => equalTo2('d1.d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('i_item_sk = 'ss_item_sk) => equalTo3('i_item_sk, 'ss_item_sk)
+	Transformed: ('s_store_sk = 'ss_store_sk) => equalTo4('s_store_sk, 'ss_store_sk)
+	Transformed: ('ss_customer_sk = 'sr_customer_sk) => equalTo5('ss_customer_sk, 'sr_customer_sk)
+	Transformed: ('ss_item_sk = 'sr_item_sk) => equalTo6('ss_item_sk, 'sr_item_sk)
+	Transformed: ('ss_ticket_number = 'sr_ticket_number) => equalTo7('ss_ticket_number, 'sr_ticket_number)
+	Transformed: ('sr_returned_date_sk = 'd2.d_date_sk) => equalTo8('sr_returned_date_sk, 'd2.d_date_sk)
+	Transformed: (('d2.d_moy >= 9) AND ('d2.d_moy <= (9 + 3))) => between9('d2.d_moy, 9, (9 + 3))
+	Transformed: (9 + 3) => add10(9, 3)
+	Transformed: ('d2.d_year = 1999) => equalTo11('d2.d_year, 1999)
+	Transformed: ('sr_customer_sk = 'cs_bill_customer_sk) => equalTo12('sr_customer_sk, 'cs_bill_customer_sk)
+	Transformed: ('sr_item_sk = 'cs_item_sk) => equalTo13('sr_item_sk, 'cs_item_sk)
+	Transformed: ('cs_sold_date_sk = 'd3.d_date_sk) => equalTo14('cs_sold_date_sk, 'd3.d_date_sk)
+	Transformed: (1999 + 1) => add15(1999, 1)
+	Transformed: (1999 + 2) => add16(1999, 2)
+=======================

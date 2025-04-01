@@ -1,0 +1,16 @@
+======MUTATION SUMMARY=============
+QUERY 89
+	Transformed: ('sum_sales - 'avg_monthly_sales) => subtract0('sum_sales, 'avg_monthly_sales)
+	Transformed: (CASE WHEN NOT ('avg_monthly_sales = 0) THEN ('abs(('sum_sales - 'avg_monthly_sales)) / 'avg_monthly_sales) ELSE null END > 0.1) => greaterThan1(CASE WHEN NOT ('avg_monthly_sales = 0) THEN ('abs(('sum_sales - 'avg_monthly_sales)) / 'avg_monthly_sales) ELSE null END, 0.1)
+	Transformed: ('avg_monthly_sales = 0) => equalTo2('avg_monthly_sales, 0)
+	Transformed: ('abs(('sum_sales - 'avg_monthly_sales)) / 'avg_monthly_sales) => divide3('abs(('sum_sales - 'avg_monthly_sales)), 'avg_monthly_sales)
+	Transformed: ('sum_sales - 'avg_monthly_sales) => subtract4('sum_sales, 'avg_monthly_sales)
+	Transformed: ('ss_item_sk = 'i_item_sk) => equalTo5('ss_item_sk, 'i_item_sk)
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo6('ss_sold_date_sk, 'd_date_sk)
+	Transformed: ('ss_store_sk = 's_store_sk) => equalTo7('ss_store_sk, 's_store_sk)
+	Transformed: 'd_year IN (1999) => inArray8('d_year, [1999])
+	Transformed: 'i_category IN (Books,Electronics,Sports) => inArray9('i_category, [Books,Electronics,Sports])
+	Transformed: 'i_class IN (computers,stereo,football) => inArray10('i_class, [computers,stereo,football])
+	Transformed: 'i_category IN (Men,Jewelry,Women) => inArray11('i_category, [Men,Jewelry,Women])
+	Transformed: 'i_class IN (shirts,birdal,dresses) => inArray12('i_class, [shirts,birdal,dresses])
+=======================

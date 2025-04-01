@@ -1,0 +1,19 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [substr(w_warehouse_name, 1, 20)#48958 ASC NULLS FIRST, sm_type#48949 ASC NULLS FIRST, web_name#41446 ASC NULLS FIRST], true
+      +- Aggregate [substr(w_warehouse_name#19728, 1, 20), sm_type#48949, web_name#41446], [substr(w_warehouse_name#19728, 1, 20) AS substr(w_warehouse_name, 1, 20)#48958, sm_type#48949, web_name#41446, sum(CASE WHEN ((ws_ship_date_sk#514 - ws_sold_date_sk#546) <= 30) THEN 1 ELSE 0 END) AS 30 days#48942L, sum(CASE WHEN (((ws_ship_date_sk#514 - ws_sold_date_sk#546) > 30) AND ((ws_ship_date_sk#514 - ws_sold_date_sk#546) <= 60)) THEN 1 ELSE 0 END) AS 31-60 days#48943L, sum(CASE WHEN (((ws_ship_date_sk#514 - ws_sold_date_sk#546) > 60) AND ((ws_ship_date_sk#514 - ws_sold_date_sk#546) <= 90)) THEN 1 ELSE 0 END) AS 61-90 days#48944L, sum(CASE WHEN (((ws_ship_date_sk#514 - ws_sold_date_sk#546) > 90) AND ((ws_ship_date_sk#514 - ws_sold_date_sk#546) <= 120)) THEN 1 ELSE 0 END) AS 91-120 days#48945L, sum(CASE WHEN ((ws_ship_date_sk#514 - ws_sold_date_sk#546) > 120) THEN 1 ELSE 0 END) AS >120 days#48946L]
+         +- Filter (((((d_month_seq#27 >= 1200) AND (d_month_seq#27 <= (1200 + 11))) AND (ws_ship_date_sk#514 = d_date_sk#24)) AND (ws_warehouse_sk#527 = w_warehouse_sk#19726)) AND ((ws_ship_mode_sk#526 = sm_ship_mode_sk#48947) AND (ws_web_site_sk#525 = web_site_sk#41442)))
+            +- Join Inner
+               :- Join Inner
+               :  :- Join Inner
+               :  :  :- Join Inner
+               :  :  :  :- SubqueryAlias spark_catalog.tpcds.web_sales
+               :  :  :  :  +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+               :  :  :  +- SubqueryAlias spark_catalog.tpcds.warehouse
+               :  :  :     +- Relation spark_catalog.tpcds.warehouse[w_warehouse_sk#19726,w_warehouse_id#19727,w_warehouse_name#19728,w_warehouse_sq_ft#19729,w_street_number#19730,w_street_name#19731,w_street_type#19732,w_suite_number#19733,w_city#19734,w_county#19735,w_state#19736,w_zip#19737,w_country#19738,w_gmt_offset#19739] parquet
+               :  :  +- SubqueryAlias spark_catalog.tpcds.ship_mode
+               :  :     +- Relation spark_catalog.tpcds.ship_mode[sm_ship_mode_sk#48947,sm_ship_mode_id#48948,sm_type#48949,sm_code#48950,sm_carrier#48951,sm_contract#48952] parquet
+               :  +- SubqueryAlias spark_catalog.tpcds.web_site
+               :     +- Relation spark_catalog.tpcds.web_site[web_site_sk#41442,web_site_id#41443,web_rec_start_date#41444,web_rec_end_date#41445,web_name#41446,web_open_date_sk#41447,web_close_date_sk#41448,web_class#41449,web_manager#41450,web_mkt_id#41451,web_mkt_class#41452,web_mkt_desc#41453,web_market_manager#41454,web_company_id#41455,web_company_name#41456,web_street_number#41457,web_street_name#41458,web_street_type#41459,web_suite_number#41460,web_city#41461,web_county#41462,web_state#41463,web_zip#41464,web_country#41465,... 2 more fields] parquet
+               +- SubqueryAlias spark_catalog.tpcds.date_dim
+                  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet

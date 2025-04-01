@@ -1,0 +1,18 @@
+======MUTATION SUMMARY=============
+QUERY 90
+	Transformed: (cast('amc as decimal(15,4)) / cast('pmc as decimal(15,4))) => divide0(cast('amc as decimal(15,4)), cast('pmc as decimal(15,4)))
+	Transformed: ('ws_sold_time_sk = 'tpcds.time_dim.t_time_sk) => equalTo1('ws_sold_time_sk, 'tpcds.time_dim.t_time_sk)
+	Transformed: ('ws_ship_hdemo_sk = 'tpcds.household_demographics.hd_demo_sk) => equalTo2('ws_ship_hdemo_sk, 'tpcds.household_demographics.hd_demo_sk)
+	Transformed: ('ws_web_page_sk = 'tpcds.web_page.wp_web_page_sk) => equalTo3('ws_web_page_sk, 'tpcds.web_page.wp_web_page_sk)
+	Transformed: (('tpcds.time_dim.t_hour >= 8) AND ('tpcds.time_dim.t_hour <= (8 + 1))) => between4('tpcds.time_dim.t_hour, 8, (8 + 1))
+	Transformed: (8 + 1) => add5(8, 1)
+	Transformed: ('tpcds.household_demographics.hd_dep_count = 6) => equalTo6('tpcds.household_demographics.hd_dep_count, 6)
+	Transformed: (('tpcds.web_page.wp_char_count >= 5000) AND ('tpcds.web_page.wp_char_count <= 5200)) => between7('tpcds.web_page.wp_char_count, 5000, 5200)
+	Transformed: ('ws_sold_time_sk = 'tpcds.time_dim.t_time_sk) => equalTo8('ws_sold_time_sk, 'tpcds.time_dim.t_time_sk)
+	Transformed: ('ws_ship_hdemo_sk = 'tpcds.household_demographics.hd_demo_sk) => equalTo9('ws_ship_hdemo_sk, 'tpcds.household_demographics.hd_demo_sk)
+	Transformed: ('ws_web_page_sk = 'tpcds.web_page.wp_web_page_sk) => equalTo10('ws_web_page_sk, 'tpcds.web_page.wp_web_page_sk)
+	Transformed: (('tpcds.time_dim.t_hour >= 19) AND ('tpcds.time_dim.t_hour <= (19 + 1))) => between11('tpcds.time_dim.t_hour, 19, (19 + 1))
+	Transformed: (19 + 1) => add12(19, 1)
+	Transformed: ('tpcds.household_demographics.hd_dep_count = 6) => equalTo13('tpcds.household_demographics.hd_dep_count, 6)
+	Transformed: (('tpcds.web_page.wp_char_count >= 5000) AND ('tpcds.web_page.wp_char_count <= 5200)) => between14('tpcds.web_page.wp_char_count, 5000, 5200)
+=======================

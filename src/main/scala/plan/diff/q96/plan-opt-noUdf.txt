@@ -1,0 +1,19 @@
+Aggregate [count(1) AS count(1)#70601L]
++- Project
+   +- Join Inner, (ss_store_sk#495 = s_store_sk#52)
+      :- Project [ss_store_sk#495]
+      :  +- Join Inner, (ss_sold_time_sk#489 = t_time_sk#52125)
+      :     :- Project [ss_sold_time_sk#489, ss_store_sk#495]
+      :     :  +- Join Inner, (ss_hdemo_sk#493 = hd_demo_sk#4287)
+      :     :     :- Project [ss_sold_time_sk#489, ss_hdemo_sk#493, ss_store_sk#495]
+      :     :     :  +- Filter (isnotnull(ss_hdemo_sk#493) AND (isnotnull(ss_sold_time_sk#489) AND isnotnull(ss_store_sk#495)))
+      :     :     :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+      :     :     +- Project [hd_demo_sk#4287]
+      :     :        +- Filter ((isnotnull(hd_dep_count#4290) AND (hd_dep_count#4290 = 7)) AND isnotnull(hd_demo_sk#4287))
+      :     :           +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#4287,hd_income_band_sk#4288,hd_buy_potential#4289,hd_dep_count#4290,hd_vehicle_count#4291] parquet
+      :     +- Project [t_time_sk#52125]
+      :        +- Filter (((isnotnull(t_hour#52128) AND isnotnull(t_minute#52129)) AND ((t_hour#52128 = 20) AND (t_minute#52129 >= 30))) AND isnotnull(t_time_sk#52125))
+      :           +- Relation spark_catalog.tpcds.time_dim[t_time_sk#52125,t_time_id#52126,t_time#52127,t_hour#52128,t_minute#52129,t_second#52130,t_am_pm#52131,t_shift#52132,t_sub_shift#52133,t_meal_time#52134] parquet
+      +- Project [s_store_sk#52]
+         +- Filter ((isnotnull(s_store_name#57) AND (s_store_name#57 = ese)) AND isnotnull(s_store_sk#52))
+            +- Relation spark_catalog.tpcds.store[s_store_sk#52,s_store_id#53,s_rec_start_date#54,s_rec_end_date#55,s_closed_date_sk#56,s_store_name#57,s_number_employees#58,s_floor_space#59,s_hours#60,s_manager#61,s_market_id#62,s_geography_class#63,s_market_desc#64,s_market_manager#65,s_division_id#66,s_division_name#67,s_company_id#68,s_company_name#69,s_street_number#70,s_street_name#71,s_street_type#72,s_suite_number#73,s_city#74,s_county#75,... 5 more fields] parquet

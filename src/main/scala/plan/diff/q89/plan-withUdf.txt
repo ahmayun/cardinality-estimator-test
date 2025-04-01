@@ -1,0 +1,23 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [subtract0(sum_sales#67472, avg_monthly_sales#67473) ASC NULLS FIRST, s_store_name#57 ASC NULLS FIRST], true
+      +- Project [i_category#4226, i_class#4224, i_brand#4222, s_store_name#57, s_company_name#69, d_moy#32, sum_sales#67472, avg_monthly_sales#67473]
+         +- Filter greaterThan1(CASE WHEN NOT equalTo2(avg_monthly_sales#67473, 0) THEN divide3(abs(subtract4(sum_sales#67472, avg_monthly_sales#67473)), avg_monthly_sales#67473) END, 0.1)
+            +- Window [avg(_w0#67489) windowspecdefinition(i_category#4226, i_brand#4222, s_store_name#57, s_company_name#69, specifiedwindowframe(RowFrame, unboundedpreceding$(), unboundedfollowing$())) AS avg_monthly_sales#67473], [i_category#4226, i_brand#4222, s_store_name#57, s_company_name#69]
+               +- Aggregate [i_category#4226, i_class#4224, i_brand#4222, s_store_name#57, s_company_name#69, d_moy#32], [i_category#4226, i_class#4224, i_brand#4222, s_store_name#57, s_company_name#69, d_moy#32, MakeDecimal(sum(UnscaledValue(ss_sales_price#501)),17,2) AS sum_sales#67472, MakeDecimal(sum(UnscaledValue(ss_sales_price#501)),17,2) AS _w0#67489]
+                  +- Project [i_brand#4222, i_class#4224, i_category#4226, ss_sales_price#501, d_moy#32, s_store_name#57, s_company_name#69]
+                     +- Join Inner, equalTo7(ss_store_sk#495, s_store_sk#52)
+                        :- Project [i_brand#4222, i_class#4224, i_category#4226, ss_store_sk#495, ss_sales_price#501, d_moy#32]
+                        :  +- Join Inner, equalTo6(ss_sold_date_sk#511, d_date_sk#24)
+                        :     :- Project [i_brand#4222, i_class#4224, i_category#4226, ss_store_sk#495, ss_sales_price#501, ss_sold_date_sk#511]
+                        :     :  +- Join Inner, equalTo5(ss_item_sk#490, i_item_sk#4214)
+                        :     :     :- Project [i_item_sk#4214, i_brand#4222, i_class#4224, i_category#4226]
+                        :     :     :  +- Filter ((inArray9(i_category#4226, [Books,Electronics,Sports]) AND inArray10(i_class#4224, [computers,stereo,football])) OR (inArray11(i_category#4226, [Men,Jewelry,Women]) AND inArray12(i_class#4224, [shirts,birdal,dresses])))
+                        :     :     :     +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+                        :     :     +- Project [ss_item_sk#490, ss_store_sk#495, ss_sales_price#501, ss_sold_date_sk#511]
+                        :     :        +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+                        :     +- Project [d_date_sk#24, d_moy#32]
+                        :        +- Filter inArray8(d_year#30, [1999])
+                        :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+                        +- Project [s_store_sk#52, s_store_name#57, s_company_name#69]
+                           +- Relation spark_catalog.tpcds.store[s_store_sk#52,s_store_id#53,s_rec_start_date#54,s_rec_end_date#55,s_closed_date_sk#56,s_store_name#57,s_number_employees#58,s_floor_space#59,s_hours#60,s_manager#61,s_market_id#62,s_geography_class#63,s_market_desc#64,s_market_manager#65,s_division_id#66,s_division_name#67,s_company_id#68,s_company_name#69,s_street_number#70,s_street_name#71,s_street_type#72,s_suite_number#73,s_city#74,s_county#75,... 5 more fields] parquet

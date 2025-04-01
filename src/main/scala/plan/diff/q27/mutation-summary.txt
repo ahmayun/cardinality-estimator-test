@@ -1,0 +1,12 @@
+======MUTATION SUMMARY=============
+QUERY 27
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo0('ss_sold_date_sk, 'd_date_sk)
+	Transformed: ('ss_item_sk = 'i_item_sk) => equalTo1('ss_item_sk, 'i_item_sk)
+	Transformed: ('ss_store_sk = 's_store_sk) => equalTo2('ss_store_sk, 's_store_sk)
+	Transformed: ('ss_cdemo_sk = 'cd_demo_sk) => equalTo3('ss_cdemo_sk, 'cd_demo_sk)
+	Transformed: ('cd_gender = M) => equalTo4('cd_gender, M)
+	Transformed: ('cd_marital_status = S) => equalTo5('cd_marital_status, S)
+	Transformed: ('cd_education_status = College) => equalTo6('cd_education_status, College)
+	Transformed: ('d_year = 2002) => equalTo7('d_year, 2002)
+	Transformed: 's_state IN (TN,TN,TN,TN,TN,TN) => inArray8('s_state, [TN,TN,TN,TN,TN,TN])
+=======================

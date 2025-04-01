@@ -1,0 +1,63 @@
+WithCTE
+:- CTERelationDef 88, false
+:  +- SubqueryAlias year_total
+:     +- Union false, false
+:        :- Union false, false
+:        :  :- Aggregate [c_customer_id#82, c_first_name#89, c_last_name#90, c_preferred_cust_flag#91, c_birth_country#95, c_login#96, c_email_address#97, d_year#30], [c_customer_id#82 AS customer_id#30874, c_first_name#89 AS customer_first_name#30875, c_last_name#90 AS customer_last_name#30876, c_preferred_cust_flag#91 AS customer_preferred_cust_flag#30877, c_birth_country#95 AS customer_birth_country#30878, c_login#96 AS customer_login#30879, c_email_address#97 AS customer_email_address#30880, d_year#30 AS dyear#30881, sum(((((ss_ext_list_price#505 - ss_ext_wholesale_cost#504) - ss_ext_discount_amt#502) + ss_ext_sales_price#503) / cast(2 as decimal(1,0)))) AS year_total#30882, s AS sale_type#30883]
+:        :  :  +- Filter ((c_customer_sk#81 = ss_customer_sk#491) AND (ss_sold_date_sk#511 = d_date_sk#24))
+:        :  :     +- Join Inner
+:        :  :        :- Join Inner
+:        :  :        :  :- SubqueryAlias spark_catalog.tpcds.customer
+:        :  :        :  :  +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+:        :  :        :  +- SubqueryAlias spark_catalog.tpcds.store_sales
+:        :  :        :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+:        :  :        +- SubqueryAlias spark_catalog.tpcds.date_dim
+:        :  :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+:        :  +- Aggregate [c_customer_id#30905, c_first_name#30912, c_last_name#30913, c_preferred_cust_flag#30914, c_birth_country#30918, c_login#30919, c_email_address#30920, d_year#30928], [c_customer_id#30905 AS customer_id#30884, c_first_name#30912 AS customer_first_name#30885, c_last_name#30913 AS customer_last_name#30886, c_preferred_cust_flag#30914 AS customer_preferred_cust_flag#30887, c_birth_country#30918 AS customer_birth_country#30888, c_login#30919 AS customer_login#30889, c_email_address#30920 AS customer_email_address#30890, d_year#30928 AS dyear#30891, sum(((((cs_ext_list_price#572 - cs_ext_wholesale_cost#571) - cs_ext_discount_amt#569) + cs_ext_sales_price#570) / cast(2 as decimal(1,0)))) AS year_total#30892, c AS sale_type#30893]
+:        :     +- Filter ((c_customer_sk#30904 = cs_bill_customer_sk#550) AND (cs_sold_date_sk#581 = d_date_sk#30922))
+:        :        +- Join Inner
+:        :           :- Join Inner
+:        :           :  :- SubqueryAlias spark_catalog.tpcds.customer
+:        :           :  :  +- Relation spark_catalog.tpcds.customer[c_customer_sk#30904,c_customer_id#30905,c_current_cdemo_sk#30906,c_current_hdemo_sk#30907,c_current_addr_sk#30908,c_first_shipto_date_sk#30909,c_first_sales_date_sk#30910,c_salutation#30911,c_first_name#30912,c_last_name#30913,c_preferred_cust_flag#30914,c_birth_day#30915,c_birth_month#30916,c_birth_year#30917,c_birth_country#30918,c_login#30919,c_email_address#30920,c_last_review_date#30921] parquet
+:        :           :  +- SubqueryAlias spark_catalog.tpcds.catalog_sales
+:        :           :     +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+:        :           +- SubqueryAlias spark_catalog.tpcds.date_dim
+:        :              +- Relation spark_catalog.tpcds.date_dim[d_date_sk#30922,d_date_id#30923,d_date#30924,d_month_seq#30925,d_week_seq#30926,d_quarter_seq#30927,d_year#30928,d_dow#30929,d_moy#30930,d_dom#30931,d_qoy#30932,d_fy_year#30933,d_fy_quarter_seq#30934,d_fy_week_seq#30935,d_day_name#30936,d_quarter_name#30937,d_holiday#30938,d_weekend#30939,d_following_holiday#30940,d_first_dom#30941,d_last_dom#30942,d_same_day_ly#30943,d_same_day_lq#30944,d_current_day#30945,... 4 more fields] parquet
+:        +- Aggregate [c_customer_id#30951, c_first_name#30958, c_last_name#30959, c_preferred_cust_flag#30960, c_birth_country#30964, c_login#30965, c_email_address#30966, d_year#30974], [c_customer_id#30951 AS customer_id#30894, c_first_name#30958 AS customer_first_name#30895, c_last_name#30959 AS customer_last_name#30896, c_preferred_cust_flag#30960 AS customer_preferred_cust_flag#30897, c_birth_country#30964 AS customer_birth_country#30898, c_login#30965 AS customer_login#30899, c_email_address#30966 AS customer_email_address#30900, d_year#30974 AS dyear#30901, sum(((((ws_ext_list_price#537 - ws_ext_wholesale_cost#536) - ws_ext_discount_amt#534) + ws_ext_sales_price#535) / cast(2 as decimal(1,0)))) AS year_total#30902, w AS sale_type#30903]
+:           +- Filter ((c_customer_sk#30950 = ws_bill_customer_sk#516) AND (ws_sold_date_sk#546 = d_date_sk#30968))
+:              +- Join Inner
+:                 :- Join Inner
+:                 :  :- SubqueryAlias spark_catalog.tpcds.customer
+:                 :  :  +- Relation spark_catalog.tpcds.customer[c_customer_sk#30950,c_customer_id#30951,c_current_cdemo_sk#30952,c_current_hdemo_sk#30953,c_current_addr_sk#30954,c_first_shipto_date_sk#30955,c_first_sales_date_sk#30956,c_salutation#30957,c_first_name#30958,c_last_name#30959,c_preferred_cust_flag#30960,c_birth_day#30961,c_birth_month#30962,c_birth_year#30963,c_birth_country#30964,c_login#30965,c_email_address#30966,c_last_review_date#30967] parquet
+:                 :  +- SubqueryAlias spark_catalog.tpcds.web_sales
+:                 :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+:                 +- SubqueryAlias spark_catalog.tpcds.date_dim
+:                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#30968,d_date_id#30969,d_date#30970,d_month_seq#30971,d_week_seq#30972,d_quarter_seq#30973,d_year#30974,d_dow#30975,d_moy#30976,d_dom#30977,d_qoy#30978,d_fy_year#30979,d_fy_quarter_seq#30980,d_fy_week_seq#30981,d_day_name#30982,d_quarter_name#30983,d_holiday#30984,d_weekend#30985,d_following_holiday#30986,d_first_dom#30987,d_last_dom#30988,d_same_day_ly#30989,d_same_day_lq#30990,d_current_day#30991,... 4 more fields] parquet
++- GlobalLimit 100
+   +- LocalLimit 100
+      +- Sort [customer_id#31003 ASC NULLS FIRST, customer_first_name#31004 ASC NULLS FIRST, customer_last_name#31005 ASC NULLS FIRST, customer_preferred_cust_flag#31006 ASC NULLS FIRST], true
+         +- Project [customer_id#31003, customer_first_name#31004, customer_last_name#31005, customer_preferred_cust_flag#31006]
+            +- Filter ((((((customer_id#31003 = customer_id#30874) AND (customer_id#30874 = customer_id#31023)) AND (customer_id#30874 = customer_id#31013)) AND (((customer_id#30874 = customer_id#31033) AND (customer_id#30874 = customer_id#31043)) AND (sale_type#30883 = s))) AND ((((sale_type#31022 = c) AND (sale_type#31042 = w)) AND (sale_type#31012 = s)) AND ((sale_type#31032 = c) AND (sale_type#31052 = w)))) AND (((((dyear#30881 = 2001) AND (dyear#31010 = (2001 + 1))) AND (dyear#31020 = 2001)) AND (((dyear#31030 = (2001 + 1)) AND (dyear#31040 = 2001)) AND (dyear#31050 = (2001 + 1)))) AND ((((year_total#30882 > cast(cast(0 as decimal(1,0)) as decimal(24,6))) AND (year_total#31021 > cast(cast(0 as decimal(1,0)) as decimal(24,6)))) AND (year_total#31041 > cast(cast(0 as decimal(1,0)) as decimal(24,6)))) AND ((CASE WHEN (year_total#31021 > cast(cast(0 as decimal(1,0)) as decimal(24,6))) THEN (year_total#31031 / year_total#31021) ELSE cast(null as decimal(38,14)) END > CASE WHEN (year_total#30882 > cast(cast(0 as decimal(1,0)) as decimal(24,6))) THEN (year_total#31011 / year_total#30882) ELSE cast(null as decimal(38,14)) END) AND (CASE WHEN (year_total#31021 > cast(cast(0 as decimal(1,0)) as decimal(24,6))) THEN (year_total#31031 / year_total#31021) ELSE cast(null as decimal(38,14)) END > CASE WHEN (year_total#31041 > cast(cast(0 as decimal(1,0)) as decimal(24,6))) THEN (year_total#31051 / year_total#31041) ELSE cast(null as decimal(38,14)) END)))))
+               +- Join Inner
+                  :- Join Inner
+                  :  :- Join Inner
+                  :  :  :- Join Inner
+                  :  :  :  :- Join Inner
+                  :  :  :  :  :- SubqueryAlias t_s_firstyear
+                  :  :  :  :  :  +- SubqueryAlias year_total
+                  :  :  :  :  :     +- CTERelationRef 88, true, [customer_id#30874, customer_first_name#30875, customer_last_name#30876, customer_preferred_cust_flag#30877, customer_birth_country#30878, customer_login#30879, customer_email_address#30880, dyear#30881, year_total#30882, sale_type#30883]
+                  :  :  :  :  +- SubqueryAlias t_s_secyear
+                  :  :  :  :     +- SubqueryAlias year_total
+                  :  :  :  :        +- CTERelationRef 88, true, [customer_id#31003, customer_first_name#31004, customer_last_name#31005, customer_preferred_cust_flag#31006, customer_birth_country#31007, customer_login#31008, customer_email_address#31009, dyear#31010, year_total#31011, sale_type#31012]
+                  :  :  :  +- SubqueryAlias t_c_firstyear
+                  :  :  :     +- SubqueryAlias year_total
+                  :  :  :        +- CTERelationRef 88, true, [customer_id#31013, customer_first_name#31014, customer_last_name#31015, customer_preferred_cust_flag#31016, customer_birth_country#31017, customer_login#31018, customer_email_address#31019, dyear#31020, year_total#31021, sale_type#31022]
+                  :  :  +- SubqueryAlias t_c_secyear
+                  :  :     +- SubqueryAlias year_total
+                  :  :        +- CTERelationRef 88, true, [customer_id#31023, customer_first_name#31024, customer_last_name#31025, customer_preferred_cust_flag#31026, customer_birth_country#31027, customer_login#31028, customer_email_address#31029, dyear#31030, year_total#31031, sale_type#31032]
+                  :  +- SubqueryAlias t_w_firstyear
+                  :     +- SubqueryAlias year_total
+                  :        +- CTERelationRef 88, true, [customer_id#31033, customer_first_name#31034, customer_last_name#31035, customer_preferred_cust_flag#31036, customer_birth_country#31037, customer_login#31038, customer_email_address#31039, dyear#31040, year_total#31041, sale_type#31042]
+                  +- SubqueryAlias t_w_secyear
+                     +- SubqueryAlias year_total
+                        +- CTERelationRef 88, true, [customer_id#31043, customer_first_name#31044, customer_last_name#31045, customer_preferred_cust_flag#31046, customer_birth_country#31047, customer_login#31048, customer_email_address#31049, dyear#31050, year_total#31051, sale_type#31052]

@@ -1,0 +1,11 @@
+PushPredicateThroughNonJoin.canPushThroughCondition.case2
+InferFiltersFromConstraints.inferNewFilter.else2
+PushPredicateThroughNonJoin.canPushThroughCondition.case1
+RemoveNoopOperators.apply.case24
+RemoveNoopOperators.apply.match21
+PushPredicateThroughNonJoin.apply.case1
+CombineFilters.apply.match55
+InferFiltersFromConstraints.inferFilters.then49
+RemoveNoopOperators.apply.then22
+RemoveNoopOperators.apply.case1
+CombineFilters.apply.case1

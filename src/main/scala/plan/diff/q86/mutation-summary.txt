@@ -1,0 +1,11 @@
+======MUTATION SUMMARY=============
+QUERY 86
+	Transformed: ('lochierarchy = 0) => equalTo0('lochierarchy, 0)
+	Transformed: ('grouping('i_category) + 'grouping('i_class)) => add1('grouping('i_category), 'grouping('i_class))
+	Transformed: ('grouping('i_category) + 'grouping('i_class)) => add2('grouping('i_category), 'grouping('i_class))
+	Transformed: ('grouping('i_class) = 0) => equalTo3('grouping('i_class), 0)
+	Transformed: (('d1.d_month_seq >= 1200) AND ('d1.d_month_seq <= (1200 + 11))) => between4('d1.d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add5(1200, 11)
+	Transformed: ('d1.d_date_sk = 'ws_sold_date_sk) => equalTo6('d1.d_date_sk, 'ws_sold_date_sk)
+	Transformed: ('i_item_sk = 'ws_item_sk) => equalTo7('i_item_sk, 'ws_item_sk)
+=======================

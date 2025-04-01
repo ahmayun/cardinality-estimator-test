@@ -1,0 +1,37 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [rnk#39447 ASC NULLS FIRST], true
+      +- Project [rnk#39447, i_product_name#4235 AS best_performing#39453, i_product_name#39621 AS worst_performing#39454]
+         +- Join Inner, equalTo2(i_item_sk#39600, item_sk#39448)
+            :- Project [rnk#39447, item_sk#39448, i_product_name#4235]
+            :  +- Join Inner, equalTo1(i_item_sk#4214, item_sk#39443)
+            :     :- Project [item_sk#39443, rnk#39447, item_sk#39448]
+            :     :  +- Join Inner, equalTo0(rnk#39447, rnk#39452)
+            :     :     :- Project [item_sk#39443, rnk#39447]
+            :     :     :  +- Filter lessThan3(rnk#39447, 11)
+            :     :     :     +- Window [rank(rank_col#39444) windowspecdefinition(rank_col#39444 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rnk#39447], [rank_col#39444 ASC NULLS FIRST]
+            :     :     :        +- Filter greaterThan4(rank_col#39444, multiply5(0.9, scalar-subquery#39446 []))
+            :     :     :           :  +- Aggregate [ss_store_sk#39633], [cast((avg(UnscaledValue(ss_net_profit#39648)) / 100.0) as decimal(11,6)) AS rank_col#39445]
+            :     :     :           :     +- Project [ss_store_sk#39633, ss_net_profit#39648]
+            :     :     :           :        +- Filter (equalTo6(ss_store_sk#39633, 4) AND isnull(ss_addr_sk#39632))
+            :     :     :           :           +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#39627,ss_item_sk#39628,ss_customer_sk#39629,ss_cdemo_sk#39630,ss_hdemo_sk#39631,ss_addr_sk#39632,ss_store_sk#39633,ss_promo_sk#39634,ss_ticket_number#39635L,ss_quantity#39636,ss_wholesale_cost#39637,ss_list_price#39638,ss_sales_price#39639,ss_ext_discount_amt#39640,ss_ext_sales_price#39641,ss_ext_wholesale_cost#39642,ss_ext_list_price#39643,ss_ext_tax#39644,ss_coupon_amt#39645,ss_net_paid#39646,ss_net_paid_inc_tax#39647,ss_net_profit#39648,ss_sold_date_sk#39649] parquet
+            :     :     :           +- Aggregate [ss_item_sk#490], [ss_item_sk#490 AS item_sk#39443, cast((avg(UnscaledValue(ss_net_profit#510)) / 100.0) as decimal(11,6)) AS rank_col#39444]
+            :     :     :              +- Project [ss_item_sk#490, ss_net_profit#510]
+            :     :     :                 +- Filter equalTo7(ss_store_sk#495, 4)
+            :     :     :                    +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+            :     :     +- Project [item_sk#39448, rnk#39452]
+            :     :        +- Filter lessThan8(rnk#39452, 11)
+            :     :           +- Window [rank(rank_col#39449) windowspecdefinition(rank_col#39449 DESC NULLS LAST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rnk#39452], [rank_col#39449 DESC NULLS LAST]
+            :     :              +- Filter greaterThan9(rank_col#39449, multiply10(0.9, scalar-subquery#39451 []))
+            :     :                 :  +- Aggregate [ss_store_sk#39656], [cast((avg(UnscaledValue(ss_net_profit#39671)) / 100.0) as decimal(11,6)) AS rank_col#39450]
+            :     :                 :     +- Project [ss_store_sk#39656, ss_net_profit#39671]
+            :     :                 :        +- Filter (equalTo11(ss_store_sk#39656, 4) AND isnull(ss_addr_sk#39655))
+            :     :                 :           +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#39650,ss_item_sk#39651,ss_customer_sk#39652,ss_cdemo_sk#39653,ss_hdemo_sk#39654,ss_addr_sk#39655,ss_store_sk#39656,ss_promo_sk#39657,ss_ticket_number#39658L,ss_quantity#39659,ss_wholesale_cost#39660,ss_list_price#39661,ss_sales_price#39662,ss_ext_discount_amt#39663,ss_ext_sales_price#39664,ss_ext_wholesale_cost#39665,ss_ext_list_price#39666,ss_ext_tax#39667,ss_coupon_amt#39668,ss_net_paid#39669,ss_net_paid_inc_tax#39670,ss_net_profit#39671,ss_sold_date_sk#39672] parquet
+            :     :                 +- Aggregate [ss_item_sk#39578], [ss_item_sk#39578 AS item_sk#39448, cast((avg(UnscaledValue(ss_net_profit#39598)) / 100.0) as decimal(11,6)) AS rank_col#39449]
+            :     :                    +- Project [ss_item_sk#39578, ss_net_profit#39598]
+            :     :                       +- Filter equalTo12(ss_store_sk#39583, 4)
+            :     :                          +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#39577,ss_item_sk#39578,ss_customer_sk#39579,ss_cdemo_sk#39580,ss_hdemo_sk#39581,ss_addr_sk#39582,ss_store_sk#39583,ss_promo_sk#39584,ss_ticket_number#39585L,ss_quantity#39586,ss_wholesale_cost#39587,ss_list_price#39588,ss_sales_price#39589,ss_ext_discount_amt#39590,ss_ext_sales_price#39591,ss_ext_wholesale_cost#39592,ss_ext_list_price#39593,ss_ext_tax#39594,ss_coupon_amt#39595,ss_net_paid#39596,ss_net_paid_inc_tax#39597,ss_net_profit#39598,ss_sold_date_sk#39599] parquet
+            :     +- Project [i_item_sk#4214, i_product_name#4235]
+            :        +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+            +- Project [i_item_sk#39600, i_product_name#39621]
+               +- Relation spark_catalog.tpcds.item[i_item_sk#39600,i_item_id#39601,i_rec_start_date#39602,i_rec_end_date#39603,i_item_desc#39604,i_current_price#39605,i_wholesale_cost#39606,i_brand_id#39607,i_brand#39608,i_class_id#39609,i_class#39610,i_category_id#39611,i_category#39612,i_manufact_id#39613,i_manufact#39614,i_size#39615,i_formulation#39616,i_color#39617,i_units#39618,i_container#39619,i_manager_id#39620,i_product_name#39621] parquet

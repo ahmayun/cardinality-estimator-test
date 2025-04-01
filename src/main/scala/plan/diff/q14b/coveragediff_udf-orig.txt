@@ -1,0 +1,1 @@
+ColumnPruning.apply.case2

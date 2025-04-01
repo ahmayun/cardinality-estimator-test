@@ -1,0 +1,29 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [ca_zip#476 ASC NULLS FIRST, ca_city#473 ASC NULLS FIRST], true
+      +- Aggregate [ca_zip#476, ca_city#473], [ca_zip#476, ca_city#473, MakeDecimal(sum(UnscaledValue(ws_sales_price#533)),17,2) AS sum(ws_sales_price)#39801]
+         +- Project [ws_sales_price#533, ca_city#473, ca_zip#476]
+            +- Filter (inArray3(substr(ca_zip#476, 1, 5), [85669,86197,88274,83405,86475,85392,85460,80348,81792]) OR exists#39802)
+               +- Join ExistenceJoin(exists#39802), (i_item_id#4215 = i_item_id#39779)
+                  :- Project [ws_sales_price#533, ca_city#473, ca_zip#476, i_item_id#4215]
+                  :  +- Join Inner, equalTo2(ws_item_sk#515, i_item_sk#4214)
+                  :     :- Project [ws_item_sk#515, ws_sales_price#533, ca_city#473, ca_zip#476]
+                  :     :  +- Join Inner, equalTo4(ws_sold_date_sk#546, d_date_sk#24)
+                  :     :     :- Project [ws_item_sk#515, ws_sales_price#533, ws_sold_date_sk#546, ca_city#473, ca_zip#476]
+                  :     :     :  +- Join Inner, equalTo1(c_current_addr_sk#85, ca_address_sk#467)
+                  :     :     :     :- Project [ws_item_sk#515, ws_sales_price#533, ws_sold_date_sk#546, c_current_addr_sk#85]
+                  :     :     :     :  +- Join Inner, equalTo0(ws_bill_customer_sk#516, c_customer_sk#81)
+                  :     :     :     :     :- Project [ws_item_sk#515, ws_bill_customer_sk#516, ws_sales_price#533, ws_sold_date_sk#546]
+                  :     :     :     :     :  +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+                  :     :     :     :     +- Project [c_customer_sk#81, c_current_addr_sk#85]
+                  :     :     :     :        +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+                  :     :     :     +- Project [ca_address_sk#467, ca_city#473, ca_zip#476]
+                  :     :     :        +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+                  :     :     +- Project [d_date_sk#24]
+                  :     :        +- Filter (equalTo5(d_qoy#34, 2) AND equalTo6(d_year#30, 2001))
+                  :     :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+                  :     +- Project [i_item_sk#4214, i_item_id#4215]
+                  :        +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+                  +- Project [i_item_id#39779]
+                     +- Filter inArray7(i_item_sk#39778, [2,3,5,7,11,13,17,19,23,29])
+                        +- Relation spark_catalog.tpcds.item[i_item_sk#39778,i_item_id#39779,i_rec_start_date#39780,i_rec_end_date#39781,i_item_desc#39782,i_current_price#39783,i_wholesale_cost#39784,i_brand_id#39785,i_brand#39786,i_class_id#39787,i_class#39788,i_category_id#39789,i_category#39790,i_manufact_id#39791,i_manufact#39792,i_size#39793,i_formulation#39794,i_color#39795,i_units#39796,i_container#39797,i_manager_id#39798,i_product_name#39799] parquet

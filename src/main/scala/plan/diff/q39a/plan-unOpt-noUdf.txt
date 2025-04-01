@@ -1,0 +1,29 @@
+WithCTE
+:- CTERelationDef 80, false
+:  +- SubqueryAlias inv
+:     +- Project [w_warehouse_name#19728, w_warehouse_sk#19726, i_item_sk#4214, d_moy#32, stdev#29440, mean#29441, CASE WHEN (mean#29441 = cast(0 as double)) THEN cast(null as double) ELSE (stdev#29440 / mean#29441) END AS cov#29442]
+:        +- Filter (CASE WHEN (mean#29441 = cast(0 as double)) THEN cast(0 as double) ELSE (stdev#29440 / mean#29441) END > cast(1 as double))
+:           +- SubqueryAlias foo
+:              +- Aggregate [w_warehouse_name#19728, w_warehouse_sk#19726, i_item_sk#4214, d_moy#32], [w_warehouse_name#19728, w_warehouse_sk#19726, i_item_sk#4214, d_moy#32, stddev_samp(cast(inv_quantity_on_hand#19724 as double)) AS stdev#29440, avg(inv_quantity_on_hand#19724) AS mean#29441]
+:                 +- Filter (((inv_item_sk#19722 = i_item_sk#4214) AND (inv_warehouse_sk#19723 = w_warehouse_sk#19726)) AND ((inv_date_sk#19725 = d_date_sk#24) AND (d_year#30 = 2001)))
+:                    +- Join Inner
+:                       :- Join Inner
+:                       :  :- Join Inner
+:                       :  :  :- SubqueryAlias spark_catalog.tpcds.inventory
+:                       :  :  :  +- Relation spark_catalog.tpcds.inventory[inv_item_sk#19722,inv_warehouse_sk#19723,inv_quantity_on_hand#19724,inv_date_sk#19725] parquet
+:                       :  :  +- SubqueryAlias spark_catalog.tpcds.item
+:                       :  :     +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+:                       :  +- SubqueryAlias spark_catalog.tpcds.warehouse
+:                       :     +- Relation spark_catalog.tpcds.warehouse[w_warehouse_sk#19726,w_warehouse_id#19727,w_warehouse_name#19728,w_warehouse_sq_ft#19729,w_street_number#19730,w_street_name#19731,w_street_type#19732,w_suite_number#19733,w_city#19734,w_county#19735,w_state#19736,w_zip#19737,w_country#19738,w_gmt_offset#19739] parquet
+:                       +- SubqueryAlias spark_catalog.tpcds.date_dim
+:                          +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
++- Sort [w_warehouse_sk#19726 ASC NULLS FIRST, i_item_sk#4214 ASC NULLS FIRST, d_moy#32 ASC NULLS FIRST, mean#29441 ASC NULLS FIRST, cov#29442 ASC NULLS FIRST, d_moy#29472 ASC NULLS FIRST, mean#29474 ASC NULLS FIRST, cov#29475 ASC NULLS FIRST], true
+   +- Project [w_warehouse_sk#19726, i_item_sk#4214, d_moy#32, mean#29441, cov#29442, w_warehouse_sk#29470, i_item_sk#29471, d_moy#29472, mean#29474, cov#29475]
+      +- Filter (((i_item_sk#4214 = i_item_sk#29471) AND (w_warehouse_sk#19726 = w_warehouse_sk#29470)) AND ((d_moy#32 = 1) AND (d_moy#29472 = (1 + 1))))
+         +- Join Inner
+            :- SubqueryAlias inv1
+            :  +- SubqueryAlias inv
+            :     +- CTERelationRef 80, true, [w_warehouse_name#19728, w_warehouse_sk#19726, i_item_sk#4214, d_moy#32, stdev#29440, mean#29441, cov#29442]
+            +- SubqueryAlias inv2
+               +- SubqueryAlias inv
+                  +- CTERelationRef 80, true, [w_warehouse_name#29469, w_warehouse_sk#29470, i_item_sk#29471, d_moy#29472, stdev#29473, mean#29474, cov#29475]

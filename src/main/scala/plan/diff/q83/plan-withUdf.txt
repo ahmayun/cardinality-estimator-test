@@ -1,0 +1,112 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [item_id#64160 ASC NULLS FIRST, sr_item_qty#64161L ASC NULLS FIRST], true
+      +- Project [item_id#64160, sr_item_qty#64161L, multiply0(divide1(divide2(sr_item_qty#64161L, add3(add4(sr_item_qty#64161L, cr_item_qty#64165L), wr_item_qty#64169L)), 3.0), 100) AS sr_dev#64156, cr_item_qty#64165L, multiply5(divide6(divide7(cr_item_qty#64165L, add8(add9(sr_item_qty#64161L, cr_item_qty#64165L), wr_item_qty#64169L)), 3.0), 100) AS cr_dev#64157, wr_item_qty#64169L, multiply10(divide11(divide12(wr_item_qty#64169L, add13(add14(sr_item_qty#64161L, cr_item_qty#64165L), wr_item_qty#64169L)), 3.0), 100) AS wr_dev#64158, divide15(add16(add17(sr_item_qty#64161L, cr_item_qty#64165L), wr_item_qty#64169L), 3.0) AS average#64159]
+         +- Join Inner, equalTo19(item_id#64160, item_id#64168)
+            :- Project [item_id#64160, sr_item_qty#64161L, cr_item_qty#64165L]
+            :  +- Join Inner, equalTo18(item_id#64160, item_id#64164)
+            :     :- Aggregate [i_item_id#4215], [i_item_id#4215 AS item_id#64160, sum(sr_return_quantity#13) AS sr_item_qty#64161L]
+            :     :  +- Project [sr_return_quantity#13, i_item_id#4215]
+            :     :     +- Join Inner, (sr_returned_date_sk#23 = d_date_sk#24)
+            :     :        :- Project [sr_return_quantity#13, sr_returned_date_sk#23, i_item_id#4215]
+            :     :        :  +- Join Inner, (sr_item_sk#5 = i_item_sk#4214)
+            :     :        :     :- Project [sr_item_sk#5, sr_return_quantity#13, sr_returned_date_sk#23]
+            :     :        :     :  +- Filter ((isnotnull(sr_item_sk#5) AND isnotnull(sr_returned_date_sk#23)) AND dynamicpruning#64730 [sr_returned_date_sk#23])
+            :     :        :     :     :  +- Project [d_date_sk#24]
+            :     :        :     :     :     +- Join LeftSemi, (d_date#26 = d_date#64645)
+            :     :        :     :     :        :- Project [d_date_sk#24, d_date#26]
+            :     :        :     :     :        :  +- Filter isnotnull(d_date_sk#24)
+            :     :        :     :     :        :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+            :     :        :     :     :        +- Project [d_date#64645]
+            :     :        :     :     :           +- Join LeftSemi, (d_week_seq#64647 = d_week_seq#64559)
+            :     :        :     :     :              :- Project [d_date#64645, d_week_seq#64647]
+            :     :        :     :     :              :  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64643,d_date_id#64644,d_date#64645,d_month_seq#64646,d_week_seq#64647,d_quarter_seq#64648,d_year#64649,d_dow#64650,d_moy#64651,d_dom#64652,d_qoy#64653,d_fy_year#64654,d_fy_quarter_seq#64655,d_fy_week_seq#64656,d_day_name#64657,d_quarter_name#64658,d_holiday#64659,d_weekend#64660,d_following_holiday#64661,d_first_dom#64662,d_last_dom#64663,d_same_day_ly#64664,d_same_day_lq#64665,d_current_day#64666,... 4 more fields] parquet
+            :     :        :     :     :              +- Project [d_week_seq#64559]
+            :     :        :     :     :                 +- Filter d_date#64557 IN (2000-06-30,2000-09-27,2000-11-17)
+            :     :        :     :     :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64555,d_date_id#64556,d_date#64557,d_month_seq#64558,d_week_seq#64559,d_quarter_seq#64560,d_year#64561,d_dow#64562,d_moy#64563,d_dom#64564,d_qoy#64565,d_fy_year#64566,d_fy_quarter_seq#64567,d_fy_week_seq#64568,d_day_name#64569,d_quarter_name#64570,d_holiday#64571,d_weekend#64572,d_following_holiday#64573,d_first_dom#64574,d_last_dom#64575,d_same_day_ly#64576,d_same_day_lq#64577,d_current_day#64578,... 4 more fields] parquet
+            :     :        :     :     +- Relation spark_catalog.tpcds.store_returns[sr_return_time_sk#4,sr_item_sk#5,sr_customer_sk#6,sr_cdemo_sk#7,sr_hdemo_sk#8,sr_addr_sk#9,sr_store_sk#10,sr_reason_sk#11,sr_ticket_number#12L,sr_return_quantity#13,sr_return_amt#14,sr_return_tax#15,sr_return_amt_inc_tax#16,sr_fee#17,sr_return_ship_cost#18,sr_refunded_cash#19,sr_reversed_charge#20,sr_store_credit#21,sr_net_loss#22,sr_returned_date_sk#23] parquet
+            :     :        :     +- Project [i_item_sk#4214, i_item_id#4215]
+            :     :        :        +- Filter isnotnull(i_item_sk#4214)
+            :     :        :           +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+            :     :        +- Project [d_date_sk#24]
+            :     :           +- Join LeftSemi, (d_date#26 = d_date#64645)
+            :     :              :- Project [d_date_sk#24, d_date#26]
+            :     :              :  +- Filter isnotnull(d_date_sk#24)
+            :     :              :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+            :     :              +- Project [d_date#64645]
+            :     :                 +- Join LeftSemi, (d_week_seq#64647 = d_week_seq#64559)
+            :     :                    :- Project [d_date#64645, d_week_seq#64647]
+            :     :                    :  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64643,d_date_id#64644,d_date#64645,d_month_seq#64646,d_week_seq#64647,d_quarter_seq#64648,d_year#64649,d_dow#64650,d_moy#64651,d_dom#64652,d_qoy#64653,d_fy_year#64654,d_fy_quarter_seq#64655,d_fy_week_seq#64656,d_day_name#64657,d_quarter_name#64658,d_holiday#64659,d_weekend#64660,d_following_holiday#64661,d_first_dom#64662,d_last_dom#64663,d_same_day_ly#64664,d_same_day_lq#64665,d_current_day#64666,... 4 more fields] parquet
+            :     :                    +- Project [d_week_seq#64559]
+            :     :                       +- Filter d_date#64557 IN (2000-06-30,2000-09-27,2000-11-17)
+            :     :                          +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64555,d_date_id#64556,d_date#64557,d_month_seq#64558,d_week_seq#64559,d_quarter_seq#64560,d_year#64561,d_dow#64562,d_moy#64563,d_dom#64564,d_qoy#64565,d_fy_year#64566,d_fy_quarter_seq#64567,d_fy_week_seq#64568,d_day_name#64569,d_quarter_name#64570,d_holiday#64571,d_weekend#64572,d_following_holiday#64573,d_first_dom#64574,d_last_dom#64575,d_same_day_ly#64576,d_same_day_lq#64577,d_current_day#64578,... 4 more fields] parquet
+            :     +- Aggregate [i_item_id#64456], [i_item_id#64456 AS item_id#64164, sum(cr_return_quantity#17105) AS cr_item_qty#64165L]
+            :        +- Project [cr_return_quantity#17105, i_item_id#64456]
+            :           +- Join Inner, (cr_returned_date_sk#17115 = d_date_sk#64477)
+            :              :- Project [cr_return_quantity#17105, cr_returned_date_sk#17115, i_item_id#64456]
+            :              :  +- Join Inner, (cr_item_sk#17090 = i_item_sk#64455)
+            :              :     :- Project [cr_item_sk#17090, cr_return_quantity#17105, cr_returned_date_sk#17115]
+            :              :     :  +- Filter ((isnotnull(cr_item_sk#17090) AND isnotnull(cr_returned_date_sk#17115)) AND dynamicpruning#64731 [cr_returned_date_sk#17115])
+            :              :     :     :  +- Project [d_date_sk#64477]
+            :              :     :     :     +- Join LeftSemi, (d_date#64479 = d_date#64673)
+            :              :     :     :        :- Project [d_date_sk#64477, d_date#64479]
+            :              :     :     :        :  +- Filter isnotnull(d_date_sk#64477)
+            :              :     :     :        :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64477,d_date_id#64478,d_date#64479,d_month_seq#64480,d_week_seq#64481,d_quarter_seq#64482,d_year#64483,d_dow#64484,d_moy#64485,d_dom#64486,d_qoy#64487,d_fy_year#64488,d_fy_quarter_seq#64489,d_fy_week_seq#64490,d_day_name#64491,d_quarter_name#64492,d_holiday#64493,d_weekend#64494,d_following_holiday#64495,d_first_dom#64496,d_last_dom#64497,d_same_day_ly#64498,d_same_day_lq#64499,d_current_day#64500,... 4 more fields] parquet
+            :              :     :     :        +- Project [d_date#64673]
+            :              :     :     :           +- Join LeftSemi, (d_week_seq#64675 = d_week_seq#64587)
+            :              :     :     :              :- Project [d_date#64673, d_week_seq#64675]
+            :              :     :     :              :  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64671,d_date_id#64672,d_date#64673,d_month_seq#64674,d_week_seq#64675,d_quarter_seq#64676,d_year#64677,d_dow#64678,d_moy#64679,d_dom#64680,d_qoy#64681,d_fy_year#64682,d_fy_quarter_seq#64683,d_fy_week_seq#64684,d_day_name#64685,d_quarter_name#64686,d_holiday#64687,d_weekend#64688,d_following_holiday#64689,d_first_dom#64690,d_last_dom#64691,d_same_day_ly#64692,d_same_day_lq#64693,d_current_day#64694,... 4 more fields] parquet
+            :              :     :     :              +- Project [d_week_seq#64587]
+            :              :     :     :                 +- Filter d_date#64585 IN (2000-06-30,2000-09-27,2000-11-17)
+            :              :     :     :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64583,d_date_id#64584,d_date#64585,d_month_seq#64586,d_week_seq#64587,d_quarter_seq#64588,d_year#64589,d_dow#64590,d_moy#64591,d_dom#64592,d_qoy#64593,d_fy_year#64594,d_fy_quarter_seq#64595,d_fy_week_seq#64596,d_day_name#64597,d_quarter_name#64598,d_holiday#64599,d_weekend#64600,d_following_holiday#64601,d_first_dom#64602,d_last_dom#64603,d_same_day_ly#64604,d_same_day_lq#64605,d_current_day#64606,... 4 more fields] parquet
+            :              :     :     +- Relation spark_catalog.tpcds.catalog_returns[cr_returned_time_sk#17089,cr_item_sk#17090,cr_refunded_customer_sk#17091,cr_refunded_cdemo_sk#17092,cr_refunded_hdemo_sk#17093,cr_refunded_addr_sk#17094,cr_returning_customer_sk#17095,cr_returning_cdemo_sk#17096,cr_returning_hdemo_sk#17097,cr_returning_addr_sk#17098,cr_call_center_sk#17099,cr_catalog_page_sk#17100,cr_ship_mode_sk#17101,cr_warehouse_sk#17102,cr_reason_sk#17103,cr_order_number#17104L,cr_return_quantity#17105,cr_return_amount#17106,cr_return_tax#17107,cr_return_amt_inc_tax#17108,cr_fee#17109,cr_return_ship_cost#17110,cr_refunded_cash#17111,cr_reversed_charge#17112,... 3 more fields] parquet
+            :              :     +- Project [i_item_sk#64455, i_item_id#64456]
+            :              :        +- Filter isnotnull(i_item_sk#64455)
+            :              :           +- Relation spark_catalog.tpcds.item[i_item_sk#64455,i_item_id#64456,i_rec_start_date#64457,i_rec_end_date#64458,i_item_desc#64459,i_current_price#64460,i_wholesale_cost#64461,i_brand_id#64462,i_brand#64463,i_class_id#64464,i_class#64465,i_category_id#64466,i_category#64467,i_manufact_id#64468,i_manufact#64469,i_size#64470,i_formulation#64471,i_color#64472,i_units#64473,i_container#64474,i_manager_id#64475,i_product_name#64476] parquet
+            :              +- Project [d_date_sk#64477]
+            :                 +- Join LeftSemi, (d_date#64479 = d_date#64673)
+            :                    :- Project [d_date_sk#64477, d_date#64479]
+            :                    :  +- Filter isnotnull(d_date_sk#64477)
+            :                    :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64477,d_date_id#64478,d_date#64479,d_month_seq#64480,d_week_seq#64481,d_quarter_seq#64482,d_year#64483,d_dow#64484,d_moy#64485,d_dom#64486,d_qoy#64487,d_fy_year#64488,d_fy_quarter_seq#64489,d_fy_week_seq#64490,d_day_name#64491,d_quarter_name#64492,d_holiday#64493,d_weekend#64494,d_following_holiday#64495,d_first_dom#64496,d_last_dom#64497,d_same_day_ly#64498,d_same_day_lq#64499,d_current_day#64500,... 4 more fields] parquet
+            :                    +- Project [d_date#64673]
+            :                       +- Join LeftSemi, (d_week_seq#64675 = d_week_seq#64587)
+            :                          :- Project [d_date#64673, d_week_seq#64675]
+            :                          :  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64671,d_date_id#64672,d_date#64673,d_month_seq#64674,d_week_seq#64675,d_quarter_seq#64676,d_year#64677,d_dow#64678,d_moy#64679,d_dom#64680,d_qoy#64681,d_fy_year#64682,d_fy_quarter_seq#64683,d_fy_week_seq#64684,d_day_name#64685,d_quarter_name#64686,d_holiday#64687,d_weekend#64688,d_following_holiday#64689,d_first_dom#64690,d_last_dom#64691,d_same_day_ly#64692,d_same_day_lq#64693,d_current_day#64694,... 4 more fields] parquet
+            :                          +- Project [d_week_seq#64587]
+            :                             +- Filter d_date#64585 IN (2000-06-30,2000-09-27,2000-11-17)
+            :                                +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64583,d_date_id#64584,d_date#64585,d_month_seq#64586,d_week_seq#64587,d_quarter_seq#64588,d_year#64589,d_dow#64590,d_moy#64591,d_dom#64592,d_qoy#64593,d_fy_year#64594,d_fy_quarter_seq#64595,d_fy_week_seq#64596,d_day_name#64597,d_quarter_name#64598,d_holiday#64599,d_weekend#64600,d_following_holiday#64601,d_first_dom#64602,d_last_dom#64603,d_same_day_ly#64604,d_same_day_lq#64605,d_current_day#64606,... 4 more fields] parquet
+            +- Aggregate [i_item_id#64506], [i_item_id#64506 AS item_id#64168, sum(wr_return_quantity#26806) AS wr_item_qty#64169L]
+               +- Project [wr_return_quantity#26806, i_item_id#64506]
+                  +- Join Inner, (wr_returned_date_sk#26816 = d_date_sk#64527)
+                     :- Project [wr_return_quantity#26806, wr_returned_date_sk#26816, i_item_id#64506]
+                     :  +- Join Inner, (wr_item_sk#26794 = i_item_sk#64505)
+                     :     :- Project [wr_item_sk#26794, wr_return_quantity#26806, wr_returned_date_sk#26816]
+                     :     :  +- Filter ((isnotnull(wr_item_sk#26794) AND isnotnull(wr_returned_date_sk#26816)) AND dynamicpruning#64732 [wr_returned_date_sk#26816])
+                     :     :     :  +- Project [d_date_sk#64527]
+                     :     :     :     +- Join LeftSemi, (d_date#64529 = d_date#64701)
+                     :     :     :        :- Project [d_date_sk#64527, d_date#64529]
+                     :     :     :        :  +- Filter isnotnull(d_date_sk#64527)
+                     :     :     :        :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64527,d_date_id#64528,d_date#64529,d_month_seq#64530,d_week_seq#64531,d_quarter_seq#64532,d_year#64533,d_dow#64534,d_moy#64535,d_dom#64536,d_qoy#64537,d_fy_year#64538,d_fy_quarter_seq#64539,d_fy_week_seq#64540,d_day_name#64541,d_quarter_name#64542,d_holiday#64543,d_weekend#64544,d_following_holiday#64545,d_first_dom#64546,d_last_dom#64547,d_same_day_ly#64548,d_same_day_lq#64549,d_current_day#64550,... 4 more fields] parquet
+                     :     :     :        +- Project [d_date#64701]
+                     :     :     :           +- Join LeftSemi, (d_week_seq#64703 = d_week_seq#64615)
+                     :     :     :              :- Project [d_date#64701, d_week_seq#64703]
+                     :     :     :              :  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64699,d_date_id#64700,d_date#64701,d_month_seq#64702,d_week_seq#64703,d_quarter_seq#64704,d_year#64705,d_dow#64706,d_moy#64707,d_dom#64708,d_qoy#64709,d_fy_year#64710,d_fy_quarter_seq#64711,d_fy_week_seq#64712,d_day_name#64713,d_quarter_name#64714,d_holiday#64715,d_weekend#64716,d_following_holiday#64717,d_first_dom#64718,d_last_dom#64719,d_same_day_ly#64720,d_same_day_lq#64721,d_current_day#64722,... 4 more fields] parquet
+                     :     :     :              +- Project [d_week_seq#64615]
+                     :     :     :                 +- Filter d_date#64613 IN (2000-06-30,2000-09-27,2000-11-17)
+                     :     :     :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64611,d_date_id#64612,d_date#64613,d_month_seq#64614,d_week_seq#64615,d_quarter_seq#64616,d_year#64617,d_dow#64618,d_moy#64619,d_dom#64620,d_qoy#64621,d_fy_year#64622,d_fy_quarter_seq#64623,d_fy_week_seq#64624,d_day_name#64625,d_quarter_name#64626,d_holiday#64627,d_weekend#64628,d_following_holiday#64629,d_first_dom#64630,d_last_dom#64631,d_same_day_ly#64632,d_same_day_lq#64633,d_current_day#64634,... 4 more fields] parquet
+                     :     :     +- Relation spark_catalog.tpcds.web_returns[wr_returned_time_sk#26793,wr_item_sk#26794,wr_refunded_customer_sk#26795,wr_refunded_cdemo_sk#26796,wr_refunded_hdemo_sk#26797,wr_refunded_addr_sk#26798,wr_returning_customer_sk#26799,wr_returning_cdemo_sk#26800,wr_returning_hdemo_sk#26801,wr_returning_addr_sk#26802,wr_web_page_sk#26803,wr_reason_sk#26804,wr_order_number#26805L,wr_return_quantity#26806,wr_return_amt#26807,wr_return_tax#26808,wr_return_amt_inc_tax#26809,wr_fee#26810,wr_return_ship_cost#26811,wr_refunded_cash#26812,wr_reversed_charge#26813,wr_account_credit#26814,wr_net_loss#26815,wr_returned_date_sk#26816] parquet
+                     :     +- Project [i_item_sk#64505, i_item_id#64506]
+                     :        +- Filter isnotnull(i_item_sk#64505)
+                     :           +- Relation spark_catalog.tpcds.item[i_item_sk#64505,i_item_id#64506,i_rec_start_date#64507,i_rec_end_date#64508,i_item_desc#64509,i_current_price#64510,i_wholesale_cost#64511,i_brand_id#64512,i_brand#64513,i_class_id#64514,i_class#64515,i_category_id#64516,i_category#64517,i_manufact_id#64518,i_manufact#64519,i_size#64520,i_formulation#64521,i_color#64522,i_units#64523,i_container#64524,i_manager_id#64525,i_product_name#64526] parquet
+                     +- Project [d_date_sk#64527]
+                        +- Join LeftSemi, (d_date#64529 = d_date#64701)
+                           :- Project [d_date_sk#64527, d_date#64529]
+                           :  +- Filter isnotnull(d_date_sk#64527)
+                           :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64527,d_date_id#64528,d_date#64529,d_month_seq#64530,d_week_seq#64531,d_quarter_seq#64532,d_year#64533,d_dow#64534,d_moy#64535,d_dom#64536,d_qoy#64537,d_fy_year#64538,d_fy_quarter_seq#64539,d_fy_week_seq#64540,d_day_name#64541,d_quarter_name#64542,d_holiday#64543,d_weekend#64544,d_following_holiday#64545,d_first_dom#64546,d_last_dom#64547,d_same_day_ly#64548,d_same_day_lq#64549,d_current_day#64550,... 4 more fields] parquet
+                           +- Project [d_date#64701]
+                              +- Join LeftSemi, (d_week_seq#64703 = d_week_seq#64615)
+                                 :- Project [d_date#64701, d_week_seq#64703]
+                                 :  +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64699,d_date_id#64700,d_date#64701,d_month_seq#64702,d_week_seq#64703,d_quarter_seq#64704,d_year#64705,d_dow#64706,d_moy#64707,d_dom#64708,d_qoy#64709,d_fy_year#64710,d_fy_quarter_seq#64711,d_fy_week_seq#64712,d_day_name#64713,d_quarter_name#64714,d_holiday#64715,d_weekend#64716,d_following_holiday#64717,d_first_dom#64718,d_last_dom#64719,d_same_day_ly#64720,d_same_day_lq#64721,d_current_day#64722,... 4 more fields] parquet
+                                 +- Project [d_week_seq#64615]
+                                    +- Filter d_date#64613 IN (2000-06-30,2000-09-27,2000-11-17)
+                                       +- Relation spark_catalog.tpcds.date_dim[d_date_sk#64611,d_date_id#64612,d_date#64613,d_month_seq#64614,d_week_seq#64615,d_quarter_seq#64616,d_year#64617,d_dow#64618,d_moy#64619,d_dom#64620,d_qoy#64621,d_fy_year#64622,d_fy_quarter_seq#64623,d_fy_week_seq#64624,d_day_name#64625,d_quarter_name#64626,d_holiday#64627,d_weekend#64628,d_following_holiday#64629,d_first_dom#64630,d_last_dom#64631,d_same_day_ly#64632,d_same_day_lq#64633,d_current_day#64634,... 4 more fields] parquet

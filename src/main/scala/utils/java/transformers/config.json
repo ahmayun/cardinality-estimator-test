@@ -1,0 +1,38 @@
+{
+  "configs": {
+    "seed": "seedlab-vt"
+  },
+  "mutations": {
+    "dead_code": {
+      "max_inserts": 4,
+      "snippets": [
+        "if (false) {\n    int tempVal = 999;\n    tempVal -= 1;\n    System.out.println(\"This block is never executed\");\n}",
+        "int placeholder = 123;\nplaceholder += 0;\nif (placeholder > 9999) {\n    System.out.println(\"Completely unused check\");\n}",
+        "for (int i = 0; i < 3; i++) {}\nboolean dummyCondition = true;\nif (dummyCondition && false) {\n    System.out.println(\"Logic that won't run\");\n}",
+        "int result = 42;\nresult += 0;\nif (!(result < 0)) {}\nSystem.out.println(\"# This line won't affect anything\");"
+      ]
+    },
+    "misleading_comments": {
+      "max_inserts": 4,
+      "comments": [
+        "// Ensures parallel universe coherence remains stable",
+        "// This line triggers advanced warp field calibration",
+        "// Optimizes quantum chromodynamics at runtime",
+        "// Secretly reconfigures matrix multiplication for negative time cycles"
+      ]
+    },
+    "misleading_variables": {
+      "max_inserts": 5,
+      "variables": [
+        "serializerDragon",
+        "classMorph",
+        "quantumMatcher",
+        "warpKey",
+        "enumGuardian"
+      ]
+    },
+    "decompose": {
+      "max_inserts": 1
+    }
+  }
+}

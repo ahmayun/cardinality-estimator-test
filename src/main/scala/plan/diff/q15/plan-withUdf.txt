@@ -1,0 +1,19 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [ca_zip#476 ASC NULLS FIRST], true
+      +- Aggregate [ca_zip#476], [ca_zip#476, MakeDecimal(sum(UnscaledValue(cs_sales_price#568)),17,2) AS sum(cs_sales_price)#17052]
+         +- Project [cs_sales_price#568, ca_zip#476]
+            +- Join Inner, equalTo5(cs_sold_date_sk#581, d_date_sk#24)
+               :- Project [cs_sales_price#568, cs_sold_date_sk#581, ca_zip#476]
+               :  +- Join Inner, (equalTo1(c_current_addr_sk#85, ca_address_sk#467) AND ((inArray2(substr(ca_zip#476, 1, 5), [85669,86197,88274,83405,86475,85392,85460,80348,81792]) OR inArray3(ca_state#475, [CA,WA,GA])) OR greaterThan4(cs_sales_price#568, 500)))
+               :     :- Project [cs_sales_price#568, cs_sold_date_sk#581, c_current_addr_sk#85]
+               :     :  +- Join Inner, equalTo0(cs_bill_customer_sk#550, c_customer_sk#81)
+               :     :     :- Project [cs_bill_customer_sk#550, cs_sales_price#568, cs_sold_date_sk#581]
+               :     :     :  +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+               :     :     +- Project [c_customer_sk#81, c_current_addr_sk#85]
+               :     :        +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet
+               :     +- Project [ca_address_sk#467, ca_state#475, ca_zip#476]
+               :        +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+               +- Project [d_date_sk#24]
+                  +- Filter (equalTo6(d_qoy#34, 2) AND equalTo7(d_year#30, 2001))
+                     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet

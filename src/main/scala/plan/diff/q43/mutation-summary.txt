@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 43
+	Transformed: ('d_day_name = Sunday) => equalTo0('d_day_name, Sunday)
+	Transformed: ('d_day_name = Monday) => equalTo1('d_day_name, Monday)
+	Transformed: ('d_day_name = Tuesday) => equalTo2('d_day_name, Tuesday)
+	Transformed: ('d_day_name = Wednesday) => equalTo3('d_day_name, Wednesday)
+	Transformed: ('d_day_name = Thursday) => equalTo4('d_day_name, Thursday)
+	Transformed: ('d_day_name = Friday) => equalTo5('d_day_name, Friday)
+	Transformed: ('d_day_name = Saturday) => equalTo6('d_day_name, Saturday)
+	Transformed: ('d_date_sk = 'ss_sold_date_sk) => equalTo7('d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('s_store_sk = 'ss_store_sk) => equalTo8('s_store_sk, 'ss_store_sk)
+	Transformed: ('s_gmt_offset = -5) => equalTo9('s_gmt_offset, -5)
+	Transformed: ('d_year = 2000) => equalTo10('d_year, 2000)
+=======================

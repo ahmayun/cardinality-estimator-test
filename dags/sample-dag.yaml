@@ -1,0 +1,27 @@
+directed: true
+graph: {}
+links:
+- source: 0
+  target: 3
+- source: 1
+  target: 3
+- source: 3
+  target: 4
+- source: 4
+  target: 6
+- source: 2
+  target: 5
+- source: 5
+  target: 6
+- source: 6
+  target: 7
+multigraph: false
+nodes:
+- id: 0
+- id: 1
+- id: 2
+- id: 3
+- id: 4
+- id: 5
+- id: 6
+

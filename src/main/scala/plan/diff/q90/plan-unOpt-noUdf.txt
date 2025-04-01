@@ -1,0 +1,33 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [am_pm_ratio#69048 ASC NULLS FIRST], true
+      +- Project [(cast(amc#69046L as decimal(15,4)) / cast(pmc#69047L as decimal(15,4))) AS am_pm_ratio#69048]
+         +- Join Cross
+            :- SubqueryAlias at
+            :  +- Aggregate [count(1) AS amc#69046L]
+            :     +- Filter ((((ws_sold_time_sk#513 = t_time_sk#52125) AND (ws_ship_hdemo_sk#522 = hd_demo_sk#4287)) AND (ws_web_page_sk#524 = wp_web_page_sk#60807)) AND ((((t_hour#52128 >= 8) AND (t_hour#52128 <= (8 + 1))) AND (hd_dep_count#4290 = 6)) AND ((wp_char_count#60817 >= 5000) AND (wp_char_count#60817 <= 5200))))
+            :        +- Join Inner
+            :           :- Join Inner
+            :           :  :- Join Inner
+            :           :  :  :- SubqueryAlias spark_catalog.tpcds.web_sales
+            :           :  :  :  +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+            :           :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+            :           :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#4287,hd_income_band_sk#4288,hd_buy_potential#4289,hd_dep_count#4290,hd_vehicle_count#4291] parquet
+            :           :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+            :           :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#52125,t_time_id#52126,t_time#52127,t_hour#52128,t_minute#52129,t_second#52130,t_am_pm#52131,t_shift#52132,t_sub_shift#52133,t_meal_time#52134] parquet
+            :           +- SubqueryAlias spark_catalog.tpcds.web_page
+            :              +- Relation spark_catalog.tpcds.web_page[wp_web_page_sk#60807,wp_web_page_id#60808,wp_rec_start_date#60809,wp_rec_end_date#60810,wp_creation_date_sk#60811,wp_access_date_sk#60812,wp_autogen_flag#60813,wp_customer_sk#60814,wp_url#60815,wp_type#60816,wp_char_count#60817,wp_link_count#60818,wp_image_count#60819,wp_max_ad_count#60820] parquet
+            +- SubqueryAlias pt
+               +- Aggregate [count(1) AS pmc#69047L]
+                  +- Filter ((((ws_sold_time_sk#69051 = t_time_sk#69090) AND (ws_ship_hdemo_sk#69060 = hd_demo_sk#69085)) AND (ws_web_page_sk#69062 = wp_web_page_sk#69100)) AND ((((t_hour#69093 >= 19) AND (t_hour#69093 <= (19 + 1))) AND (hd_dep_count#69088 = 6)) AND ((wp_char_count#69110 >= 5000) AND (wp_char_count#69110 <= 5200))))
+                     +- Join Inner
+                        :- Join Inner
+                        :  :- Join Inner
+                        :  :  :- SubqueryAlias spark_catalog.tpcds.web_sales
+                        :  :  :  +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#69051,ws_ship_date_sk#69052,ws_item_sk#69053,ws_bill_customer_sk#69054,ws_bill_cdemo_sk#69055,ws_bill_hdemo_sk#69056,ws_bill_addr_sk#69057,ws_ship_customer_sk#69058,ws_ship_cdemo_sk#69059,ws_ship_hdemo_sk#69060,ws_ship_addr_sk#69061,ws_web_page_sk#69062,ws_web_site_sk#69063,ws_ship_mode_sk#69064,ws_warehouse_sk#69065,ws_promo_sk#69066,ws_order_number#69067L,ws_quantity#69068,ws_wholesale_cost#69069,ws_list_price#69070,ws_sales_price#69071,ws_ext_discount_amt#69072,ws_ext_sales_price#69073,ws_ext_wholesale_cost#69074,... 10 more fields] parquet
+                        :  :  +- SubqueryAlias spark_catalog.tpcds.household_demographics
+                        :  :     +- Relation spark_catalog.tpcds.household_demographics[hd_demo_sk#69085,hd_income_band_sk#69086,hd_buy_potential#69087,hd_dep_count#69088,hd_vehicle_count#69089] parquet
+                        :  +- SubqueryAlias spark_catalog.tpcds.time_dim
+                        :     +- Relation spark_catalog.tpcds.time_dim[t_time_sk#69090,t_time_id#69091,t_time#69092,t_hour#69093,t_minute#69094,t_second#69095,t_am_pm#69096,t_shift#69097,t_sub_shift#69098,t_meal_time#69099] parquet
+                        +- SubqueryAlias spark_catalog.tpcds.web_page
+                           +- Relation spark_catalog.tpcds.web_page[wp_web_page_sk#69100,wp_web_page_id#69101,wp_rec_start_date#69102,wp_rec_end_date#69103,wp_creation_date_sk#69104,wp_access_date_sk#69105,wp_autogen_flag#69106,wp_customer_sk#69107,wp_url#69108,wp_type#69109,wp_char_count#69110,wp_link_count#69111,wp_image_count#69112,wp_max_ad_count#69113] parquet

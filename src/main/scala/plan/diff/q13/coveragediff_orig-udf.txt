@@ -1,0 +1,4 @@
+ColumnPruning.prunedChild.else2
+InferFiltersFromConstraints.inferFilters.then49
+InferFiltersFromConstraints.inferNewFilter.else2
+PushPredicateThroughNonJoin.canPushThroughCondition.case1

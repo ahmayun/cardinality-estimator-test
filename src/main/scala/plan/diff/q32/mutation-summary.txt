@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 32
+	Transformed: ('i_manufact_id = 977) => equalTo0('i_manufact_id, 977)
+	Transformed: ('i_item_sk = 'cs_item_sk) => equalTo1('i_item_sk, 'cs_item_sk)
+	Transformed: (('d_date >= cast(2000-01-27 as date)) AND ('d_date <= (cast(2000-01-27 as date) + INTERVAL '90' DAY))) => between2('d_date, cast(2000-01-27 as date), (cast(2000-01-27 as date) + INTERVAL '90' DAY))
+	Transformed: (cast(2000-01-27 as date) + INTERVAL '90' DAY) => add3(cast(2000-01-27 as date), INTERVAL '90' DAY)
+	Transformed: ('d_date_sk = 'cs_sold_date_sk) => equalTo4('d_date_sk, 'cs_sold_date_sk)
+	Transformed: ('cs_ext_discount_amt > scalar-subquery#27500 []) => greaterThan5('cs_ext_discount_amt, scalar-subquery#27500 [])
+	Transformed: (1.3 * 'avg('cs_ext_discount_amt)) => multiply6(1.3, 'avg('cs_ext_discount_amt))
+	Transformed: ('cs_item_sk = 'i_item_sk) => equalTo7('cs_item_sk, 'i_item_sk)
+	Transformed: (('d_date >= cast(2000-01-27 as date)) AND ('d_date <= (cast(2000-01-27 as date) + INTERVAL '90' DAY))) => between8('d_date, cast(2000-01-27 as date), (cast(2000-01-27 as date) + INTERVAL '90' DAY))
+	Transformed: (cast(2000-01-27 as date) + INTERVAL '90' DAY) => add9(cast(2000-01-27 as date), INTERVAL '90' DAY)
+	Transformed: ('d_date_sk = 'cs_sold_date_sk) => equalTo10('d_date_sk, 'cs_sold_date_sk)
+=======================

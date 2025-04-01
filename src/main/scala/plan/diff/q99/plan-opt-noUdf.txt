@@ -1,0 +1,27 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [substr(w_warehouse_name, 1, 20)#70850 ASC NULLS FIRST, sm_type#48949 ASC NULLS FIRST, cc_name#17064 ASC NULLS FIRST], true
+      +- Aggregate [_groupingexpression#70859, sm_type#48949, cc_name#17064], [_groupingexpression#70859 AS substr(w_warehouse_name, 1, 20)#70850, sm_type#48949, cc_name#17064, sum(CASE WHEN ((cs_ship_date_sk#549 - cs_sold_date_sk#581) <= 30) THEN 1 ELSE 0 END) AS 30 days#70840L, sum(CASE WHEN (((cs_ship_date_sk#549 - cs_sold_date_sk#581) > 30) AND ((cs_ship_date_sk#549 - cs_sold_date_sk#581) <= 60)) THEN 1 ELSE 0 END) AS 31-60 days#70841L, sum(CASE WHEN (((cs_ship_date_sk#549 - cs_sold_date_sk#581) > 60) AND ((cs_ship_date_sk#549 - cs_sold_date_sk#581) <= 90)) THEN 1 ELSE 0 END) AS 61-90 days#70842L, sum(CASE WHEN (((cs_ship_date_sk#549 - cs_sold_date_sk#581) > 90) AND ((cs_ship_date_sk#549 - cs_sold_date_sk#581) <= 120)) THEN 1 ELSE 0 END) AS 91-120 days#70843L, sum(CASE WHEN ((cs_ship_date_sk#549 - cs_sold_date_sk#581) > 120) THEN 1 ELSE 0 END) AS >120 days#70844L]
+         +- Project [cs_ship_date_sk#549, cs_sold_date_sk#581, sm_type#48949, cc_name#17064, substr(w_warehouse_name#19728, 1, 20) AS _groupingexpression#70859]
+            +- Join Inner, (cs_ship_date_sk#549 = d_date_sk#24)
+               :- Project [cs_ship_date_sk#549, cs_sold_date_sk#581, w_warehouse_name#19728, sm_type#48949, cc_name#17064]
+               :  +- Join Inner, (cs_call_center_sk#558 = cc_call_center_sk#17058)
+               :     :- Project [cs_ship_date_sk#549, cs_call_center_sk#558, cs_sold_date_sk#581, w_warehouse_name#19728, sm_type#48949]
+               :     :  +- Join Inner, (cs_ship_mode_sk#560 = sm_ship_mode_sk#48947)
+               :     :     :- Project [cs_ship_date_sk#549, cs_call_center_sk#558, cs_ship_mode_sk#560, cs_sold_date_sk#581, w_warehouse_name#19728]
+               :     :     :  +- Join Inner, (cs_warehouse_sk#561 = w_warehouse_sk#19726)
+               :     :     :     :- Project [cs_ship_date_sk#549, cs_call_center_sk#558, cs_ship_mode_sk#560, cs_warehouse_sk#561, cs_sold_date_sk#581]
+               :     :     :     :  +- Filter ((isnotnull(cs_warehouse_sk#561) AND isnotnull(cs_ship_mode_sk#560)) AND (isnotnull(cs_call_center_sk#558) AND isnotnull(cs_ship_date_sk#549)))
+               :     :     :     :     +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+               :     :     :     +- Project [w_warehouse_sk#19726, w_warehouse_name#19728]
+               :     :     :        +- Filter isnotnull(w_warehouse_sk#19726)
+               :     :     :           +- Relation spark_catalog.tpcds.warehouse[w_warehouse_sk#19726,w_warehouse_id#19727,w_warehouse_name#19728,w_warehouse_sq_ft#19729,w_street_number#19730,w_street_name#19731,w_street_type#19732,w_suite_number#19733,w_city#19734,w_county#19735,w_state#19736,w_zip#19737,w_country#19738,w_gmt_offset#19739] parquet
+               :     :     +- Project [sm_ship_mode_sk#48947, sm_type#48949]
+               :     :        +- Filter isnotnull(sm_ship_mode_sk#48947)
+               :     :           +- Relation spark_catalog.tpcds.ship_mode[sm_ship_mode_sk#48947,sm_ship_mode_id#48948,sm_type#48949,sm_code#48950,sm_carrier#48951,sm_contract#48952] parquet
+               :     +- Project [cc_call_center_sk#17058, cc_name#17064]
+               :        +- Filter isnotnull(cc_call_center_sk#17058)
+               :           +- Relation spark_catalog.tpcds.call_center[cc_call_center_sk#17058,cc_call_center_id#17059,cc_rec_start_date#17060,cc_rec_end_date#17061,cc_closed_date_sk#17062,cc_open_date_sk#17063,cc_name#17064,cc_class#17065,cc_employees#17066,cc_sq_ft#17067,cc_hours#17068,cc_manager#17069,cc_mkt_id#17070,cc_mkt_class#17071,cc_mkt_desc#17072,cc_market_manager#17073,cc_division#17074,cc_division_name#17075,cc_company#17076,cc_company_name#17077,cc_street_number#17078,cc_street_name#17079,cc_street_type#17080,cc_suite_number#17081,... 7 more fields] parquet
+               +- Project [d_date_sk#24]
+                  +- Filter ((isnotnull(d_month_seq#27) AND ((d_month_seq#27 >= 1200) AND (d_month_seq#27 <= 1211))) AND isnotnull(d_date_sk#24))
+                     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet

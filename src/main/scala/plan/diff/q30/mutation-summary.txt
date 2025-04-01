@@ -1,0 +1,9 @@
+======MUTATION SUMMARY=============
+QUERY 30
+	Transformed: ('ctr1.ctr_total_return > scalar-subquery#27094 []) => greaterThan0('ctr1.ctr_total_return, scalar-subquery#27094 [])
+	Transformed: ('ca_address_sk = 'c_current_addr_sk) => equalTo1('ca_address_sk, 'c_current_addr_sk)
+	Transformed: ('ca_state = GA) => equalTo2('ca_state, GA)
+	Transformed: ('ctr1.ctr_customer_sk = 'c_customer_sk) => equalTo3('ctr1.ctr_customer_sk, 'c_customer_sk)
+	Transformed: ('avg('ctr_total_return) * 1.2) => multiply4('avg('ctr_total_return), 1.2)
+	Transformed: ('ctr1.ctr_state = 'ctr2.ctr_state) => equalTo5('ctr1.ctr_state, 'ctr2.ctr_state)
+=======================

@@ -1,0 +1,16 @@
+======MUTATION SUMMARY=============
+QUERY 91
+	Transformed: ('cr_call_center_sk = 'cc_call_center_sk) => equalTo0('cr_call_center_sk, 'cc_call_center_sk)
+	Transformed: ('cr_returned_date_sk = 'd_date_sk) => equalTo1('cr_returned_date_sk, 'd_date_sk)
+	Transformed: ('cr_returning_customer_sk = 'c_customer_sk) => equalTo2('cr_returning_customer_sk, 'c_customer_sk)
+	Transformed: ('cd_demo_sk = 'c_current_cdemo_sk) => equalTo3('cd_demo_sk, 'c_current_cdemo_sk)
+	Transformed: ('hd_demo_sk = 'c_current_hdemo_sk) => equalTo4('hd_demo_sk, 'c_current_hdemo_sk)
+	Transformed: ('ca_address_sk = 'c_current_addr_sk) => equalTo5('ca_address_sk, 'c_current_addr_sk)
+	Transformed: ('d_year = 1998) => equalTo6('d_year, 1998)
+	Transformed: ('d_moy = 11) => equalTo7('d_moy, 11)
+	Transformed: ('cd_marital_status = M) => equalTo8('cd_marital_status, M)
+	Transformed: ('cd_education_status = Unknown) => equalTo9('cd_education_status, Unknown)
+	Transformed: ('cd_marital_status = W) => equalTo10('cd_marital_status, W)
+	Transformed: ('cd_education_status = Advanced Degree) => equalTo11('cd_education_status, Advanced Degree)
+	Transformed: ('ca_gmt_offset = -7) => equalTo12('ca_gmt_offset, -7)
+=======================

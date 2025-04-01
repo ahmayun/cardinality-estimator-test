@@ -1,0 +1,17 @@
+======MUTATION SUMMARY=============
+QUERY 35
+	Transformed: ('c.c_current_addr_sk = 'ca.ca_address_sk) => equalTo0('c.c_current_addr_sk, 'ca.ca_address_sk)
+	Transformed: ('cd_demo_sk = 'c.c_current_cdemo_sk) => equalTo1('cd_demo_sk, 'c.c_current_cdemo_sk)
+	Transformed: ('c.c_customer_sk = 'ss_customer_sk) => equalTo2('c.c_customer_sk, 'ss_customer_sk)
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo3('ss_sold_date_sk, 'd_date_sk)
+	Transformed: ('d_year = 2002) => equalTo4('d_year, 2002)
+	Transformed: ('d_qoy < 4) => lessThan5('d_qoy, 4)
+	Transformed: ('c.c_customer_sk = 'ws_bill_customer_sk) => equalTo6('c.c_customer_sk, 'ws_bill_customer_sk)
+	Transformed: ('ws_sold_date_sk = 'd_date_sk) => equalTo7('ws_sold_date_sk, 'd_date_sk)
+	Transformed: ('d_year = 2002) => equalTo8('d_year, 2002)
+	Transformed: ('d_qoy < 4) => lessThan9('d_qoy, 4)
+	Transformed: ('c.c_customer_sk = 'cs_ship_customer_sk) => equalTo10('c.c_customer_sk, 'cs_ship_customer_sk)
+	Transformed: ('cs_sold_date_sk = 'd_date_sk) => equalTo11('cs_sold_date_sk, 'd_date_sk)
+	Transformed: ('d_year = 2002) => equalTo12('d_year, 2002)
+	Transformed: ('d_qoy < 4) => lessThan13('d_qoy, 4)
+=======================

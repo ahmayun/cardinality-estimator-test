@@ -1,0 +1,12 @@
+PushPredicateThroughJoin.apply.match83
+PushPredicateThroughNonJoin.apply.then66
+PushPredicateThroughNonJoin.canPushThroughCondition.case2
+CombineFilters.apply.case1
+PushPredicateThroughNonJoin.apply.then64
+InferFiltersFromConstraints.inferNewFilter.else2
+PushPredicateThroughJoin.apply.else88
+PushPredicateThroughNonJoin.canPushThroughCondition.case1
+PushPredicateThroughJoin.apply.case1
+PushPredicateThroughNonJoin.apply.case2
+PushPredicateThroughNonJoin.apply.case1
+CombineFilters.apply.match55

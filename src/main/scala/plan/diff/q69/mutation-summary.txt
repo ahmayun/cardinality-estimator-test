@@ -1,0 +1,21 @@
+======MUTATION SUMMARY=============
+QUERY 69
+	Transformed: ('c.c_current_addr_sk = 'ca.ca_address_sk) => equalTo0('c.c_current_addr_sk, 'ca.ca_address_sk)
+	Transformed: 'ca_state IN (KY,GA,NM) => inArray1('ca_state, [KY,GA,NM])
+	Transformed: ('cd_demo_sk = 'c.c_current_cdemo_sk) => equalTo2('cd_demo_sk, 'c.c_current_cdemo_sk)
+	Transformed: ('c.c_customer_sk = 'ss_customer_sk) => equalTo3('c.c_customer_sk, 'ss_customer_sk)
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo4('ss_sold_date_sk, 'd_date_sk)
+	Transformed: ('d_year = 2001) => equalTo5('d_year, 2001)
+	Transformed: (('d_moy >= 4) AND ('d_moy <= (4 + 2))) => between6('d_moy, 4, (4 + 2))
+	Transformed: (4 + 2) => add7(4, 2)
+	Transformed: ('c.c_customer_sk = 'ws_bill_customer_sk) => equalTo8('c.c_customer_sk, 'ws_bill_customer_sk)
+	Transformed: ('ws_sold_date_sk = 'd_date_sk) => equalTo9('ws_sold_date_sk, 'd_date_sk)
+	Transformed: ('d_year = 2001) => equalTo10('d_year, 2001)
+	Transformed: (('d_moy >= 4) AND ('d_moy <= (4 + 2))) => between11('d_moy, 4, (4 + 2))
+	Transformed: (4 + 2) => add12(4, 2)
+	Transformed: ('c.c_customer_sk = 'cs_ship_customer_sk) => equalTo13('c.c_customer_sk, 'cs_ship_customer_sk)
+	Transformed: ('cs_sold_date_sk = 'd_date_sk) => equalTo14('cs_sold_date_sk, 'd_date_sk)
+	Transformed: ('d_year = 2001) => equalTo15('d_year, 2001)
+	Transformed: (('d_moy >= 4) AND ('d_moy <= (4 + 2))) => between16('d_moy, 4, (4 + 2))
+	Transformed: (4 + 2) => add17(4, 2)
+=======================

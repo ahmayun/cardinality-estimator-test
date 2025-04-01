@@ -1,0 +1,25 @@
+GlobalLimit 100
++- LocalLimit 100
+   +- Sort [i_item_id#4215 ASC NULLS FIRST], true
+      +- Aggregate [i_item_id#4215], [i_item_id#4215, avg(cs_quantity#565) AS agg1#25732, cast((avg(UnscaledValue(cs_list_price#567)) / 100.0) as decimal(11,6)) AS agg2#25733, cast((avg(UnscaledValue(cs_coupon_amt#574)) / 100.0) as decimal(11,6)) AS agg3#25734, cast((avg(UnscaledValue(cs_sales_price#568)) / 100.0) as decimal(11,6)) AS agg4#25735]
+         +- Project [cs_quantity#565, cs_list_price#567, cs_sales_price#568, cs_coupon_amt#574, i_item_id#4215]
+            +- Join Inner, equalTo3(cs_promo_sk#563, p_promo_sk#25689)
+               :- Project [cs_promo_sk#563, cs_quantity#565, cs_list_price#567, cs_sales_price#568, cs_coupon_amt#574, i_item_id#4215]
+               :  +- Join Inner, equalTo1(cs_item_sk#562, i_item_sk#4214)
+               :     :- Project [cs_item_sk#562, cs_promo_sk#563, cs_quantity#565, cs_list_price#567, cs_sales_price#568, cs_coupon_amt#574]
+               :     :  +- Join Inner, equalTo0(cs_sold_date_sk#581, d_date_sk#24)
+               :     :     :- Project [cs_item_sk#562, cs_promo_sk#563, cs_quantity#565, cs_list_price#567, cs_sales_price#568, cs_coupon_amt#574, cs_sold_date_sk#581]
+               :     :     :  +- Join Inner, equalTo2(cs_bill_cdemo_sk#551, cd_demo_sk#480)
+               :     :     :     :- Project [cs_bill_cdemo_sk#551, cs_item_sk#562, cs_promo_sk#563, cs_quantity#565, cs_list_price#567, cs_sales_price#568, cs_coupon_amt#574, cs_sold_date_sk#581]
+               :     :     :     :  +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+               :     :     :     +- Project [cd_demo_sk#480]
+               :     :     :        +- Filter ((equalTo4(cd_gender#481, M) AND equalTo5(cd_marital_status#482, S)) AND equalTo6(cd_education_status#483, College))
+               :     :     :           +- Relation spark_catalog.tpcds.customer_demographics[cd_demo_sk#480,cd_gender#481,cd_marital_status#482,cd_education_status#483,cd_purchase_estimate#484,cd_credit_rating#485,cd_dep_count#486,cd_dep_employed_count#487,cd_dep_college_count#488] parquet
+               :     :     +- Project [d_date_sk#24]
+               :     :        +- Filter equalTo9(d_year#30, 2000)
+               :     :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+               :     +- Project [i_item_sk#4214, i_item_id#4215]
+               :        +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+               +- Project [p_promo_sk#25689]
+                  +- Filter (equalTo7(p_channel_email#25698, N) OR equalTo8(p_channel_event#25703, N))
+                     +- Relation spark_catalog.tpcds.promotion[p_promo_sk#25689,p_promo_id#25690,p_start_date_sk#25691,p_end_date_sk#25692,p_item_sk#25693,p_cost#25694,p_response_target#25695,p_promo_name#25696,p_channel_dmail#25697,p_channel_email#25698,p_channel_catalog#25699,p_channel_tv#25700,p_channel_radio#25701,p_channel_press#25702,p_channel_event#25703,p_channel_demo#25704,p_channel_details#25705,p_purpose#25706,p_discount_active#25707] parquet

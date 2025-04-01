@@ -1,0 +1,23 @@
+======MUTATION SUMMARY=============
+QUERY 11
+	Transformed: ('t_s_secyear.customer_id = 't_s_firstyear.customer_id) => equalTo0('t_s_secyear.customer_id, 't_s_firstyear.customer_id)
+	Transformed: ('t_s_firstyear.customer_id = 't_w_secyear.customer_id) => equalTo1('t_s_firstyear.customer_id, 't_w_secyear.customer_id)
+	Transformed: ('t_s_firstyear.customer_id = 't_w_firstyear.customer_id) => equalTo2('t_s_firstyear.customer_id, 't_w_firstyear.customer_id)
+	Transformed: ('t_s_firstyear.sale_type = s) => equalTo3('t_s_firstyear.sale_type, s)
+	Transformed: ('t_w_firstyear.sale_type = w) => equalTo4('t_w_firstyear.sale_type, w)
+	Transformed: ('t_s_secyear.sale_type = s) => equalTo5('t_s_secyear.sale_type, s)
+	Transformed: ('t_w_secyear.sale_type = w) => equalTo6('t_w_secyear.sale_type, w)
+	Transformed: ('t_s_firstyear.dyear = 2001) => equalTo7('t_s_firstyear.dyear, 2001)
+	Transformed: ('t_s_secyear.dyear = (2001 + 1)) => equalTo8('t_s_secyear.dyear, (2001 + 1))
+	Transformed: (2001 + 1) => add9(2001, 1)
+	Transformed: ('t_w_firstyear.dyear = 2001) => equalTo10('t_w_firstyear.dyear, 2001)
+	Transformed: ('t_w_secyear.dyear = (2001 + 1)) => equalTo11('t_w_secyear.dyear, (2001 + 1))
+	Transformed: (2001 + 1) => add12(2001, 1)
+	Transformed: ('t_s_firstyear.year_total > 0) => greaterThan13('t_s_firstyear.year_total, 0)
+	Transformed: ('t_w_firstyear.year_total > 0) => greaterThan14('t_w_firstyear.year_total, 0)
+	Transformed: (CASE WHEN ('t_w_firstyear.year_total > 0) THEN ('t_w_secyear.year_total / 't_w_firstyear.year_total) ELSE 0.0 END > CASE WHEN ('t_s_firstyear.year_total > 0) THEN ('t_s_secyear.year_total / 't_s_firstyear.year_total) ELSE 0.0 END) => greaterThan15(CASE WHEN ('t_w_firstyear.year_total > 0) THEN ('t_w_secyear.year_total / 't_w_firstyear.year_total) ELSE 0.0 END, CASE WHEN ('t_s_firstyear.year_total > 0) THEN ('t_s_secyear.year_total / 't_s_firstyear.year_total) ELSE 0.0 END)
+	Transformed: ('t_w_firstyear.year_total > 0) => greaterThan16('t_w_firstyear.year_total, 0)
+	Transformed: ('t_w_secyear.year_total / 't_w_firstyear.year_total) => divide17('t_w_secyear.year_total, 't_w_firstyear.year_total)
+	Transformed: ('t_s_firstyear.year_total > 0) => greaterThan18('t_s_firstyear.year_total, 0)
+	Transformed: ('t_s_secyear.year_total / 't_s_firstyear.year_total) => divide19('t_s_secyear.year_total, 't_s_firstyear.year_total)
+=======================

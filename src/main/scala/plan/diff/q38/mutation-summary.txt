@@ -1,0 +1,15 @@
+======MUTATION SUMMARY=============
+QUERY 38
+	Transformed: ('tpcds.store_sales.ss_sold_date_sk = 'tpcds.date_dim.d_date_sk) => equalTo0('tpcds.store_sales.ss_sold_date_sk, 'tpcds.date_dim.d_date_sk)
+	Transformed: ('tpcds.store_sales.ss_customer_sk = 'tpcds.customer.c_customer_sk) => equalTo1('tpcds.store_sales.ss_customer_sk, 'tpcds.customer.c_customer_sk)
+	Transformed: (('d_month_seq >= 1200) AND ('d_month_seq <= (1200 + 11))) => between2('d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add3(1200, 11)
+	Transformed: ('tpcds.catalog_sales.cs_sold_date_sk = 'tpcds.date_dim.d_date_sk) => equalTo4('tpcds.catalog_sales.cs_sold_date_sk, 'tpcds.date_dim.d_date_sk)
+	Transformed: ('tpcds.catalog_sales.cs_bill_customer_sk = 'tpcds.customer.c_customer_sk) => equalTo5('tpcds.catalog_sales.cs_bill_customer_sk, 'tpcds.customer.c_customer_sk)
+	Transformed: (('d_month_seq >= 1200) AND ('d_month_seq <= (1200 + 11))) => between6('d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add7(1200, 11)
+	Transformed: ('tpcds.web_sales.ws_sold_date_sk = 'tpcds.date_dim.d_date_sk) => equalTo8('tpcds.web_sales.ws_sold_date_sk, 'tpcds.date_dim.d_date_sk)
+	Transformed: ('tpcds.web_sales.ws_bill_customer_sk = 'tpcds.customer.c_customer_sk) => equalTo9('tpcds.web_sales.ws_bill_customer_sk, 'tpcds.customer.c_customer_sk)
+	Transformed: (('d_month_seq >= 1200) AND ('d_month_seq <= (1200 + 11))) => between10('d_month_seq, 1200, (1200 + 11))
+	Transformed: (1200 + 11) => add11(1200, 11)
+=======================

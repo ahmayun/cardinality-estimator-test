@@ -1,0 +1,1 @@
+Q31,"Exception: class org.apache.spark.sql.catalyst.parser.ParseException","Exception: class org.apache.spark.sql.catalyst.parser.ParseException"

@@ -1,0 +1,76 @@
+WithCTE
+:- CTERelationDef 100, false
+:  +- SubqueryAlias ssr
+:     +- Aggregate [s_store_id#53], [s_store_id#53, sum(sales_price#41387) AS sales#41397, sum(profit#41388) AS profit#41398, sum(return_amt#41389) AS returns#41399, sum(net_loss#41390) AS profit_loss#41400]
+:        +- Filter (((date_sk#41386 = d_date_sk#24) AND ((d_date#26 >= cast(2000-08-23 as date)) AND (d_date#26 <= date_add(cast(2000-08-23 as date), extractansiintervaldays(INTERVAL '14' DAY))))) AND (store_sk#41385 = s_store_sk#52))
+:           +- Join Inner
+:              :- Join Inner
+:              :  :- SubqueryAlias salesreturns
+:              :  :  +- Union false, false
+:              :  :     :- Project [ss_store_sk#495 AS store_sk#41385, ss_sold_date_sk#511 AS date_sk#41386, ss_ext_sales_price#503 AS sales_price#41387, ss_net_profit#510 AS profit#41388, cast(0 as decimal(7,2)) AS return_amt#41389, cast(0 as decimal(7,2)) AS net_loss#41390]
+:              :  :     :  +- SubqueryAlias spark_catalog.tpcds.store_sales
+:              :  :     :     +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+:              :  :     +- Project [sr_store_sk#10 AS store_sk#41391, sr_returned_date_sk#23 AS date_sk#41392, cast(0 as decimal(7,2)) AS sales_price#41393, cast(0 as decimal(7,2)) AS profit#41394, sr_return_amt#14 AS return_amt#41395, sr_net_loss#22 AS net_loss#41396]
+:              :  :        +- SubqueryAlias spark_catalog.tpcds.store_returns
+:              :  :           +- Relation spark_catalog.tpcds.store_returns[sr_return_time_sk#4,sr_item_sk#5,sr_customer_sk#6,sr_cdemo_sk#7,sr_hdemo_sk#8,sr_addr_sk#9,sr_store_sk#10,sr_reason_sk#11,sr_ticket_number#12L,sr_return_quantity#13,sr_return_amt#14,sr_return_tax#15,sr_return_amt_inc_tax#16,sr_fee#17,sr_return_ship_cost#18,sr_refunded_cash#19,sr_reversed_charge#20,sr_store_credit#21,sr_net_loss#22,sr_returned_date_sk#23] parquet
+:              :  +- SubqueryAlias spark_catalog.tpcds.date_dim
+:              :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+:              +- SubqueryAlias spark_catalog.tpcds.store
+:                 +- Relation spark_catalog.tpcds.store[s_store_sk#52,s_store_id#53,s_rec_start_date#54,s_rec_end_date#55,s_closed_date_sk#56,s_store_name#57,s_number_employees#58,s_floor_space#59,s_hours#60,s_manager#61,s_market_id#62,s_geography_class#63,s_market_desc#64,s_market_manager#65,s_division_id#66,s_division_name#67,s_company_id#68,s_company_name#69,s_street_number#70,s_street_name#71,s_street_type#72,s_suite_number#73,s_city#74,s_county#75,... 5 more fields] parquet
+:- CTERelationDef 101, false
+:  +- SubqueryAlias csr
+:     +- Aggregate [cp_catalog_page_id#41434], [cp_catalog_page_id#41434, sum(sales_price#41403) AS sales#41413, sum(profit#41404) AS profit#41414, sum(return_amt#41405) AS returns#41415, sum(net_loss#41406) AS profit_loss#41416]
+:        +- Filter (((date_sk#41402 = d_date_sk#41468) AND ((d_date#41470 >= cast(2000-08-23 as date)) AND (d_date#41470 <= date_add(cast(2000-08-23 as date), extractansiintervaldays(INTERVAL '14' DAY))))) AND (page_sk#41401 = cp_catalog_page_sk#41433))
+:           +- Join Inner
+:              :- Join Inner
+:              :  :- SubqueryAlias salesreturns
+:              :  :  +- Union false, false
+:              :  :     :- Project [cs_catalog_page_sk#559 AS page_sk#41401, cs_sold_date_sk#581 AS date_sk#41402, cs_ext_sales_price#570 AS sales_price#41403, cs_net_profit#580 AS profit#41404, cast(0 as decimal(7,2)) AS return_amt#41405, cast(0 as decimal(7,2)) AS net_loss#41406]
+:              :  :     :  +- SubqueryAlias spark_catalog.tpcds.catalog_sales
+:              :  :     :     +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+:              :  :     +- Project [cr_catalog_page_sk#17100 AS page_sk#41407, cr_returned_date_sk#17115 AS date_sk#41408, cast(0 as decimal(7,2)) AS sales_price#41409, cast(0 as decimal(7,2)) AS profit#41410, cr_return_amount#17106 AS return_amt#41411, cr_net_loss#17114 AS net_loss#41412]
+:              :  :        +- SubqueryAlias spark_catalog.tpcds.catalog_returns
+:              :  :           +- Relation spark_catalog.tpcds.catalog_returns[cr_returned_time_sk#17089,cr_item_sk#17090,cr_refunded_customer_sk#17091,cr_refunded_cdemo_sk#17092,cr_refunded_hdemo_sk#17093,cr_refunded_addr_sk#17094,cr_returning_customer_sk#17095,cr_returning_cdemo_sk#17096,cr_returning_hdemo_sk#17097,cr_returning_addr_sk#17098,cr_call_center_sk#17099,cr_catalog_page_sk#17100,cr_ship_mode_sk#17101,cr_warehouse_sk#17102,cr_reason_sk#17103,cr_order_number#17104L,cr_return_quantity#17105,cr_return_amount#17106,cr_return_tax#17107,cr_return_amt_inc_tax#17108,cr_fee#17109,cr_return_ship_cost#17110,cr_refunded_cash#17111,cr_reversed_charge#17112,... 3 more fields] parquet
+:              :  +- SubqueryAlias spark_catalog.tpcds.date_dim
+:              :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#41468,d_date_id#41469,d_date#41470,d_month_seq#41471,d_week_seq#41472,d_quarter_seq#41473,d_year#41474,d_dow#41475,d_moy#41476,d_dom#41477,d_qoy#41478,d_fy_year#41479,d_fy_quarter_seq#41480,d_fy_week_seq#41481,d_day_name#41482,d_quarter_name#41483,d_holiday#41484,d_weekend#41485,d_following_holiday#41486,d_first_dom#41487,d_last_dom#41488,d_same_day_ly#41489,d_same_day_lq#41490,d_current_day#41491,... 4 more fields] parquet
+:              +- SubqueryAlias spark_catalog.tpcds.catalog_page
+:                 +- Relation spark_catalog.tpcds.catalog_page[cp_catalog_page_sk#41433,cp_catalog_page_id#41434,cp_start_date_sk#41435,cp_end_date_sk#41436,cp_department#41437,cp_catalog_number#41438,cp_catalog_page_number#41439,cp_description#41440,cp_type#41441] parquet
+:- CTERelationDef 102, false
+:  +- SubqueryAlias wsr
+:     +- Aggregate [web_site_id#41443], [web_site_id#41443, sum(sales_price#41419) AS sales#41429, sum(profit#41420) AS profit#41430, sum(return_amt#41421) AS returns#41431, sum(net_loss#41422) AS profit_loss#41432]
+:        +- Filter (((date_sk#41418 = d_date_sk#41530) AND ((d_date#41532 >= cast(2000-08-23 as date)) AND (d_date#41532 <= date_add(cast(2000-08-23 as date), extractansiintervaldays(INTERVAL '14' DAY))))) AND (wsr_web_site_sk#41417 = web_site_sk#41442))
+:           +- Join Inner
+:              :- Join Inner
+:              :  :- SubqueryAlias salesreturns
+:              :  :  +- Union false, false
+:              :  :     :- Project [ws_web_site_sk#525 AS wsr_web_site_sk#41417, ws_sold_date_sk#546 AS date_sk#41418, ws_ext_sales_price#535 AS sales_price#41419, ws_net_profit#545 AS profit#41420, cast(0 as decimal(7,2)) AS return_amt#41421, cast(0 as decimal(7,2)) AS net_loss#41422]
+:              :  :     :  +- SubqueryAlias spark_catalog.tpcds.web_sales
+:              :  :     :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+:              :  :     +- Project [ws_web_site_sk#41508 AS wsr_web_site_sk#41423, wr_returned_date_sk#26816 AS date_sk#41424, cast(0 as decimal(7,2)) AS sales_price#41425, cast(0 as decimal(7,2)) AS profit#41426, wr_return_amt#26807 AS return_amt#41427, wr_net_loss#26815 AS net_loss#41428]
+:              :  :        +- Join LeftOuter, ((wr_item_sk#26794 = ws_item_sk#41498) AND (wr_order_number#26805L = ws_order_number#41512L))
+:              :  :           :- SubqueryAlias spark_catalog.tpcds.web_returns
+:              :  :           :  +- Relation spark_catalog.tpcds.web_returns[wr_returned_time_sk#26793,wr_item_sk#26794,wr_refunded_customer_sk#26795,wr_refunded_cdemo_sk#26796,wr_refunded_hdemo_sk#26797,wr_refunded_addr_sk#26798,wr_returning_customer_sk#26799,wr_returning_cdemo_sk#26800,wr_returning_hdemo_sk#26801,wr_returning_addr_sk#26802,wr_web_page_sk#26803,wr_reason_sk#26804,wr_order_number#26805L,wr_return_quantity#26806,wr_return_amt#26807,wr_return_tax#26808,wr_return_amt_inc_tax#26809,wr_fee#26810,wr_return_ship_cost#26811,wr_refunded_cash#26812,wr_reversed_charge#26813,wr_account_credit#26814,wr_net_loss#26815,wr_returned_date_sk#26816] parquet
+:              :  :           +- SubqueryAlias spark_catalog.tpcds.web_sales
+:              :  :              +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#41496,ws_ship_date_sk#41497,ws_item_sk#41498,ws_bill_customer_sk#41499,ws_bill_cdemo_sk#41500,ws_bill_hdemo_sk#41501,ws_bill_addr_sk#41502,ws_ship_customer_sk#41503,ws_ship_cdemo_sk#41504,ws_ship_hdemo_sk#41505,ws_ship_addr_sk#41506,ws_web_page_sk#41507,ws_web_site_sk#41508,ws_ship_mode_sk#41509,ws_warehouse_sk#41510,ws_promo_sk#41511,ws_order_number#41512L,ws_quantity#41513,ws_wholesale_cost#41514,ws_list_price#41515,ws_sales_price#41516,ws_ext_discount_amt#41517,ws_ext_sales_price#41518,ws_ext_wholesale_cost#41519,... 10 more fields] parquet
+:              :  +- SubqueryAlias spark_catalog.tpcds.date_dim
+:              :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#41530,d_date_id#41531,d_date#41532,d_month_seq#41533,d_week_seq#41534,d_quarter_seq#41535,d_year#41536,d_dow#41537,d_moy#41538,d_dom#41539,d_qoy#41540,d_fy_year#41541,d_fy_quarter_seq#41542,d_fy_week_seq#41543,d_day_name#41544,d_quarter_name#41545,d_holiday#41546,d_weekend#41547,d_following_holiday#41548,d_first_dom#41549,d_last_dom#41550,d_same_day_ly#41551,d_same_day_lq#41552,d_current_day#41553,... 4 more fields] parquet
+:              +- SubqueryAlias spark_catalog.tpcds.web_site
+:                 +- Relation spark_catalog.tpcds.web_site[web_site_sk#41442,web_site_id#41443,web_rec_start_date#41444,web_rec_end_date#41445,web_name#41446,web_open_date_sk#41447,web_close_date_sk#41448,web_class#41449,web_manager#41450,web_mkt_id#41451,web_mkt_class#41452,web_mkt_desc#41453,web_market_manager#41454,web_company_id#41455,web_company_name#41456,web_street_number#41457,web_street_name#41458,web_street_type#41459,web_suite_number#41460,web_city#41461,web_county#41462,web_state#41463,web_zip#41464,web_country#41465,... 2 more fields] parquet
++- GlobalLimit 100
+   +- LocalLimit 100
+      +- Sort [channel#41581 ASC NULLS FIRST, id#41582 ASC NULLS FIRST], true
+         +- Aggregate [channel#41581, id#41582, spark_grouping_id#41580L], [channel#41581, id#41582, sum(sales#41397) AS sales#41382, sum(returns#41399) AS returns#41383, sum(profit#41375) AS profit#41384]
+            +- Expand [[channel#41373, id#41374, sales#41397, returns#41399, profit#41375, channel#41578, id#41579, 0], [channel#41373, id#41374, sales#41397, returns#41399, profit#41375, channel#41578, null, 1], [channel#41373, id#41374, sales#41397, returns#41399, profit#41375, null, null, 3]], [channel#41373, id#41374, sales#41397, returns#41399, profit#41375, channel#41581, id#41582, spark_grouping_id#41580L]
+               +- Project [channel#41373, id#41374, sales#41397, returns#41399, profit#41375, channel#41373 AS channel#41578, id#41374 AS id#41579]
+                  +- SubqueryAlias x
+                     +- Union false, false
+                        :- Union false, false
+                        :  :- Project [tpcds.store channel AS channel#41373, concat(tpcds.store, s_store_id#53) AS id#41374, sales#41397, returns#41399, (profit#41398 - profit_loss#41400) AS profit#41375]
+                        :  :  +- SubqueryAlias ssr
+                        :  :     +- CTERelationRef 100, true, [s_store_id#53, sales#41397, profit#41398, returns#41399, profit_loss#41400]
+                        :  +- Project [catalog channel AS channel#41376, concat(tpcds.catalog_page, cp_catalog_page_id#41434) AS id#41377, sales#41413, returns#41415, (profit#41414 - profit_loss#41416) AS profit#41378]
+                        :     +- SubqueryAlias csr
+                        :        +- CTERelationRef 101, true, [cp_catalog_page_id#41434, sales#41413, profit#41414, returns#41415, profit_loss#41416]
+                        +- Project [web channel AS channel#41379, concat(tpcds.web_site, web_site_id#41443) AS id#41380, sales#41429, returns#41431, (profit#41430 - profit_loss#41432) AS profit#41381]
+                           +- SubqueryAlias wsr
+                              +- CTERelationRef 102, true, [web_site_id#41443, sales#41429, profit#41430, returns#41431, profit_loss#41432]

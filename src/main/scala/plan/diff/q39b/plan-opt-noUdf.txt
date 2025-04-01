@@ -1,0 +1,48 @@
+Sort [w_warehouse_sk#19726 ASC NULLS FIRST, i_item_sk#4214 ASC NULLS FIRST, d_moy#32 ASC NULLS FIRST, mean#30297 ASC NULLS FIRST, cov#30298 ASC NULLS FIRST, d_moy#30483 ASC NULLS FIRST, mean#30330 ASC NULLS FIRST, cov#30331 ASC NULLS FIRST], true
++- Join Inner, ((i_item_sk#4214 = i_item_sk#30439) AND (w_warehouse_sk#19726 = w_warehouse_sk#30461))
+   :- Project [w_warehouse_sk#19726, i_item_sk#4214, d_moy#32, mean#30297, CASE WHEN (mean#30297 = 0.0) THEN null ELSE (stdev#30296 / mean#30297) END AS cov#30298]
+   :  +- Filter (CASE WHEN (mean#30297 = 0.0) THEN false ELSE ((stdev#30296 / mean#30297) > 1.0) END AND CASE WHEN (mean#30297 = 0.0) THEN false ELSE ((stdev#30296 / mean#30297) > 1.5) END)
+   :     +- Aggregate [w_warehouse_name#19728, w_warehouse_sk#19726, i_item_sk#4214, d_moy#32], [w_warehouse_sk#19726, i_item_sk#4214, d_moy#32, stddev_samp(cast(inv_quantity_on_hand#19724 as double)) AS stdev#30296, avg(inv_quantity_on_hand#19724) AS mean#30297]
+   :        +- Project [inv_quantity_on_hand#19724, i_item_sk#4214, w_warehouse_sk#19726, w_warehouse_name#19728, d_moy#32]
+   :           +- Join Inner, (inv_date_sk#19725 = d_date_sk#24)
+   :              :- Project [inv_quantity_on_hand#19724, inv_date_sk#19725, i_item_sk#4214, w_warehouse_sk#19726, w_warehouse_name#19728]
+   :              :  +- Join Inner, (inv_warehouse_sk#19723 = w_warehouse_sk#19726)
+   :              :     :- Project [inv_warehouse_sk#19723, inv_quantity_on_hand#19724, inv_date_sk#19725, i_item_sk#4214]
+   :              :     :  +- Join Inner, (inv_item_sk#19722 = i_item_sk#4214)
+   :              :     :     :- Filter (((isnotnull(inv_item_sk#19722) AND isnotnull(inv_warehouse_sk#19723)) AND isnotnull(inv_date_sk#19725)) AND dynamicpruning#30520 [inv_date_sk#19725])
+   :              :     :     :  :  +- Project [d_date_sk#24, d_moy#32]
+   :              :     :     :  :     +- Filter (((isnotnull(d_year#30) AND isnotnull(d_moy#32)) AND ((d_year#30 = 2001) AND (d_moy#32 = 1))) AND isnotnull(d_date_sk#24))
+   :              :     :     :  :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+   :              :     :     :  +- Relation spark_catalog.tpcds.inventory[inv_item_sk#19722,inv_warehouse_sk#19723,inv_quantity_on_hand#19724,inv_date_sk#19725] parquet
+   :              :     :     +- Project [i_item_sk#4214]
+   :              :     :        +- Filter isnotnull(i_item_sk#4214)
+   :              :     :           +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+   :              :     +- Project [w_warehouse_sk#19726, w_warehouse_name#19728]
+   :              :        +- Filter isnotnull(w_warehouse_sk#19726)
+   :              :           +- Relation spark_catalog.tpcds.warehouse[w_warehouse_sk#19726,w_warehouse_id#19727,w_warehouse_name#19728,w_warehouse_sq_ft#19729,w_street_number#19730,w_street_name#19731,w_street_type#19732,w_suite_number#19733,w_city#19734,w_county#19735,w_state#19736,w_zip#19737,w_country#19738,w_gmt_offset#19739] parquet
+   :              +- Project [d_date_sk#24, d_moy#32]
+   :                 +- Filter (((isnotnull(d_year#30) AND isnotnull(d_moy#32)) AND ((d_year#30 = 2001) AND (d_moy#32 = 1))) AND isnotnull(d_date_sk#24))
+   :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+   +- Project [w_warehouse_sk#30461, i_item_sk#30439, d_moy#30483, mean#30297 AS mean#30330, CASE WHEN (mean#30297 = 0.0) THEN null ELSE (stdev#30296 / mean#30297) END AS cov#30331]
+      +- Filter CASE WHEN (mean#30297 = 0.0) THEN false ELSE ((stdev#30296 / mean#30297) > 1.0) END
+         +- Aggregate [w_warehouse_name#30463, w_warehouse_sk#30461, i_item_sk#30439, d_moy#30483], [w_warehouse_sk#30461, i_item_sk#30439, d_moy#30483, stddev_samp(cast(inv_quantity_on_hand#30437 as double)) AS stdev#30296, avg(inv_quantity_on_hand#30437) AS mean#30297]
+            +- Project [inv_quantity_on_hand#30437, i_item_sk#30439, w_warehouse_sk#30461, w_warehouse_name#30463, d_moy#30483]
+               +- Join Inner, (inv_date_sk#30438 = d_date_sk#30475)
+                  :- Project [inv_quantity_on_hand#30437, inv_date_sk#30438, i_item_sk#30439, w_warehouse_sk#30461, w_warehouse_name#30463]
+                  :  +- Join Inner, (inv_warehouse_sk#30436 = w_warehouse_sk#30461)
+                  :     :- Project [inv_warehouse_sk#30436, inv_quantity_on_hand#30437, inv_date_sk#30438, i_item_sk#30439]
+                  :     :  +- Join Inner, (inv_item_sk#30435 = i_item_sk#30439)
+                  :     :     :- Filter (((isnotnull(inv_item_sk#30435) AND isnotnull(inv_warehouse_sk#30436)) AND isnotnull(inv_date_sk#30438)) AND dynamicpruning#30521 [inv_date_sk#30438])
+                  :     :     :  :  +- Project [d_date_sk#30475, d_moy#30483]
+                  :     :     :  :     +- Filter (((isnotnull(d_year#30481) AND isnotnull(d_moy#30483)) AND ((d_year#30481 = 2001) AND (d_moy#30483 = 2))) AND isnotnull(d_date_sk#30475))
+                  :     :     :  :        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#30475,d_date_id#30476,d_date#30477,d_month_seq#30478,d_week_seq#30479,d_quarter_seq#30480,d_year#30481,d_dow#30482,d_moy#30483,d_dom#30484,d_qoy#30485,d_fy_year#30486,d_fy_quarter_seq#30487,d_fy_week_seq#30488,d_day_name#30489,d_quarter_name#30490,d_holiday#30491,d_weekend#30492,d_following_holiday#30493,d_first_dom#30494,d_last_dom#30495,d_same_day_ly#30496,d_same_day_lq#30497,d_current_day#30498,... 4 more fields] parquet
+                  :     :     :  +- Relation spark_catalog.tpcds.inventory[inv_item_sk#30435,inv_warehouse_sk#30436,inv_quantity_on_hand#30437,inv_date_sk#30438] parquet
+                  :     :     +- Project [i_item_sk#30439]
+                  :     :        +- Filter isnotnull(i_item_sk#30439)
+                  :     :           +- Relation spark_catalog.tpcds.item[i_item_sk#30439,i_item_id#30440,i_rec_start_date#30441,i_rec_end_date#30442,i_item_desc#30443,i_current_price#30444,i_wholesale_cost#30445,i_brand_id#30446,i_brand#30447,i_class_id#30448,i_class#30449,i_category_id#30450,i_category#30451,i_manufact_id#30452,i_manufact#30453,i_size#30454,i_formulation#30455,i_color#30456,i_units#30457,i_container#30458,i_manager_id#30459,i_product_name#30460] parquet
+                  :     +- Project [w_warehouse_sk#30461, w_warehouse_name#30463]
+                  :        +- Filter isnotnull(w_warehouse_sk#30461)
+                  :           +- Relation spark_catalog.tpcds.warehouse[w_warehouse_sk#30461,w_warehouse_id#30462,w_warehouse_name#30463,w_warehouse_sq_ft#30464,w_street_number#30465,w_street_name#30466,w_street_type#30467,w_suite_number#30468,w_city#30469,w_county#30470,w_state#30471,w_zip#30472,w_country#30473,w_gmt_offset#30474] parquet
+                  +- Project [d_date_sk#30475, d_moy#30483]
+                     +- Filter (((isnotnull(d_year#30481) AND isnotnull(d_moy#30483)) AND ((d_year#30481 = 2001) AND (d_moy#30483 = 2))) AND isnotnull(d_date_sk#30475))
+                        +- Relation spark_catalog.tpcds.date_dim[d_date_sk#30475,d_date_id#30476,d_date#30477,d_month_seq#30478,d_week_seq#30479,d_quarter_seq#30480,d_year#30481,d_dow#30482,d_moy#30483,d_dom#30484,d_qoy#30485,d_fy_year#30486,d_fy_quarter_seq#30487,d_fy_week_seq#30488,d_day_name#30489,d_quarter_name#30490,d_holiday#30491,d_weekend#30492,d_following_holiday#30493,d_first_dom#30494,d_last_dom#30495,d_same_day_ly#30496,d_same_day_lq#30497,d_current_day#30498,... 4 more fields] parquet

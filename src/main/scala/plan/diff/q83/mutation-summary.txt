@@ -1,0 +1,23 @@
+======MUTATION SUMMARY=============
+QUERY 83
+	Transformed: ((('sr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0) * 100) => multiply0((('sr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0), 100)
+	Transformed: (('sr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0) => divide1(('sr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)), 3.0)
+	Transformed: ('sr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) => divide2('sr_item_qty, (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty))
+	Transformed: (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty) => add3(('sr_item_qty + 'cr_item_qty), 'wr_item_qty)
+	Transformed: ('sr_item_qty + 'cr_item_qty) => add4('sr_item_qty, 'cr_item_qty)
+	Transformed: ((('cr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0) * 100) => multiply5((('cr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0), 100)
+	Transformed: (('cr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0) => divide6(('cr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)), 3.0)
+	Transformed: ('cr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) => divide7('cr_item_qty, (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty))
+	Transformed: (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty) => add8(('sr_item_qty + 'cr_item_qty), 'wr_item_qty)
+	Transformed: ('sr_item_qty + 'cr_item_qty) => add9('sr_item_qty, 'cr_item_qty)
+	Transformed: ((('wr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0) * 100) => multiply10((('wr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0), 100)
+	Transformed: (('wr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) / 3.0) => divide11(('wr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)), 3.0)
+	Transformed: ('wr_item_qty / (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty)) => divide12('wr_item_qty, (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty))
+	Transformed: (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty) => add13(('sr_item_qty + 'cr_item_qty), 'wr_item_qty)
+	Transformed: ('sr_item_qty + 'cr_item_qty) => add14('sr_item_qty, 'cr_item_qty)
+	Transformed: ((('sr_item_qty + 'cr_item_qty) + 'wr_item_qty) / 3.0) => divide15((('sr_item_qty + 'cr_item_qty) + 'wr_item_qty), 3.0)
+	Transformed: (('sr_item_qty + 'cr_item_qty) + 'wr_item_qty) => add16(('sr_item_qty + 'cr_item_qty), 'wr_item_qty)
+	Transformed: ('sr_item_qty + 'cr_item_qty) => add17('sr_item_qty, 'cr_item_qty)
+	Transformed: ('sr_items.item_id = 'cr_items.item_id) => equalTo18('sr_items.item_id, 'cr_items.item_id)
+	Transformed: ('sr_items.item_id = 'wr_items.item_id) => equalTo19('sr_items.item_id, 'wr_items.item_id)
+=======================

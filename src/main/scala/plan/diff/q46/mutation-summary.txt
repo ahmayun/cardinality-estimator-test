@@ -1,0 +1,16 @@
+======MUTATION SUMMARY=============
+QUERY 46
+	Transformed: ('ss_customer_sk = 'c_customer_sk) => equalTo0('ss_customer_sk, 'c_customer_sk)
+	Transformed: ('tpcds.customer.c_current_addr_sk = 'current_addr.ca_address_sk) => equalTo1('tpcds.customer.c_current_addr_sk, 'current_addr.ca_address_sk)
+	Transformed: ('current_addr.ca_city = 'bought_city) => equalTo2('current_addr.ca_city, 'bought_city)
+	Transformed: ('tpcds.store_sales.ss_sold_date_sk = 'tpcds.date_dim.d_date_sk) => equalTo3('tpcds.store_sales.ss_sold_date_sk, 'tpcds.date_dim.d_date_sk)
+	Transformed: ('tpcds.store_sales.ss_store_sk = 'tpcds.store.s_store_sk) => equalTo4('tpcds.store_sales.ss_store_sk, 'tpcds.store.s_store_sk)
+	Transformed: ('tpcds.store_sales.ss_hdemo_sk = 'tpcds.household_demographics.hd_demo_sk) => equalTo5('tpcds.store_sales.ss_hdemo_sk, 'tpcds.household_demographics.hd_demo_sk)
+	Transformed: ('tpcds.store_sales.ss_addr_sk = 'tpcds.customer_address.ca_address_sk) => equalTo6('tpcds.store_sales.ss_addr_sk, 'tpcds.customer_address.ca_address_sk)
+	Transformed: ('tpcds.household_demographics.hd_dep_count = 4) => equalTo7('tpcds.household_demographics.hd_dep_count, 4)
+	Transformed: ('tpcds.household_demographics.hd_vehicle_count = 3) => equalTo8('tpcds.household_demographics.hd_vehicle_count, 3)
+	Transformed: 'tpcds.date_dim.d_dow IN (6,0) => inArray9('tpcds.date_dim.d_dow, [6,0])
+	Transformed: (1999 + 1) => add10(1999, 1)
+	Transformed: (1999 + 2) => add11(1999, 2)
+	Transformed: 'tpcds.store.s_city IN (Fairview,Midway,Fairview,Fairview,Fairview) => inArray12('tpcds.store.s_city, [Fairview,Midway,Fairview,Fairview,Fairview])
+=======================

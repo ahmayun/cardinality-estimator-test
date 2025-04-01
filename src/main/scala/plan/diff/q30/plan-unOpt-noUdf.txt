@@ -1,0 +1,32 @@
+WithCTE
+:- CTERelationDef 64, false
+:  +- SubqueryAlias customer_total_return
+:     +- Aggregate [wr_returning_customer_sk#26799, ca_state#475], [wr_returning_customer_sk#26799 AS ctr_customer_sk#26790, ca_state#475 AS ctr_state#26791, sum(wr_return_amt#26807) AS ctr_total_return#26792]
+:        +- Filter (((wr_returned_date_sk#26816 = d_date_sk#24) AND (d_year#30 = 2002)) AND (wr_returning_addr_sk#26802 = ca_address_sk#467))
+:           +- Join Inner
+:              :- Join Inner
+:              :  :- SubqueryAlias spark_catalog.tpcds.web_returns
+:              :  :  +- Relation spark_catalog.tpcds.web_returns[wr_returned_time_sk#26793,wr_item_sk#26794,wr_refunded_customer_sk#26795,wr_refunded_cdemo_sk#26796,wr_refunded_hdemo_sk#26797,wr_refunded_addr_sk#26798,wr_returning_customer_sk#26799,wr_returning_cdemo_sk#26800,wr_returning_hdemo_sk#26801,wr_returning_addr_sk#26802,wr_web_page_sk#26803,wr_reason_sk#26804,wr_order_number#26805L,wr_return_quantity#26806,wr_return_amt#26807,wr_return_tax#26808,wr_return_amt_inc_tax#26809,wr_fee#26810,wr_return_ship_cost#26811,wr_refunded_cash#26812,wr_reversed_charge#26813,wr_account_credit#26814,wr_net_loss#26815,wr_returned_date_sk#26816] parquet
+:              :  +- SubqueryAlias spark_catalog.tpcds.date_dim
+:              :     +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+:              +- SubqueryAlias spark_catalog.tpcds.customer_address
+:                 +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
++- GlobalLimit 100
+   +- LocalLimit 100
+      +- Sort [c_customer_id#82 ASC NULLS FIRST, c_salutation#88 ASC NULLS FIRST, c_first_name#89 ASC NULLS FIRST, c_last_name#90 ASC NULLS FIRST, c_preferred_cust_flag#91 ASC NULLS FIRST, c_birth_day#92 ASC NULLS FIRST, c_birth_month#93 ASC NULLS FIRST, c_birth_year#94 ASC NULLS FIRST, c_birth_country#95 ASC NULLS FIRST, c_login#96 ASC NULLS FIRST, c_email_address#97 ASC NULLS FIRST, c_last_review_date#98 ASC NULLS FIRST, ctr_total_return#26792 ASC NULLS FIRST], true
+         +- Project [c_customer_id#82, c_salutation#88, c_first_name#89, c_last_name#90, c_preferred_cust_flag#91, c_birth_day#92, c_birth_month#93, c_birth_year#94, c_birth_country#95, c_login#96, c_email_address#97, c_last_review_date#98, ctr_total_return#26792]
+            +- Filter (((cast(ctr_total_return#26792 as decimal(24,7)) > scalar-subquery#26789 [ctr_state#26791]) AND (ca_address_sk#26817 = c_current_addr_sk#85)) AND ((ca_state#26825 = GA) AND (ctr_customer_sk#26790 = c_customer_sk#81)))
+               :  +- Aggregate [(avg(ctr_total_return#26834) * 1.2) AS (avg(ctr_total_return) * 1.2)#26836]
+               :     +- Filter (outer(ctr_state#26791) = ctr_state#26833)
+               :        +- SubqueryAlias ctr2
+               :           +- SubqueryAlias customer_total_return
+               :              +- CTERelationRef 64, true, [ctr_customer_sk#26832, ctr_state#26833, ctr_total_return#26834]
+               +- Join Inner
+                  :- Join Inner
+                  :  :- SubqueryAlias ctr1
+                  :  :  +- SubqueryAlias customer_total_return
+                  :  :     +- CTERelationRef 64, true, [ctr_customer_sk#26790, ctr_state#26791, ctr_total_return#26792]
+                  :  +- SubqueryAlias spark_catalog.tpcds.customer_address
+                  :     +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#26817,ca_address_id#26818,ca_street_number#26819,ca_street_name#26820,ca_street_type#26821,ca_suite_number#26822,ca_city#26823,ca_county#26824,ca_state#26825,ca_zip#26826,ca_country#26827,ca_gmt_offset#26828,ca_location_type#26829] parquet
+                  +- SubqueryAlias spark_catalog.tpcds.customer
+                     +- Relation spark_catalog.tpcds.customer[c_customer_sk#81,c_customer_id#82,c_current_cdemo_sk#83,c_current_hdemo_sk#84,c_current_addr_sk#85,c_first_shipto_date_sk#86,c_first_sales_date_sk#87,c_salutation#88,c_first_name#89,c_last_name#90,c_preferred_cust_flag#91,c_birth_day#92,c_birth_month#93,c_birth_year#94,c_birth_country#95,c_login#96,c_email_address#97,c_last_review_date#98] parquet

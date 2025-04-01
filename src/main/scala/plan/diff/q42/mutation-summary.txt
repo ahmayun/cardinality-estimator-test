@@ -1,0 +1,8 @@
+======MUTATION SUMMARY=============
+QUERY 42
+	Transformed: ('dt.d_date_sk = 'tpcds.store_sales.ss_sold_date_sk) => equalTo0('dt.d_date_sk, 'tpcds.store_sales.ss_sold_date_sk)
+	Transformed: ('tpcds.store_sales.ss_item_sk = 'tpcds.item.i_item_sk) => equalTo1('tpcds.store_sales.ss_item_sk, 'tpcds.item.i_item_sk)
+	Transformed: ('tpcds.item.i_manager_id = 1) => equalTo2('tpcds.item.i_manager_id, 1)
+	Transformed: ('dt.d_moy = 11) => equalTo3('dt.d_moy, 11)
+	Transformed: ('dt.d_year = 2000) => equalTo4('dt.d_year, 2000)
+=======================

@@ -1,0 +1,2 @@
+ColumnPruning.hasConflictingAttrsWithSubquery.case1
+PushPredicateThroughNonJoin.canPushThroughCondition.case1

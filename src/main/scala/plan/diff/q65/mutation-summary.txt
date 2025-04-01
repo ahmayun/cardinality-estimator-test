@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 65
+	Transformed: ('sb.ss_store_sk = 'sc.ss_store_sk) => equalTo0('sb.ss_store_sk, 'sc.ss_store_sk)
+	Transformed: ('sc.revenue <= (0.1 * 'sb.ave)) => lessThanOrEqual1('sc.revenue, (0.1 * 'sb.ave))
+	Transformed: (0.1 * 'sb.ave) => multiply2(0.1, 'sb.ave)
+	Transformed: ('s_store_sk = 'sc.ss_store_sk) => equalTo3('s_store_sk, 'sc.ss_store_sk)
+	Transformed: ('i_item_sk = 'sc.ss_item_sk) => equalTo4('i_item_sk, 'sc.ss_item_sk)
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo5('ss_sold_date_sk, 'd_date_sk)
+	Transformed: (('d_month_seq >= 1176) AND ('d_month_seq <= (1176 + 11))) => between6('d_month_seq, 1176, (1176 + 11))
+	Transformed: (1176 + 11) => add7(1176, 11)
+	Transformed: ('ss_sold_date_sk = 'd_date_sk) => equalTo8('ss_sold_date_sk, 'd_date_sk)
+	Transformed: (('d_month_seq >= 1176) AND ('d_month_seq <= (1176 + 11))) => between9('d_month_seq, 1176, (1176 + 11))
+	Transformed: (1176 + 11) => add10(1176, 11)
+=======================

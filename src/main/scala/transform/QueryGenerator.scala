@@ -1,28 +1,25 @@
 package transform
 
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.catalyst.expressions.{Add, Divide, Expression, Multiply, ScalarSubquery, Subtract}
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
+import transform.Transformer._
 
 import java.io.{File, PrintWriter}
 import scala.io.Source
 
 object QueryGenerator {
 
-  val udfTemplate: String =
-    """
-      |val {UDFNAME}: UserDefinedFunction = udf({UDFBODY})
-      |spark.udf.register("{UDFNAME}", {UDFNAME})
-      |""".stripMargin
-
   val template: String =
-    """package tpcds.runnables.{PACKAGE}
+    """package tpcds.runnables.generated.{PACKAGE}
 
       |import org.apache.spark.sql.SparkSession
       |import org.apache.spark.sql.catalyst.rules.RuleExecutor
       |import org.apache.spark.sql.expressions.UserDefinedFunction
       |import org.apache.spark.sql.functions.udf
       |
+      |/*
+      |{COMMENT}
+      |*/
       |object Q{N} {
       |
       |  def main(args: Array[String]): Unit = {
@@ -54,57 +51,13 @@ object QueryGenerator {
       |}
       |""".stripMargin
 
-  private def fixTableReferences(query: String): String = {
-    val tableNames = List("call_center","catalog_page","catalog_returns","catalog_sales","customer","customer_address","customer_demographics","date_dim","household_demographics","income_band","inventory","item","promotion","reason","ship_mode","store","store_returns","store_sales","time_dim","warehouse","web_page","web_returns","web_sales","web_site")
-
-    tableNames.foldLeft(query) { (currentQuery, tableName) =>
-      val pattern = s"\\b$tableName\\b".r
-      pattern.replaceAllIn(currentQuery, s"tpcds.$tableName")
-    }
-  }
-
-  def processQuery(query: String): String = {
+  def makeScalaString(query: String): String = {
     val tripleQuotes = """""""*3
     val margin = "\t|"
-    val indentedQuery = fixTableReferences(query).split("\n")
+    val indentedQuery = query.split("\n")
       .map(line => margin + line)
       .mkString("\n")
     s"$tripleQuotes\n$indentedQuery\n$tripleQuotes.stripMargin"
-  }
-
-  private def insertUDF(spark: SparkSession, queryContent: String, template: String): String = {
-    val lp = spark.sql(queryContent).queryExecution.logical
-
-//    def traverseAndTransformPlan(plan: LogicalPlan): LogicalPlan = {
-//      // Transform expressions inside the plan
-//      val newExpressions: Seq[Expression] = plan.expressions.map(transformExpression)
-//
-//      // Check for subqueries
-//      newExpressions.foreach { expr =>
-//        expr.foreach {
-//          case subquery: ScalarSubquery =>
-//            println(s"Found Scalar Subquery: ${subquery.plan}")
-//          case _ => // Ignore other expressions
-//        }
-//      }
-//
-//      // Recursively transform children plans
-//      val newChildren = plan.children.map(traverseAndTransformPlan)
-//
-//      // Return a new LogicalPlan with transformed expressions and children
-//      plan.withNewChildren(newChildren).withNewExprs(newExpressions)
-//    }
-//
-//    def transformExpression(expr: Expression): Expression = {
-//      expr.transform {
-//        case Add(left, right, _) =>
-//          println(s"Transforming Add($left, $right) → Subtract($left, $right)")
-//          Subtract(left, right)
-//      }
-//    }
-//
-//    traverseAndTransformPlan(lp)
-    template
   }
 
   def generateScalaFiles(spark: SparkSession): Unit = {
@@ -115,30 +68,44 @@ object QueryGenerator {
     if (!outputDirOriginal.exists()) outputDirOriginal.mkdirs()
     if (!outputDirUDF.exists()) outputDirUDF.mkdirs()
 
-    queryDir.listFiles().filter(_.getName.matches("tpcds-q\\d+[a-z]*\\.sql")).foreach { file =>
-//      val queryNumber = file.getName.replaceAll("[^0-9]", "")
-      val queryPattern = "([0-9]+)([a-z]?)".r
-      val queryNumber = queryPattern.findFirstIn(file.getName).getOrElse("")
-      val queryContent = Source.fromFile(file).mkString
-      val processedQuery = processQuery(queryContent)
+    queryDir
+      .listFiles()
+      .filter(_.getName.matches("tpcds-q\\d+[a-z]*\\.sql"))
+      .sorted
+      .take(1)
+      .foreach { file =>
+  //      val queryNumber = file.getName.replaceAll("[^0-9]", "")
+        val queryPattern = "([0-9]+)([a-z]?)".r
+        val queryNumber = queryPattern.findFirstIn(file.getName).getOrElse("")
+        val queryContent = Source.fromFile(file).mkString
+        val processedQuery = fixTableReferences(queryContent)
+        val queryScalaString = makeScalaString(processedQuery)
 
-      val scalaCode = template
-        .replace("{N}", queryNumber)
-        .replace("{QUERY}", processedQuery)
+        val scalaCodeOrig = template
+          .replace("{PACKAGE}", "original")
+          .replace("{N}", queryNumber)
+          .replace("{QUERY}", queryScalaString)
+          .replace("{COMMENT}", "Original Query")
 
-      val outputFile = new File(outputDirOriginal, s"Q$queryNumber.scala")
-      val writer = new PrintWriter(outputFile)
-      writer.write(scalaCode)
-      writer.close()
-      println(s"Generated Original: ${outputFile.getPath}")
 
-      val udfInsertedCode = insertUDF(spark, queryContent, template)
-      val outputFileUDF = new File(outputDirUDF, s"Q$queryNumber.scala")
-      val writerUDF = new PrintWriter(outputFileUDF)
-      writer.write(udfInsertedCode)
-      writer.close()
-      println(s"Generated UDF code: ${outputFileUDF.getPath}")
+        val outputFile = new File(outputDirOriginal, s"Q$queryNumber.scala")
+        val writer = new PrintWriter(outputFile)
+        writer.write(scalaCodeOrig)
+        writer.close()
+        println(s"Generated Original: ${outputFile.getPath}")
 
+        val (udfInsertedCode, summary) = insertAndRegisterUDFs(spark, queryNumber, processedQuery)
+        val scalaCodeUDF = template
+          .replace("{PACKAGE}", "udf")
+          .replace("{N}", queryNumber)
+          .replace("{QUERY}", makeScalaString(udfInsertedCode.toString()))
+          .replace("{COMMENT}", summary.toString)
+
+        val outputFileUDF = new File(outputDirUDF, s"Q$queryNumber.scala")
+        val writerUDF = new PrintWriter(outputFileUDF)
+        writerUDF.write(scalaCodeUDF)
+        writerUDF.close()
+        println(s"Generated UDF code: ${outputFileUDF.getPath}")
     }
   }
 

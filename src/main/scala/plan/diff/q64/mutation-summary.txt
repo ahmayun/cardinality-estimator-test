@@ -1,0 +1,10 @@
+======MUTATION SUMMARY=============
+QUERY 64
+	Transformed: ('cs1.item_sk = 'cs2.item_sk) => equalTo0('cs1.item_sk, 'cs2.item_sk)
+	Transformed: ('cs1.syear = 1999) => equalTo1('cs1.syear, 1999)
+	Transformed: ('cs2.syear = (1999 + 1)) => equalTo2('cs2.syear, (1999 + 1))
+	Transformed: (1999 + 1) => add3(1999, 1)
+	Transformed: ('cs2.cnt <= 'cs1.cnt) => lessThanOrEqual4('cs2.cnt, 'cs1.cnt)
+	Transformed: ('cs1.store_name = 'cs2.store_name) => equalTo5('cs1.store_name, 'cs2.store_name)
+	Transformed: ('cs1.store_zip = 'cs2.store_zip) => equalTo6('cs1.store_zip, 'cs2.store_zip)
+=======================

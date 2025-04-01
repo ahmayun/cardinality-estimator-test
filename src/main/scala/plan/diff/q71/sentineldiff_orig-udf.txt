@@ -1,0 +1,12 @@
+PushPredicateThroughNonJoin.apply.then72
+ColumnPruning.hasConflictingAttrsWithSubquery.case1
+PushPredicateThroughNonJoin.canPushThroughCondition.case2
+CombineFilters.apply.case1
+PushPredicateThroughNonJoin.apply.else76
+InferFiltersFromConstraints.inferNewFilter.else2
+PushPredicateThroughNonJoin.canPushThroughCondition.case1
+PushPredicateThroughNonJoin.apply.case4
+PushPredicateThroughNonJoin.apply.case1
+CombineFilters.apply.match55
+PushPredicateThroughNonJoin.apply.case74
+PushPredicateThroughNonJoin.apply.then75

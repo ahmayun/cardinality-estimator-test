@@ -1,0 +1,34 @@
+Sort [ext_price#54312 DESC NULLS LAST, brand_id#54310 ASC NULLS FIRST], true
++- Aggregate [i_brand#4222, i_brand_id#4221, t_hour#52128, t_minute#52129], [i_brand_id#4221 AS brand_id#54310, i_brand#4222 AS brand#54311, t_hour#52128, t_minute#52129, MakeDecimal(sum(UnscaledValue(ext_price#54298)),17,2) AS ext_price#54312]
+   +- Project [i_brand_id#4221, i_brand#4222, ext_price#54298, t_hour#52128, t_minute#52129]
+      +- Join Inner, equalTo2(time_sk#54301, t_time_sk#52125)
+         :- Project [i_brand_id#4221, i_brand#4222, ext_price#54298, time_sk#54301]
+         :  +- Join Inner, equalTo0(sold_item_sk#54300, i_item_sk#4214)
+         :     :- Project [i_item_sk#4214, i_brand_id#4221, i_brand#4222]
+         :     :  +- Filter equalTo1(i_manager_id#4234, 1)
+         :     :     +- Relation spark_catalog.tpcds.item[i_item_sk#4214,i_item_id#4215,i_rec_start_date#4216,i_rec_end_date#4217,i_item_desc#4218,i_current_price#4219,i_wholesale_cost#4220,i_brand_id#4221,i_brand#4222,i_class_id#4223,i_class#4224,i_category_id#4225,i_category#4226,i_manufact_id#4227,i_manufact#4228,i_size#4229,i_formulation#4230,i_color#4231,i_units#4232,i_container#4233,i_manager_id#4234,i_product_name#4235] parquet
+         :     +- Union false, false
+         :        :- Project [ws_ext_sales_price#535 AS ext_price#54298, ws_item_sk#515 AS sold_item_sk#54300, ws_sold_time_sk#513 AS time_sk#54301]
+         :        :  +- Join Inner, equalTo5(d_date_sk#24, ws_sold_date_sk#546)
+         :        :     :- Project [ws_sold_time_sk#513, ws_item_sk#515, ws_ext_sales_price#535, ws_sold_date_sk#546]
+         :        :     :  +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+         :        :     +- Project [d_date_sk#24]
+         :        :        +- Filter (equalTo6(d_moy#32, 11) AND equalTo7(d_year#30, 1999))
+         :        :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+         :        :- Project [cs_ext_sales_price#570 AS ext_price#54302, cs_item_sk#562 AS sold_item_sk#54304, cs_sold_time_sk#548 AS time_sk#54305]
+         :        :  +- Join Inner, equalTo8(d_date_sk#54377, cs_sold_date_sk#581)
+         :        :     :- Project [cs_sold_time_sk#548, cs_item_sk#562, cs_ext_sales_price#570, cs_sold_date_sk#581]
+         :        :     :  +- Relation spark_catalog.tpcds.catalog_sales[cs_sold_time_sk#548,cs_ship_date_sk#549,cs_bill_customer_sk#550,cs_bill_cdemo_sk#551,cs_bill_hdemo_sk#552,cs_bill_addr_sk#553,cs_ship_customer_sk#554,cs_ship_cdemo_sk#555,cs_ship_hdemo_sk#556,cs_ship_addr_sk#557,cs_call_center_sk#558,cs_catalog_page_sk#559,cs_ship_mode_sk#560,cs_warehouse_sk#561,cs_item_sk#562,cs_promo_sk#563,cs_order_number#564L,cs_quantity#565,cs_wholesale_cost#566,cs_list_price#567,cs_sales_price#568,cs_ext_discount_amt#569,cs_ext_sales_price#570,cs_ext_wholesale_cost#571,... 10 more fields] parquet
+         :        :     +- Project [d_date_sk#54377]
+         :        :        +- Filter (equalTo9(d_moy#54385, 11) AND equalTo10(d_year#54383, 1999))
+         :        :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#54377,d_date_id#54378,d_date#54379,d_month_seq#54380,d_week_seq#54381,d_quarter_seq#54382,d_year#54383,d_dow#54384,d_moy#54385,d_dom#54386,d_qoy#54387,d_fy_year#54388,d_fy_quarter_seq#54389,d_fy_week_seq#54390,d_day_name#54391,d_quarter_name#54392,d_holiday#54393,d_weekend#54394,d_following_holiday#54395,d_first_dom#54396,d_last_dom#54397,d_same_day_ly#54398,d_same_day_lq#54399,d_current_day#54400,... 4 more fields] parquet
+         :        +- Project [ss_ext_sales_price#503 AS ext_price#54306, ss_item_sk#490 AS sold_item_sk#54308, ss_sold_time_sk#489 AS time_sk#54309]
+         :           +- Join Inner, equalTo11(d_date_sk#54405, ss_sold_date_sk#511)
+         :              :- Project [ss_sold_time_sk#489, ss_item_sk#490, ss_ext_sales_price#503, ss_sold_date_sk#511]
+         :              :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+         :              +- Project [d_date_sk#54405]
+         :                 +- Filter (equalTo12(d_moy#54413, 11) AND equalTo13(d_year#54411, 1999))
+         :                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#54405,d_date_id#54406,d_date#54407,d_month_seq#54408,d_week_seq#54409,d_quarter_seq#54410,d_year#54411,d_dow#54412,d_moy#54413,d_dom#54414,d_qoy#54415,d_fy_year#54416,d_fy_quarter_seq#54417,d_fy_week_seq#54418,d_day_name#54419,d_quarter_name#54420,d_holiday#54421,d_weekend#54422,d_following_holiday#54423,d_first_dom#54424,d_last_dom#54425,d_same_day_ly#54426,d_same_day_lq#54427,d_current_day#54428,... 4 more fields] parquet
+         +- Project [t_time_sk#52125, t_hour#52128, t_minute#52129]
+            +- Filter (equalTo3(t_meal_time#52134, breakfast) OR equalTo4(t_meal_time#52134, dinner))
+               +- Relation spark_catalog.tpcds.time_dim[t_time_sk#52125,t_time_id#52126,t_time#52127,t_hour#52128,t_minute#52129,t_second#52130,t_am_pm#52131,t_shift#52132,t_sub_shift#52133,t_meal_time#52134] parquet

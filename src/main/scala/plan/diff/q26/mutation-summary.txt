@@ -1,0 +1,13 @@
+======MUTATION SUMMARY=============
+QUERY 26
+	Transformed: ('cs_sold_date_sk = 'd_date_sk) => equalTo0('cs_sold_date_sk, 'd_date_sk)
+	Transformed: ('cs_item_sk = 'i_item_sk) => equalTo1('cs_item_sk, 'i_item_sk)
+	Transformed: ('cs_bill_cdemo_sk = 'cd_demo_sk) => equalTo2('cs_bill_cdemo_sk, 'cd_demo_sk)
+	Transformed: ('cs_promo_sk = 'p_promo_sk) => equalTo3('cs_promo_sk, 'p_promo_sk)
+	Transformed: ('cd_gender = M) => equalTo4('cd_gender, M)
+	Transformed: ('cd_marital_status = S) => equalTo5('cd_marital_status, S)
+	Transformed: ('cd_education_status = College) => equalTo6('cd_education_status, College)
+	Transformed: ('p_channel_email = N) => equalTo7('p_channel_email, N)
+	Transformed: ('p_channel_event = N) => equalTo8('p_channel_event, N)
+	Transformed: ('d_year = 2000) => equalTo9('d_year, 2000)
+=======================

@@ -1,0 +1,10 @@
+======MUTATION SUMMARY=============
+QUERY 47
+	Transformed: ('sum_sales - 'avg_monthly_sales) => subtract0('sum_sales, 'avg_monthly_sales)
+	Transformed: ('d_year = 1999) => equalTo1('d_year, 1999)
+	Transformed: ('avg_monthly_sales > 0) => greaterThan2('avg_monthly_sales, 0)
+	Transformed: (CASE WHEN ('avg_monthly_sales > 0) THEN ('abs(('sum_sales - 'avg_monthly_sales)) / 'avg_monthly_sales) ELSE null END > 0.1) => greaterThan3(CASE WHEN ('avg_monthly_sales > 0) THEN ('abs(('sum_sales - 'avg_monthly_sales)) / 'avg_monthly_sales) ELSE null END, 0.1)
+	Transformed: ('avg_monthly_sales > 0) => greaterThan4('avg_monthly_sales, 0)
+	Transformed: ('abs(('sum_sales - 'avg_monthly_sales)) / 'avg_monthly_sales) => divide5('abs(('sum_sales - 'avg_monthly_sales)), 'avg_monthly_sales)
+	Transformed: ('sum_sales - 'avg_monthly_sales) => subtract6('sum_sales, 'avg_monthly_sales)
+=======================

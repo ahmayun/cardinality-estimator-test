@@ -1,0 +1,12 @@
+======MUTATION SUMMARY=============
+QUERY 19
+	Transformed: ('d_date_sk = 'ss_sold_date_sk) => equalTo0('d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('ss_item_sk = 'i_item_sk) => equalTo1('ss_item_sk, 'i_item_sk)
+	Transformed: ('i_manager_id = 8) => equalTo2('i_manager_id, 8)
+	Transformed: ('d_moy = 11) => equalTo3('d_moy, 11)
+	Transformed: ('d_year = 1998) => equalTo4('d_year, 1998)
+	Transformed: ('ss_customer_sk = 'c_customer_sk) => equalTo5('ss_customer_sk, 'c_customer_sk)
+	Transformed: ('c_current_addr_sk = 'ca_address_sk) => equalTo6('c_current_addr_sk, 'ca_address_sk)
+	Transformed: ('substr('ca_zip, 1, 5) = 'substr('s_zip, 1, 5)) => equalTo7('substr('ca_zip, 1, 5), 'substr('s_zip, 1, 5))
+	Transformed: ('ss_store_sk = 's_store_sk) => equalTo8('ss_store_sk, 's_store_sk)
+=======================

@@ -1,0 +1,14 @@
+======MUTATION SUMMARY=============
+QUERY 36
+	Transformed: ('lochierarchy = 0) => equalTo0('lochierarchy, 0)
+	Transformed: ('sum('ss_net_profit) / 'sum('ss_ext_sales_price)) => divide1('sum('ss_net_profit), 'sum('ss_ext_sales_price))
+	Transformed: ('grouping('i_category) + 'grouping('i_class)) => add2('grouping('i_category), 'grouping('i_class))
+	Transformed: ('grouping('i_category) + 'grouping('i_class)) => add3('grouping('i_category), 'grouping('i_class))
+	Transformed: ('grouping('i_class) = 0) => equalTo4('grouping('i_class), 0)
+	Transformed: ('sum('ss_net_profit) / 'sum('ss_ext_sales_price)) => divide5('sum('ss_net_profit), 'sum('ss_ext_sales_price))
+	Transformed: ('d1.d_year = 2001) => equalTo6('d1.d_year, 2001)
+	Transformed: ('d1.d_date_sk = 'ss_sold_date_sk) => equalTo7('d1.d_date_sk, 'ss_sold_date_sk)
+	Transformed: ('i_item_sk = 'ss_item_sk) => equalTo8('i_item_sk, 'ss_item_sk)
+	Transformed: ('s_store_sk = 'ss_store_sk) => equalTo9('s_store_sk, 'ss_store_sk)
+	Transformed: 's_state IN (TN,TN,TN,TN,TN,TN,TN,TN) => inArray10('s_state, [TN,TN,TN,TN,TN,TN,TN,TN])
+=======================

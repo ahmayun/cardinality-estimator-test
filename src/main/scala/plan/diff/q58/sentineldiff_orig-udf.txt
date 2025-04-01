@@ -1,0 +1,5 @@
+PushPredicateThroughNonJoin.apply.then66
+PushPredicateThroughNonJoin.apply.else67
+PushPredicateThroughNonJoin.apply.then64
+PushPredicateThroughNonJoin.apply.else65
+PushPredicateThroughNonJoin.apply.case2

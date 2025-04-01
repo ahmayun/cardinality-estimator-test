@@ -1,0 +1,40 @@
+WithCTE
+:- CTERelationDef 156, false
+:  +- SubqueryAlias wss
+:     +- Aggregate [d_week_seq#28, ss_store_sk#495], [d_week_seq#28, ss_store_sk#495, sum(CASE WHEN (d_day_name#38 = Sunday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS sun_sales#46401, sum(CASE WHEN (d_day_name#38 = Monday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS mon_sales#46402, sum(CASE WHEN (d_day_name#38 = Tuesday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS tue_sales#46403, sum(CASE WHEN (d_day_name#38 = Wednesday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS wed_sales#46404, sum(CASE WHEN (d_day_name#38 = Thursday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS thu_sales#46405, sum(CASE WHEN (d_day_name#38 = Friday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS fri_sales#46406, sum(CASE WHEN (d_day_name#38 = Saturday) THEN ss_sales_price#501 ELSE cast(null as decimal(7,2)) END) AS sat_sales#46407]
+:        +- Filter (d_date_sk#24 = ss_sold_date_sk#511)
+:           +- Join Inner
+:              :- SubqueryAlias spark_catalog.tpcds.store_sales
+:              :  +- Relation spark_catalog.tpcds.store_sales[ss_sold_time_sk#489,ss_item_sk#490,ss_customer_sk#491,ss_cdemo_sk#492,ss_hdemo_sk#493,ss_addr_sk#494,ss_store_sk#495,ss_promo_sk#496,ss_ticket_number#497L,ss_quantity#498,ss_wholesale_cost#499,ss_list_price#500,ss_sales_price#501,ss_ext_discount_amt#502,ss_ext_sales_price#503,ss_ext_wholesale_cost#504,ss_ext_list_price#505,ss_ext_tax#506,ss_coupon_amt#507,ss_net_paid#508,ss_net_paid_inc_tax#509,ss_net_profit#510,ss_sold_date_sk#511] parquet
+:              +- SubqueryAlias spark_catalog.tpcds.date_dim
+:                 +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
++- GlobalLimit 100
+   +- LocalLimit 100
+      +- Sort [s_store_name1#46381 ASC NULLS FIRST, s_store_id1#46383 ASC NULLS FIRST, d_week_seq1#46382 ASC NULLS FIRST], true
+         +- Project [s_store_name1#46381, s_store_id1#46383, d_week_seq1#46382, (sun_sales1#46384 / sun_sales2#46394) AS (sun_sales1 / sun_sales2)#46509, (mon_sales1#46385 / mon_sales2#46395) AS (mon_sales1 / mon_sales2)#46510, (tue_sales1#46386 / tue_sales2#46396) AS (tue_sales1 / tue_sales2)#46511, (wed_sales1#46387 / wed_sales2#46397) AS (wed_sales1 / wed_sales2)#46512, (thu_sales1#46388 / thu_sales2#46398) AS (thu_sales1 / thu_sales2)#46513, (fri_sales1#46389 / fri_sales2#46399) AS (fri_sales1 / fri_sales2)#46514, (sat_sales1#46390 / sat_sales2#46400) AS (sat_sales1 / sat_sales2)#46515]
+            +- Filter ((s_store_id1#46383 = s_store_id2#46393) AND (d_week_seq1#46382 = (d_week_seq2#46392 - 52)))
+               +- Join Inner
+                  :- SubqueryAlias y
+                  :  +- Project [s_store_name#57 AS s_store_name1#46381, d_week_seq#28 AS d_week_seq1#46382, s_store_id#53 AS s_store_id1#46383, sun_sales#46401 AS sun_sales1#46384, mon_sales#46402 AS mon_sales1#46385, tue_sales#46403 AS tue_sales1#46386, wed_sales#46404 AS wed_sales1#46387, thu_sales#46405 AS thu_sales1#46388, fri_sales#46406 AS fri_sales1#46389, sat_sales#46407 AS sat_sales1#46390]
+                  :     +- Filter (((d_week_seq#46412 = d_week_seq#28) AND (ss_store_sk#495 = s_store_sk#52)) AND ((d_month_seq#46411 >= 1212) AND (d_month_seq#46411 <= (1212 + 11))))
+                  :        +- Join Inner
+                  :           :- Join Inner
+                  :           :  :- SubqueryAlias wss
+                  :           :  :  +- CTERelationRef 156, true, [d_week_seq#28, ss_store_sk#495, sun_sales#46401, mon_sales#46402, tue_sales#46403, wed_sales#46404, thu_sales#46405, fri_sales#46406, sat_sales#46407]
+                  :           :  +- SubqueryAlias spark_catalog.tpcds.store
+                  :           :     +- Relation spark_catalog.tpcds.store[s_store_sk#52,s_store_id#53,s_rec_start_date#54,s_rec_end_date#55,s_closed_date_sk#56,s_store_name#57,s_number_employees#58,s_floor_space#59,s_hours#60,s_manager#61,s_market_id#62,s_geography_class#63,s_market_desc#64,s_market_manager#65,s_division_id#66,s_division_name#67,s_company_id#68,s_company_name#69,s_street_number#70,s_street_name#71,s_street_type#72,s_suite_number#73,s_city#74,s_county#75,... 5 more fields] parquet
+                  :           +- SubqueryAlias d
+                  :              +- SubqueryAlias spark_catalog.tpcds.date_dim
+                  :                 +- Relation spark_catalog.tpcds.date_dim[d_date_sk#46408,d_date_id#46409,d_date#46410,d_month_seq#46411,d_week_seq#46412,d_quarter_seq#46413,d_year#46414,d_dow#46415,d_moy#46416,d_dom#46417,d_qoy#46418,d_fy_year#46419,d_fy_quarter_seq#46420,d_fy_week_seq#46421,d_day_name#46422,d_quarter_name#46423,d_holiday#46424,d_weekend#46425,d_following_holiday#46426,d_first_dom#46427,d_last_dom#46428,d_same_day_ly#46429,d_same_day_lq#46430,d_current_day#46431,... 4 more fields] parquet
+                  +- SubqueryAlias x
+                     +- Project [s_store_name#46441 AS s_store_name2#46391, d_week_seq#46500 AS d_week_seq2#46392, s_store_id#46437 AS s_store_id2#46393, sun_sales#46502 AS sun_sales2#46394, mon_sales#46503 AS mon_sales2#46395, tue_sales#46504 AS tue_sales2#46396, wed_sales#46505 AS wed_sales2#46397, thu_sales#46506 AS thu_sales2#46398, fri_sales#46507 AS fri_sales2#46399, sat_sales#46508 AS sat_sales2#46400]
+                        +- Filter (((d_week_seq#46469 = d_week_seq#46500) AND (ss_store_sk#46501 = s_store_sk#46436)) AND ((d_month_seq#46468 >= (1212 + 12)) AND (d_month_seq#46468 <= (1212 + 23))))
+                           +- Join Inner
+                              :- Join Inner
+                              :  :- SubqueryAlias wss
+                              :  :  +- CTERelationRef 156, true, [d_week_seq#46500, ss_store_sk#46501, sun_sales#46502, mon_sales#46503, tue_sales#46504, wed_sales#46505, thu_sales#46506, fri_sales#46507, sat_sales#46508]
+                              :  +- SubqueryAlias spark_catalog.tpcds.store
+                              :     +- Relation spark_catalog.tpcds.store[s_store_sk#46436,s_store_id#46437,s_rec_start_date#46438,s_rec_end_date#46439,s_closed_date_sk#46440,s_store_name#46441,s_number_employees#46442,s_floor_space#46443,s_hours#46444,s_manager#46445,s_market_id#46446,s_geography_class#46447,s_market_desc#46448,s_market_manager#46449,s_division_id#46450,s_division_name#46451,s_company_id#46452,s_company_name#46453,s_street_number#46454,s_street_name#46455,s_street_type#46456,s_suite_number#46457,s_city#46458,s_county#46459,... 5 more fields] parquet
+                              +- SubqueryAlias d
+                                 +- SubqueryAlias spark_catalog.tpcds.date_dim
+                                    +- Relation spark_catalog.tpcds.date_dim[d_date_sk#46465,d_date_id#46466,d_date#46467,d_month_seq#46468,d_week_seq#46469,d_quarter_seq#46470,d_year#46471,d_dow#46472,d_moy#46473,d_dom#46474,d_qoy#46475,d_fy_year#46476,d_fy_quarter_seq#46477,d_fy_week_seq#46478,d_day_name#46479,d_quarter_name#46480,d_holiday#46481,d_weekend#46482,d_following_holiday#46483,d_first_dom#46484,d_last_dom#46485,d_same_day_ly#46486,d_same_day_lq#46487,d_current_day#46488,... 4 more fields] parquet

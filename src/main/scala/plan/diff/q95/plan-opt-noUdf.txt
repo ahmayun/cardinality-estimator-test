@@ -1,0 +1,42 @@
+Aggregate [count(distinct ws_order_number#70051L) AS order count#69994L, MakeDecimal(sum(UnscaledValue(ws_ext_ship_cost#70062)),17,2) AS total shipping cost#69995, MakeDecimal(sum(UnscaledValue(ws_net_profit#70067)),17,2) AS total net profit#69996]
++- Project [ws_order_number#70051L, ws_ext_ship_cost#70062, ws_net_profit#70067]
+   +- Join Inner, (ws_web_site_sk#70047 = web_site_sk#41442)
+      :- Project [ws_web_site_sk#70047, ws_order_number#70051L, ws_ext_ship_cost#70062, ws_net_profit#70067]
+      :  +- Join Inner, (ws_ship_addr_sk#70045 = ca_address_sk#467)
+      :     :- Project [ws_ship_addr_sk#70045, ws_web_site_sk#70047, ws_order_number#70051L, ws_ext_ship_cost#70062, ws_net_profit#70067]
+      :     :  +- Join Inner, (ws_ship_date_sk#70036 = d_date_sk#24)
+      :     :     :- Join LeftSemi, (ws_order_number#70051L = wr_order_number#26805L)
+      :     :     :  :- Join LeftSemi, (ws_order_number#70051L = ws_order_number#529L)
+      :     :     :  :  :- Project [ws_ship_date_sk#70036, ws_ship_addr_sk#70045, ws_web_site_sk#70047, ws_order_number#70051L, ws_ext_ship_cost#70062, ws_net_profit#70067]
+      :     :     :  :  :  +- Filter ((isnotnull(ws_ship_date_sk#70036) AND isnotnull(ws_ship_addr_sk#70045)) AND isnotnull(ws_web_site_sk#70047))
+      :     :     :  :  :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#70035,ws_ship_date_sk#70036,ws_item_sk#70037,ws_bill_customer_sk#70038,ws_bill_cdemo_sk#70039,ws_bill_hdemo_sk#70040,ws_bill_addr_sk#70041,ws_ship_customer_sk#70042,ws_ship_cdemo_sk#70043,ws_ship_hdemo_sk#70044,ws_ship_addr_sk#70045,ws_web_page_sk#70046,ws_web_site_sk#70047,ws_ship_mode_sk#70048,ws_warehouse_sk#70049,ws_promo_sk#70050,ws_order_number#70051L,ws_quantity#70052,ws_wholesale_cost#70053,ws_list_price#70054,ws_sales_price#70055,ws_ext_discount_amt#70056,ws_ext_sales_price#70057,ws_ext_wholesale_cost#70058,... 10 more fields] parquet
+      :     :     :  :  +- Project [ws_order_number#529L]
+      :     :     :  :     +- Join Inner, ((ws_order_number#529L = ws_order_number#70017L) AND NOT (ws_warehouse_sk#527 = ws_warehouse_sk#70015))
+      :     :     :  :        :- Project [ws_warehouse_sk#527, ws_order_number#529L]
+      :     :     :  :        :  +- Filter (isnotnull(ws_order_number#529L) AND isnotnull(ws_warehouse_sk#527))
+      :     :     :  :        :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#513,ws_ship_date_sk#514,ws_item_sk#515,ws_bill_customer_sk#516,ws_bill_cdemo_sk#517,ws_bill_hdemo_sk#518,ws_bill_addr_sk#519,ws_ship_customer_sk#520,ws_ship_cdemo_sk#521,ws_ship_hdemo_sk#522,ws_ship_addr_sk#523,ws_web_page_sk#524,ws_web_site_sk#525,ws_ship_mode_sk#526,ws_warehouse_sk#527,ws_promo_sk#528,ws_order_number#529L,ws_quantity#530,ws_wholesale_cost#531,ws_list_price#532,ws_sales_price#533,ws_ext_discount_amt#534,ws_ext_sales_price#535,ws_ext_wholesale_cost#536,... 10 more fields] parquet
+      :     :     :  :        +- Project [ws_warehouse_sk#70015, ws_order_number#70017L]
+      :     :     :  :           +- Filter (isnotnull(ws_order_number#70017L) AND isnotnull(ws_warehouse_sk#70015))
+      :     :     :  :              +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#70001,ws_ship_date_sk#70002,ws_item_sk#70003,ws_bill_customer_sk#70004,ws_bill_cdemo_sk#70005,ws_bill_hdemo_sk#70006,ws_bill_addr_sk#70007,ws_ship_customer_sk#70008,ws_ship_cdemo_sk#70009,ws_ship_hdemo_sk#70010,ws_ship_addr_sk#70011,ws_web_page_sk#70012,ws_web_site_sk#70013,ws_ship_mode_sk#70014,ws_warehouse_sk#70015,ws_promo_sk#70016,ws_order_number#70017L,ws_quantity#70018,ws_wholesale_cost#70019,ws_list_price#70020,ws_sales_price#70021,ws_ext_discount_amt#70022,ws_ext_sales_price#70023,ws_ext_wholesale_cost#70024,... 10 more fields] parquet
+      :     :     :  +- Project [wr_order_number#26805L]
+      :     :     :     +- Join Inner, (wr_order_number#26805L = ws_order_number#70167L)
+      :     :     :        :- Project [wr_order_number#26805L]
+      :     :     :        :  +- Filter isnotnull(wr_order_number#26805L)
+      :     :     :        :     +- Relation spark_catalog.tpcds.web_returns[wr_returned_time_sk#26793,wr_item_sk#26794,wr_refunded_customer_sk#26795,wr_refunded_cdemo_sk#26796,wr_refunded_hdemo_sk#26797,wr_refunded_addr_sk#26798,wr_returning_customer_sk#26799,wr_returning_cdemo_sk#26800,wr_returning_hdemo_sk#26801,wr_returning_addr_sk#26802,wr_web_page_sk#26803,wr_reason_sk#26804,wr_order_number#26805L,wr_return_quantity#26806,wr_return_amt#26807,wr_return_tax#26808,wr_return_amt_inc_tax#26809,wr_fee#26810,wr_return_ship_cost#26811,wr_refunded_cash#26812,wr_reversed_charge#26813,wr_account_credit#26814,wr_net_loss#26815,wr_returned_date_sk#26816] parquet
+      :     :     :        +- Project [ws_order_number#70167L]
+      :     :     :           +- Join Inner, ((ws_order_number#70167L = ws_order_number#70201L) AND NOT (ws_warehouse_sk#70165 = ws_warehouse_sk#70199))
+      :     :     :              :- Project [ws_warehouse_sk#70165, ws_order_number#70167L]
+      :     :     :              :  +- Filter (isnotnull(ws_order_number#70167L) AND isnotnull(ws_warehouse_sk#70165))
+      :     :     :              :     +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#70151,ws_ship_date_sk#70152,ws_item_sk#70153,ws_bill_customer_sk#70154,ws_bill_cdemo_sk#70155,ws_bill_hdemo_sk#70156,ws_bill_addr_sk#70157,ws_ship_customer_sk#70158,ws_ship_cdemo_sk#70159,ws_ship_hdemo_sk#70160,ws_ship_addr_sk#70161,ws_web_page_sk#70162,ws_web_site_sk#70163,ws_ship_mode_sk#70164,ws_warehouse_sk#70165,ws_promo_sk#70166,ws_order_number#70167L,ws_quantity#70168,ws_wholesale_cost#70169,ws_list_price#70170,ws_sales_price#70171,ws_ext_discount_amt#70172,ws_ext_sales_price#70173,ws_ext_wholesale_cost#70174,... 10 more fields] parquet
+      :     :     :              +- Project [ws_warehouse_sk#70199, ws_order_number#70201L]
+      :     :     :                 +- Filter (isnotnull(ws_order_number#70201L) AND isnotnull(ws_warehouse_sk#70199))
+      :     :     :                    +- Relation spark_catalog.tpcds.web_sales[ws_sold_time_sk#70185,ws_ship_date_sk#70186,ws_item_sk#70187,ws_bill_customer_sk#70188,ws_bill_cdemo_sk#70189,ws_bill_hdemo_sk#70190,ws_bill_addr_sk#70191,ws_ship_customer_sk#70192,ws_ship_cdemo_sk#70193,ws_ship_hdemo_sk#70194,ws_ship_addr_sk#70195,ws_web_page_sk#70196,ws_web_site_sk#70197,ws_ship_mode_sk#70198,ws_warehouse_sk#70199,ws_promo_sk#70200,ws_order_number#70201L,ws_quantity#70202,ws_wholesale_cost#70203,ws_list_price#70204,ws_sales_price#70205,ws_ext_discount_amt#70206,ws_ext_sales_price#70207,ws_ext_wholesale_cost#70208,... 10 more fields] parquet
+      :     :     +- Project [d_date_sk#24]
+      :     :        +- Filter ((isnotnull(d_date#26) AND ((d_date#26 >= 1999-02-01) AND (d_date#26 <= 1999-04-02))) AND isnotnull(d_date_sk#24))
+      :     :           +- Relation spark_catalog.tpcds.date_dim[d_date_sk#24,d_date_id#25,d_date#26,d_month_seq#27,d_week_seq#28,d_quarter_seq#29,d_year#30,d_dow#31,d_moy#32,d_dom#33,d_qoy#34,d_fy_year#35,d_fy_quarter_seq#36,d_fy_week_seq#37,d_day_name#38,d_quarter_name#39,d_holiday#40,d_weekend#41,d_following_holiday#42,d_first_dom#43,d_last_dom#44,d_same_day_ly#45,d_same_day_lq#46,d_current_day#47,... 4 more fields] parquet
+      :     +- Project [ca_address_sk#467]
+      :        +- Filter ((isnotnull(ca_state#475) AND (ca_state#475 = IL)) AND isnotnull(ca_address_sk#467))
+      :           +- Relation spark_catalog.tpcds.customer_address[ca_address_sk#467,ca_address_id#468,ca_street_number#469,ca_street_name#470,ca_street_type#471,ca_suite_number#472,ca_city#473,ca_county#474,ca_state#475,ca_zip#476,ca_country#477,ca_gmt_offset#478,ca_location_type#479] parquet
+      +- Project [web_site_sk#41442]
+         +- Filter ((isnotnull(web_company_name#41456) AND (web_company_name#41456 = pri)) AND isnotnull(web_site_sk#41442))
+            +- Relation spark_catalog.tpcds.web_site[web_site_sk#41442,web_site_id#41443,web_rec_start_date#41444,web_rec_end_date#41445,web_name#41446,web_open_date_sk#41447,web_close_date_sk#41448,web_class#41449,web_manager#41450,web_mkt_id#41451,web_mkt_class#41452,web_mkt_desc#41453,web_market_manager#41454,web_company_id#41455,web_company_name#41456,web_street_number#41457,web_street_name#41458,web_street_type#41459,web_suite_number#41460,web_city#41461,web_county#41462,web_state#41463,web_zip#41464,web_country#41465,... 2 more fields] parquet
