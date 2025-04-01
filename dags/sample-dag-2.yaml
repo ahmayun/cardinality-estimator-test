@@ -22,23 +22,23 @@ links:
 multigraph: false
 nodes:
 - id: 0
-  op: "spark.range(10)"
+  op: "spark.range"
 - id: 1
-  op: "spark.range(10)"
+  op: "spark.range"
 - id: 2
-  op: "as(\"a\")"
+  op: "as"
 - id: 3
-  op: "as(\"b\")"
+  op: "as"
 - id: 4
-  op: "join([in2],\"id\")"
+  op: "join"
 - id: 5
-  op: "spark.range(10)"
+  op: "spark.range"
 - id: 6
-  op: "withColumn(\"udf_op\", [gen_udf])"
+  op: "withColumn"
 - id: 7
-  op: "as(\"c\")"
+  op: "as"
 - id: 8
-  op: "join([in2], $\"udf_op\" === $\"c.id\")"
+  op: "join"
 - id: 9
   op: "show"
 
