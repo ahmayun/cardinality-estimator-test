@@ -1,0 +1,44 @@
+directed: true
+graph: {}
+links:
+- source: 0
+  target: 2
+- source: 2
+  target: 4
+- source: 1
+  target: 3
+- source: 3
+  target: 4
+- source: 4
+  target: 6
+- source: 6
+  target: 8
+- source: 5
+  target: 7
+- source: 7
+  target: 8
+- source: 8
+  target: 9
+multigraph: false
+nodes:
+- id: 0
+  op: "A"
+- id: 1
+  op: "B"
+- id: 2
+  op: "as"
+- id: 3
+  op: "as"
+- id: 4
+  op: "join"
+- id: 5
+  op: "C"
+- id: 6
+  op: "withColumn"
+- id: 7
+  op: "as"
+- id: 8
+  op: "join"
+- id: 9
+  op: "show"
+

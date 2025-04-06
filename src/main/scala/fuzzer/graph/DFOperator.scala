@@ -1,21 +1,27 @@
 package fuzzer.graph
 
-case class DFOperator(name: String, id: Int) {
-  /*
-    - inputs: List[DFOperator]
-    - arguments: List[Primitive|UDF]
-    -
-   */
-  override def toString: String = {
-    name
+import fuzzer.data.tables.TableMetadata
+
+class DFOperator(val name: String, val id: Int) {
+
+  var state: TableMetadata = null
+
+  def this(id: Int) {
+    this(null, id)
   }
+
+  override def toString: String = {
+    s"DFOperator($name, $id)"
+  }
+
 }
 
 object DFOperator {
   def fromMap(map: Map[String, Any]): DFOperator = {
-    DFOperator(
+    new DFOperator(
       name=map("op").asInstanceOf[String],
       id=map("id").asInstanceOf[Int]
     )
   }
+
 }

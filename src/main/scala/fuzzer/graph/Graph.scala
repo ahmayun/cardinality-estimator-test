@@ -1,15 +1,20 @@
 package fuzzer.graph
 
 import fuzzer.code.SourceCode
+
 import scala.collection.mutable
 
-case class Graph[T](nodes: List[Node[T]]) {
-  val topoSortedNodes = this.topologicalSort
-  def roots: List[Node[T]] = nodes.filter(_.parents.isEmpty)
-  def traverseAll: List[T] = nodes.flatMap(_.traverseDescendants).distinct
+case class Graph[T](
+                     nodes: List[Node[T]]
+                   ) {
+
+  private val topoSortedNodes = this.kahnTopoSort
+  private def roots: List[Node[T]] = nodes.filter(_.parents.isEmpty)
+
   def bfsBackwardsFromFinal(printNode: Node[T] => Unit): Unit = {
     val visited = scala.collection.mutable.Set[Node[T]]()
 
+    println(s"nodes = ${nodes.mkString(",")}")
     val finalNode = nodes.find(_.children.isEmpty).get
 
     val queue = scala.collection.mutable.Queue[Node[T]](finalNode)
@@ -19,14 +24,19 @@ case class Graph[T](nodes: List[Node[T]]) {
       if (!visited.contains(current)) {
         visited += current
         printNode(current)
-        current.parents.foreach(queue.enqueue(_))
+        current.parents.foreach(queue.enqueue)
       }
     }
   }
 
-  def kahnTraverse(visit: Node[T] => Unit): Unit = {
+  def getSourceNodes: List[Node[T]] = {
+    this.nodes.filter(_.parents.isEmpty)
+  }
+
+  private def kahnTopoSort: List[Node[T]] = {
     val inDegree = mutable.Map[Node[T], Int]()
     val queue = mutable.Queue[Node[T]]()
+    val sorted = mutable.ListBuffer[Node[T]]()
 
     // Initialize in-degrees
     for (node <- nodes) {
@@ -41,7 +51,7 @@ case class Graph[T](nodes: List[Node[T]]) {
     while (queue.nonEmpty) {
       val current = queue.dequeue()
       if (!visited.contains(current)) {
-        visit(current)
+        sorted += current
         visited += current
 
         for (child <- current.children) {
@@ -52,23 +62,8 @@ case class Graph[T](nodes: List[Node[T]]) {
         }
       }
     }
-  }
 
-  private def topologicalSort: List[Node[T]] = {
-    val visited = mutable.Set[Node[T]]()
-    val result = mutable.ListBuffer[Node[T]]()
-
-    def dfs(node: Node[T]): Unit = {
-      if (!visited.contains(node)) {
-        visited += node
-        node.children.foreach(dfs)
-        result.prepend(node)
-      }
-    }
-
-    this.nodes.foreach(dfs)
-
-    result.toList
+    sorted.toList
   }
 
   def generateCode(generator: Graph[T] => SourceCode): SourceCode = {
@@ -87,4 +82,14 @@ case class Graph[T](nodes: List[Node[T]]) {
       }
     }
   }
+
+  def traverseTopological(visit: Node[T] => Unit): Unit = this.topoSortedNodes.foreach(visit)
+  def transformNodes(visit: Node[T] => T): Graph[T] = {
+    Graph(this.topoSortedNodes.map { node =>
+      val newNode = Node(visit(node))
+      newNode.copyStateFrom(node)
+      newNode
+    })
+  }
+
 }

@@ -12,6 +12,12 @@ case class Node[T](value: T) {
   def hasAncestors: Boolean = parents.nonEmpty
   def isUnary: Boolean = parents.length == 1
   def isBinary: Boolean = parents.length == 2
+  def getInDegree: Int = parents.length
+  def getOutDegree: Int = children.length
+  def copyStateFrom(other: Node[T]): Unit = {
+    children = other.children.map(identity)
+    parents = other.parents.map(identity)
+  }
 
   override def toString: String = value.toString
 }
