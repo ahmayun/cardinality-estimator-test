@@ -5,32 +5,20 @@ import fuzzer.code.SourceCode
 import scala.collection.mutable
 
 case class Graph[T](
-                     nodes: List[Node[T]]
+                     nodesMap: Map[String, Node[T]],
+                     children: Map[String, List[String]],
+                     parents: Map[String, List[String]]
                    ) {
 
-  private val topoSortedNodes = this.kahnTopoSort
-  private def roots: List[Node[T]] = nodes.filter(_.parents.isEmpty)
-
-  def bfsBackwardsFromFinal(printNode: Node[T] => Unit): Unit = {
-    val visited = scala.collection.mutable.Set[Node[T]]()
-
-    println(s"nodes = ${nodes.mkString(",")}")
-    val finalNode = nodes.find(_.children.isEmpty).get
-
-    val queue = scala.collection.mutable.Queue[Node[T]](finalNode)
-
-    while (queue.nonEmpty) {
-      val current = queue.dequeue()
-      if (!visited.contains(current)) {
-        visited += current
-        printNode(current)
-        current.parents.foreach(queue.enqueue)
-      }
-    }
-  }
+  val nodes: List[Node[T]] = nodesMap.values.toList
+  private lazy val topoSortedNodes: List[Node[T]] = this.kahnTopoSort
 
   def getSourceNodes: List[Node[T]] = {
     this.nodes.filter(_.parents.isEmpty)
+  }
+
+  def getSinkNodes: List[Node[T]] = {
+    this.nodes.filter(_.children.isEmpty)
   }
 
   private def kahnTopoSort: List[Node[T]] = {
@@ -73,7 +61,7 @@ case class Graph[T](
   def computeReachabilityFromSources(): Unit = {
     val graph = this
 
-    val sources = graph.roots
+    val sources = graph.getSourceNodes
     sources.foreach(source => source.reachableFromSources += source)
 
     for (node <- this.topoSortedNodes) {
@@ -85,11 +73,15 @@ case class Graph[T](
 
   def traverseTopological(visit: Node[T] => Unit): Unit = this.topoSortedNodes.foreach(visit)
   def transformNodes(visit: Node[T] => T): Graph[T] = {
-    Graph(this.topoSortedNodes.map { node =>
-      val newNode = Node(visit(node))
-      newNode.copyStateFrom(node)
-      newNode
-    })
+    val newNodesMap = nodesMap.map { case (id, node) =>
+      id -> Node(id, visit(node))
+    }
+    val newGraph = Graph(newNodesMap, children, parents)
+    newGraph.nodes.foreach { n =>
+      n.graph = newGraph
+    }
+
+    newGraph
   }
 
 }

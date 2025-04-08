@@ -3,9 +3,10 @@ package fuzzer.generation
 import fuzzer.code.SourceCode
 import fuzzer.data.tables.{ColumnMetadata, TableMetadata}
 import fuzzer.data.types.{BooleanType, DataType, FloatType, IntegerType, StringType}
+import fuzzer.exceptions.ImpossibleDFGException
 import fuzzer.graph.{DAGParser, DFOperator, Graph, Node}
 
-import scala.util.Random
+import utils.Random
 import scala.collection.mutable
 import play.api.libs.json._
 import utils.json.JsonReader
@@ -69,18 +70,56 @@ object Graph2Code {
   }
 
   def pickRandomReachableSource(node: Node[DFOperator]): Node[DFOperator] = {
-    val sources = node.reachableFromSources.toSeq
+    val sources = node.getReachableSources.toSeq
     assert(sources.nonEmpty, "Expected DAG sources to be non-empty")
     sources(Random.nextInt(sources.length))
   }
 
+  def pickRandomTable(node: Node[DFOperator]): TableMetadata = {
+    val tables = node.value.stateView.values.toSeq
+    tables(Random.nextInt(tables.length))
+  }
+
   def pickRandomColumnFromReachableSources(node: Node[DFOperator]): (TableMetadata, ColumnMetadata) = {
-    val randomSource = pickRandomReachableSource(node)
-    val randomTable = randomSource.value.state
+    val randomTable = pickRandomTable(node)
     val columns = randomTable.columns
     assert(columns.nonEmpty, "Expected columnNames to be non-empty")
     val randomColumn = columns(Random.nextInt(columns.length))
     (randomTable, randomColumn)
+  }
+
+  def renameTables(newValue: String, node: Node[DFOperator]): Unit = {
+    val dfOp = node.value
+    println(s"====== RENAMING TABLE VIEW FOR ${node.id} (${node.value.name}) ===========")
+
+    // Rename each table metadata entry in the stateView
+    val renamedStateView: Map[String, TableMetadata] = dfOp.stateView.map {
+      case (id, tableMeta) =>
+        val renamed = tableMeta.copy() // get a deep copy
+        println(s"\t => At $id (${tableMeta.identifier} => $newValue)")
+        renamed.setIdentifier(newValue) // modify as needed
+        id -> renamed
+    }
+
+    // Update this node’s stateView with renamed copies
+    dfOp.stateView = renamedStateView
+
+    // Propagate the new renamed stateView to downstream nodes
+    propagateState(node)
+  }
+
+  def updateSourceState(
+                         node: Node[DFOperator],
+                         param: JsLookupResult,
+                         paramName: String,
+                         paramType: String,
+                         paramVal: String
+                       ): Unit = {
+    val effect = (param \ "state-effect").asOpt[String].get
+    effect match {
+      case "table-rename" => renameTables(paramVal, node)
+      case "column-add" =>
+    }
   }
 
   def generateOrPickString(
@@ -94,7 +133,8 @@ object Graph2Code {
 
     if (isStateAltering) {
       // Generate random string (e.g. for creating a new column)
-      val gen = s"${Random.alphanumeric.take(5).mkString}"
+      val gen = s"${Random.alphanumeric.take(fuzzer.global.Config.maxStringLength).mkString}"
+      updateSourceState(node, param, paramName, paramType, gen)
       gen
     } else {
       // Pick a column name from reachable source nodes
@@ -108,13 +148,13 @@ object Graph2Code {
     s"$prefix${col.name}"
   }
 
-  def pickTwoColumns(sources: mutable.Set[Node[DFOperator]]): ((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata)) = {
+  def pickTwoColumns(stateView: Map[String, TableMetadata]): ((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata)) = {
 
     // Step 1: Flatten all columns and group by DataType -> Map[DataType, List[(TableMetadata, ColumnMetadata)]]
-    val columnsByType: Map[DataType, Seq[(TableMetadata, ColumnMetadata)]] = sources
+    val columnsByType: Map[DataType, Seq[(TableMetadata, ColumnMetadata)]] = stateView
+      .values
       .toSeq
-      .flatMap { s =>
-        val table = s.value.state
+      .flatMap { table =>
         table.columns.map(c => (c.dataType, (table, c)))
       }
       .groupBy(_._1)
@@ -155,9 +195,7 @@ object Graph2Code {
 
   def pickMultiColumnsFromReachableSources(node: Node[DFOperator]): ((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata)) = {
     // pick one col each 2 datasets, must have same type
-
-    val sources = node.reachableFromSources
-    pickTwoColumns(sources)
+    pickTwoColumns(node.value.stateView)
   }
 
   def generateMultiColumnExpression(
@@ -249,30 +287,22 @@ object Graph2Code {
 
   def dag2Scala(spec: JsValue)(graph: Graph[DFOperator]): SourceCode = {
     val l = mutable.ListBuffer[String]()
-    var count = 0
     val variablePrefix = "auto"
 
 
-    graph.bfsBackwardsFromFinal { node =>
-      println(node)
-      if (node.parents.nonEmpty) {
+    graph.traverseTopological { node =>
+      node.value.varName = s"$variablePrefix${node.id}"
 
-        def decide(node: Node[DFOperator], i: String): String = {
-          if (!node.hasAncestors)
-            s"${constructDFOCall(spec, node, null, null)}"
-          else
-            s"${variablePrefix}${if (i == "L") count+1 else count+2}"
-        }
-
-        val left = decide(node.parents(0), "L")
-        val right = if(node.parents.length > 1) decide(node.parents(1), "R") else ""
-        l += s"val $variablePrefix$count = ${constructDFOCall(spec, node, left, right)}"
-        count += 1
+      val call = node.getInDegree match {
+        case 0 => constructDFOCall(spec, node, null, null)
+        case 1 => constructDFOCall(spec, node, node.parents.head.value.varName, null)
+        case 2 => constructDFOCall(spec, node, node.parents.head.value.varName, node.parents.last.value.varName)
       }
+      l += s"val ${node.value.varName} = $call"
     }
 
 
-    SourceCode(src=l.reverse.mkString("\n"), ast=null)
+    SourceCode(src=l.mkString("\n"), ast=null)
   }
 
   def buildOpMap(spec: JsValue): Map[String, Seq[String]] = {
@@ -331,6 +361,7 @@ object Graph2Code {
         case (0,_) => pickRandomSource(opMap)
         case (1,_) => pickRandomUnaryOp(opMap)
         case (2,_) => pickRandomBinaryOp(opMap)
+        case (in, _) => throw new ImpossibleDFGException(s"Impossible DFG provided, a node has in-degree=$in")
       }
       assert(opOpt.isDefined, s"Couldn't find an operator in the provided spec that fits the node: $node")
       val Some(op) = opOpt
@@ -338,79 +369,95 @@ object Graph2Code {
     }
   }
 
+  def initializeStateViews(graph: Graph[DFOperator]): Unit = {
+    // Step 1: compute reachability from sources if not already done
+    graph.computeReachabilityFromSources()
+
+    // Step 2: for each node in the graph
+    for (node <- graph.nodes) {
+      val dfOp = node.value
+
+      // Step 3: for each reachable source, create a copy of its state
+      val stateCopies: Map[String, TableMetadata] = node.getReachableSources
+        .map(source => source.id -> source.value.state.copy()) // assuming TableMetadata has copy()
+        .toMap
+
+      // Step 4: assign the stateView
+      dfOp.stateView = stateCopies
+    }
+  }
+
+  def propagateState(startNode: Node[DFOperator]): Unit = {
+    val visited = mutable.Set[String]()
+    val queue = mutable.Queue[Node[DFOperator]]()
+    queue.enqueueAll(startNode.children)
+
+    while (queue.nonEmpty) {
+      val current = queue.dequeue()
+      if (!visited.contains(current.id)) {
+        visited += current.id
+
+        val currentDFOp = current.value
+        val startStateView = startNode.value.stateView
+
+        // Only update keys that are also present in startNode.stateView
+        val updatedView = currentDFOp.stateView.map {
+          case (key, _) if startStateView.contains(key) =>
+            key -> startStateView(key).copy()
+          case other =>
+            other
+        }
+
+        currentDFOp.stateView = updatedView
+
+        // Enqueue children
+        queue.enqueueAll(current.children)
+      }
+    }
+  }
+
+  def constructDFG(dag: Graph[DFOperator], apiSpec: JsValue, tables: List[TableMetadata]): Graph[DFOperator] = {
+    val dfg = fillOperators(dag, apiSpec)
+    dfg.computeReachabilityFromSources()
+    dfg.getSourceNodes.sortBy(_.value.id).zip(tables).foreach {
+      case (node, table) =>
+        node.value.state = table
+    }
+    initializeStateViews(dfg)
+    dfg
+  }
+
   def main(args: Array[String]): Unit = {
-//    val hardcodedTables: List[TableMetadata] = List(
-//      TableMetadata(
-//        identifier = "users",
-//        columns = Seq(
-//          ColumnMetadata("id", IntegerType, isNullable = false, isKey = true),
-//          ColumnMetadata("name", StringType),
-//          ColumnMetadata("email", StringType)
-//        ),
-//        metadata = Map("source" -> "auth_system")
-//      ),
-//      TableMetadata(
-//        identifier = "orders",
-//        columns = Seq(
-//          ColumnMetadata("order_id", IntegerType, isNullable = false, isKey = true),
-//          ColumnMetadata("user_id", IntegerType),
-//          ColumnMetadata("amount", FloatType),
-//          ColumnMetadata("status", StringType)
-//        ),
-//        metadata = Map("source" -> "ecommerce")
-//      ),
-//      TableMetadata(
-//        identifier = "products",
-//        columns = Seq(
-//          ColumnMetadata("product_id", IntegerType, isNullable = false, isKey = true),
-//          ColumnMetadata("product_name", StringType),
-//          ColumnMetadata("price", FloatType),
-//          ColumnMetadata("available", BooleanType)
-//        ),
-//        metadata = Map("source" -> "inventory")
-//      )
-//    )
 
     val hardcodedTables: List[TableMetadata] = List(
       TableMetadata(
-        identifier = "users",
-        columns = Seq(
+        _identifier = "users",
+        _columns = Seq(
           ColumnMetadata("id", IntegerType, isNullable = false, isKey = true),
         ),
-        metadata = Map("source" -> "auth_system")
+        _metadata = Map("source" -> "auth_system")
       ),
       TableMetadata(
-        identifier = "orders",
-        columns = Seq(
+        _identifier = "orders",
+        _columns = Seq(
           ColumnMetadata("id", IntegerType, isNullable = false, isKey = true),
         ),
-        metadata = Map("source" -> "ecommerce")
+        _metadata = Map("source" -> "ecommerce")
       ),
       TableMetadata(
-        identifier = "products",
-        columns = Seq(
+        _identifier = "products",
+        _columns = Seq(
           ColumnMetadata("id", IntegerType, isNullable = false, isKey = true),
         ),
-        metadata = Map("source" -> "inventory")
+        _metadata = Map("source" -> "inventory")
       )
     )
     Random.setSeed("ahmad35".hashCode)
 
     val specScala = JsonReader.readJsonFile("specs/spark-scala.json")
-    val graph = DAGParser.parseYamlFile("dags/sample-dag-3.yaml", map => DFOperator.fromMap(map))
-//    val graphRaw = DAGParser.parseYamlFile("dags/sample-dag-3.yaml", map => DFOperator.fromMap(map))
-//    val graph = fillOperators(graphRaw, specScala)
-    graph.traverseTopological(println)
-
-    graph.computeReachabilityFromSources()
-    graph.getSourceNodes.sortBy(_.value.id).zip(hardcodedTables).foreach {
-      case (node, table) =>
-        node.value.state = table
-        println(s"${node.value.id} => ${table.identifier} ")
-    }
-
-
-    val source = graph.generateCode(dag2Scala(specScala))
+    val dag = DAGParser.parseYamlFile("dags/sample-dag-4-bare.yaml", map => DFOperator.fromMap(map))
+    val dfg = constructDFG(dag, specScala, hardcodedTables)
+    val source = dfg.generateCode(dag2Scala(specScala))
 
     println(source)
 

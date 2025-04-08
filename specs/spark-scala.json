@@ -27,7 +27,9 @@
     "parameters": {
       "alias": {
         "type": "str",
-        "required": true
+        "required": true,
+        "state-altering": true,
+        "state-effect": "table-rename"
       }
     },
     "returns": "DataFrame"
@@ -40,13 +42,14 @@
         "required": true
       },
       "on": {
-        "type": ["str", "list"],
-        "required": false
+        "type": "Column",
+        "required": true
       },
       "how": {
         "type": "str",
-        "required": false,
-        "default": "inner"
+        "required": true,
+        "default": "inner",
+        "values": ["inner", "outer", "left", "right"]
       }
     },
     "returns": "DataFrame"
@@ -56,7 +59,9 @@
     "parameters": {
       "colName": {
         "type": "str",
-        "required": true
+        "required": true,
+        "state-altering": true,
+        "state-effect": "column-add"
       },
       "col": {
         "type": "Column",
