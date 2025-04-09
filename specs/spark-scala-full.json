@@ -85,5 +85,23 @@
       }
     },
     "returns": "None"
+  },
+  
+  "explain": {
+    "type": "action",
+    "parameters": {
+      "extended": {
+        "type": "bool",
+        "required": false,
+        "default": false
+      },
+      "mode": {
+        "type": "string",
+        "required": false,
+        "default": "simple",
+        "enum": ["simple", "extended", "codegen", "cost", "formatted"]
+      }
+    },
+    "returns": "None"
   }
 }

@@ -14,6 +14,7 @@ case class Node[T](id: String, value: T) {
   def hasAncestors: Boolean = parents.nonEmpty
   def isUnary: Boolean = parents.length == 1
   def isBinary: Boolean = parents.length == 2
+  def isSink: Boolean = getOutDegree == 0
   def getInDegree: Int = parents.length
   def getOutDegree: Int = children.length
   def getReachableSources: mutable.Set[Node[T]] = {

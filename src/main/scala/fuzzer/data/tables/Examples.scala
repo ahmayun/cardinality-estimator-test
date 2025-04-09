@@ -1,9 +1,33 @@
-package fuzzer.data.tpcds
+package fuzzer.data.tables
 
-import fuzzer.data.tables.{ColumnMetadata, TableMetadata}
 import fuzzer.data.types._
 
-class TPCDSMetaData {
+object Examples {
+
+  val hardcodedTables: List[TableMetadata] = List(
+    TableMetadata(
+      _identifier = "users",
+      _columns = Seq(
+        ColumnMetadata("uid", IntegerType, isNullable = false, isKey = true),
+      ),
+      _metadata = Map("source" -> "auth_system")
+    ),
+    TableMetadata(
+      _identifier = "orders",
+      _columns = Seq(
+        ColumnMetadata("oid", IntegerType, isNullable = false, isKey = true),
+      ),
+      _metadata = Map("source" -> "ecommerce")
+    ),
+    TableMetadata(
+      _identifier = "products",
+      _columns = Seq(
+        ColumnMetadata("pid", IntegerType, isNullable = false, isKey = true),
+      ),
+      _metadata = Map("source" -> "inventory")
+    )
+  )
+
   val tpcdsTables: List[TableMetadata] = List(
 
     // ------------------------------------------------------------------------------

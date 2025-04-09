@@ -32,11 +32,18 @@ object Graph2Code {
 
     // Construct the function call based on operation type
     opType match {
-      case "source" => s"$opName(${args.mkString(", ")})"
+      case "source" => constructSourceCall(node, spec, opName, opType, parameters, args)
       case "unary" => s"$in1.$opName(${args.mkString(", ")})"
       case "binary" => s"$in1.$opName(${args.mkString(", ")})"
       case "action" => s"$in1.$opName(${args.mkString(", ")})"
       case _ => s"$in1.$opName(${args.mkString(", ")})"
+    }
+  }
+
+  private def constructSourceCall(node: Node[DFOperator], spec: JsValue, opName: String, opType: String, parameters: JsObject, args: List[String]): String = {
+    opName match {
+      case "spark.table" => s"""$opName("tpcds.${fuzzer.global.State.src2TableMap(node.id).identifier}")"""
+      case _ => s"$opName(${args.mkString(", ")})"
     }
   }
 
@@ -75,39 +82,51 @@ object Graph2Code {
     sources(Random.nextInt(sources.length))
   }
 
-  def pickRandomTable(node: Node[DFOperator]): TableMetadata = {
-    val tables = node.value.stateView.values.toSeq
-    tables(Random.nextInt(tables.length))
+  def getAllColumns(node: Node[DFOperator]): Seq[(TableMetadata, ColumnMetadata)] = {
+    val tablesColPairs = node.value.stateView.values.toSeq.flatMap { t =>
+      t.columns.map(c => (t, c))
+    }
+    tablesColPairs
   }
 
   def pickRandomColumnFromReachableSources(node: Node[DFOperator]): (TableMetadata, ColumnMetadata) = {
-    val randomTable = pickRandomTable(node)
-    val columns = randomTable.columns
-    assert(columns.nonEmpty, "Expected columnNames to be non-empty")
-    val randomColumn = columns(Random.nextInt(columns.length))
-    (randomTable, randomColumn)
+    val tablesColPairs = getAllColumns(node).filter {
+      case (_, col) =>
+        col.metadata.get("gen-iteration") match {
+          case None => true
+          case Some(i) =>
+            fuzzer.global.State.iteration.toString != i
+        }
+    }
+    assert(tablesColPairs.nonEmpty, "Expected columnNames to be non-empty")
+    val pick = tablesColPairs(Random.nextInt(tablesColPairs.length))
+    pick
   }
 
   def renameTables(newValue: String, node: Node[DFOperator]): Unit = {
     val dfOp = node.value
-    println(s"====== RENAMING TABLE VIEW FOR ${node.id} (${node.value.name}) ===========")
+//    println(s"====== RENAMING TABLE VIEW FOR ${node.id} (${node.value.name}) ===========")
 
     // Rename each table metadata entry in the stateView
     val renamedStateView: Map[String, TableMetadata] = dfOp.stateView.map {
       case (id, tableMeta) =>
         val renamed = tableMeta.copy() // get a deep copy
-        println(s"\t => At $id (${tableMeta.identifier} => $newValue)")
+//        println(s"\t => At $id (${tableMeta.identifier} => $newValue)")
         renamed.setIdentifier(newValue) // modify as needed
         id -> renamed
     }
 
     // Update this node’s stateView with renamed copies
     dfOp.stateView = renamedStateView
-
-    // Propagate the new renamed stateView to downstream nodes
-    propagateState(node)
   }
 
+  def addColumn(value: String, node: Node[DFOperator]): Unit = {
+    node.value.stateView = node.value.stateView + ("added" -> TableMetadata(
+      _identifier = "",
+      _columns = Seq(ColumnMetadata(name=value, dataType = DataType.generateRandom, metadata = Map("source" -> "runtime", "gen-iteration" -> fuzzer.global.State.iteration.toString))),
+      _metadata = Map("source" -> "runtime", "gen-iteration" -> fuzzer.global.State.iteration.toString)
+    ))
+  }
   def updateSourceState(
                          node: Node[DFOperator],
                          param: JsLookupResult,
@@ -118,7 +137,7 @@ object Graph2Code {
     val effect = (param \ "state-effect").asOpt[String].get
     effect match {
       case "table-rename" => renameTables(paramVal, node)
-      case "column-add" =>
+      case "column-add" => addColumn(paramVal, node)
     }
   }
 
@@ -135,6 +154,7 @@ object Graph2Code {
       // Generate random string (e.g. for creating a new column)
       val gen = s"${Random.alphanumeric.take(fuzzer.global.Config.maxStringLength).mkString}"
       updateSourceState(node, param, paramName, paramType, gen)
+      propagateState(node)
       gen
     } else {
       // Pick a column name from reachable source nodes
@@ -194,7 +214,6 @@ object Graph2Code {
   }
 
   def pickMultiColumnsFromReachableSources(node: Node[DFOperator]): ((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata)) = {
-    // pick one col each 2 datasets, must have same type
     pickTwoColumns(node.value.stateView)
   }
 
@@ -238,6 +257,9 @@ object Graph2Code {
       case fuzzer.data.types.FloatType => floatExpr
       case fuzzer.data.types.StringType => stringExpr
       case fuzzer.data.types.BooleanType => boolExpr
+      case fuzzer.data.types.LongType => intExpr // TODO: Fix placeholder
+      case fuzzer.data.types.DecimalType => intExpr // TODO: Fix placeholder
+      case fuzzer.data.types.DateType => stringExpr // TODO: Fix placeholder
     }
   }
 
@@ -298,12 +320,14 @@ object Graph2Code {
         case 1 => constructDFOCall(spec, node, node.parents.head.value.varName, null)
         case 2 => constructDFOCall(spec, node, node.parents.head.value.varName, node.parents.last.value.varName)
       }
-      l += s"val ${node.value.varName} = $call"
+      val lhs = if(node.isSink) "" else s"val ${node.value.varName} = "
+      l += s"$lhs$call"
     }
 
 
     SourceCode(src=l.mkString("\n"), ast=null)
   }
+
 
   def buildOpMap(spec: JsValue): Map[String, Seq[String]] = {
     spec.as[JsObject].fields.foldLeft(Map.empty[String, Seq[String]]) {
@@ -419,10 +443,17 @@ object Graph2Code {
   def constructDFG(dag: Graph[DFOperator], apiSpec: JsValue, tables: List[TableMetadata]): Graph[DFOperator] = {
     val dfg = fillOperators(dag, apiSpec)
     dfg.computeReachabilityFromSources()
-    dfg.getSourceNodes.sortBy(_.value.id).zip(tables).foreach {
+    val zipped = dfg.getSourceNodes.sortBy(_.value.id).zip(tables)
+    zipped.foreach {
       case (node, table) =>
         node.value.state = table
     }
+
+    fuzzer.global.State.src2TableMap = zipped.map {
+      case (node, table) =>
+        node.id -> table
+    }.toMap
+
     initializeStateViews(dfg)
     dfg
   }
