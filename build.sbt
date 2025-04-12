@@ -14,6 +14,7 @@ libraryDependencies ++= Seq(
   "org.scalameta" %% "scalameta" % "4.10.2",
   "com.typesafe.play" %% "play-json" % "2.9.4",
   "org.yaml" % "snakeyaml" % "2.2",
+  "org.scala-lang" % "scala-compiler" % scalaVersion.value,
 
   //  "org.scalameta" %% "trees" % "4.7.1"
 //  "org.scalameta" %% "semanticdb" % "4.7.1"

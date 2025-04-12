@@ -55,7 +55,7 @@ object TestTPCDSEnvironment {
     val web_site = spark.table("tpcds.web_site")
 
     // Select statements (you can run these with spark.sql if needed, but you're already using DataFrames)
-    web_sales.join(web_site, col("web_sales.ws_sold_date_sk") === col("web_site.web_site_sk")).show(1)
+//    web_sales.join(web_site, col("web_sales.ws_sold_date_sk") === col("web_site.web_site_sk")).show(1)
 //    spark.sql("SELECT * FROM call_center LIMIT 1")
 //    spark.sql("SELECT * FROM catalog_page LIMIT 1")
 //    spark.sql("SELECT * FROM catalog_returns LIMIT 1")
@@ -83,7 +83,7 @@ object TestTPCDSEnvironment {
 
     // show(1) for each loaded DataFrame
 //    call_center.show(1)
-//    catalog_page.show(1)
+    catalog_page.show(1)
 //    catalog_returns.show(1)
 //    catalog_sales.show(1)
 //    customer.show(1)

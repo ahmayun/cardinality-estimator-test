@@ -1,0 +1,60 @@
+{
+  "spark.table": {
+    "type": "source",
+    "parameters": {
+      "tableName": {
+        "type": "string",
+        "required": true
+      }
+    },
+    "returns": "DataFrame"
+  },
+  "as": {
+    "type": "unary",
+    "parameters": {
+      "alias": {
+        "type": "str",
+        "required": true,
+        "state-altering": true,
+        "state-effect": "table-rename"
+      }
+    },
+    "returns": "DataFrame"
+  },
+  "join": {
+    "type": "binary",
+    "parameters": {
+      "other": {
+        "type": "DataFrame",
+        "required": true
+      },
+      "on": {
+        "type": "Column",
+        "required": true
+      },
+      "how": {
+        "type": "str",
+        "required": true,
+        "default": "inner",
+        "values": ["inner", "outer", "left", "right"]
+      }
+    },
+    "returns": "DataFrame"
+  },
+  "withColumn": {
+    "type": "unary",
+    "parameters": {
+      "colName": {
+        "type": "str",
+        "required": true,
+        "state-altering": true,
+        "state-effect": "column-add"
+      },
+      "col": {
+        "type": "Column",
+        "required": true
+      }
+    },
+    "returns": "DataFrame"
+  }
+}

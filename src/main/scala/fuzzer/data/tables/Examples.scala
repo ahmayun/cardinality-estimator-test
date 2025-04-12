@@ -279,19 +279,19 @@ object Examples {
       _metadata =  Map("source" -> "tpcds")
     ),
 
-    // ------------------------------------------------------------------------------
-    // 9) DBGEN_VERSION
-    // ------------------------------------------------------------------------------
-    TableMetadata(
-      _identifier =  "dbgen_version",
-      _columns =  Seq(
-        ColumnMetadata("dv_version", StringType),
-        ColumnMetadata("dv_create_date", DateType),
-        ColumnMetadata("dv_create_time", StringType),
-        ColumnMetadata("dv_cmdline_args", StringType)
-      ),
-      _metadata =  Map("source" -> "tpcds")
-    ),
+//    // ------------------------------------------------------------------------------
+//    // 9) DBGEN_VERSION
+//    // ------------------------------------------------------------------------------
+//    TableMetadata(
+//      _identifier =  "dbgen_version",
+//      _columns =  Seq(
+//        ColumnMetadata("dv_version", StringType),
+//        ColumnMetadata("dv_create_date", DateType),
+//        ColumnMetadata("dv_create_time", StringType),
+//        ColumnMetadata("dv_cmdline_args", StringType)
+//      ),
+//      _metadata =  Map("source" -> "tpcds")
+//    ),
 
     // ------------------------------------------------------------------------------
     // 10) HOUSEHOLD_DEMOGRAPHICS

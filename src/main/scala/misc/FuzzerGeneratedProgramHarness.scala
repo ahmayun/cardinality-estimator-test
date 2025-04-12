@@ -1,37 +1,25 @@
-package misc
-
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.functions._
+import fuzzer.global.State.sparkOption
 
 object FuzzerGeneratedProgramHarness {
 
   def main(args: Array[String]): Unit = {
-    val master = if(args.isEmpty) "local[*]" else args(0)
+    val spark = sparkOption.get
 
-    val spark = SparkSession.builder()
-      .appName("Fuzzer Generated Program")
-      .config("spark.sql.cbo.enabled", "true")
-      .config("spark.sql.cbo.joinReorder.enabled", "true")
-      .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
-      .config("spark.sql.statistics.histogram.enabled", "true")
-      .master(master)
-      .enableHiveSupport()
-      .getOrCreate()
+    val auto5 = spark.table("tpcds.store_sales")
+    val auto0 = spark.table("tpcds.date_dim")
+    val auto6 = auto5.withColumn("RqFuw", col("store_sales.ss_quantity") > 5)
+    val auto7 = auto6.withColumn("f3gEt", col("store_sales.ss_coupon_amt") > 5)
+    val auto3 = auto7.join(auto0, col("date_dim.d_qoy") === col("store_sales.ss_quantity"), "inner")
+    val auto4 = auto3.withColumn("eVJXP", col("date_dim.d_dom") > 5)
+    val auto8 = auto5.join(auto4, col("date_dim.d_first_dom") === col("store_sales.ss_cdemo_sk"), "right")
+    val auto9 = auto8.withColumn("irUW2", col("date_dim.d_fy_week_seq") > 5)
+    val auto1 = auto9.join(auto0, col("date_dim.d_dom") === col("store_sales.ss_hdemo_sk"), "right")
+    val auto2 = auto1.as("f1veg")
+    val sink = auto6.join(auto2, col("f1veg.ss_sold_time_sk") === col("f1veg.d_fy_year"), "outer")
+    sink.explain(true)
 
-    spark.sparkContext.setLogLevel("ERROR")
-
-    val auto0 = spark.table("tpcds.household_demographics")
-    val auto6 = spark.table("tpcds.warehouse")
-    val auto4 = auto0.as("IcuBp")
-    val auto5 = auto4.as("VixhC")
-    val auto7 = auto6.join(auto5, col("warehouse.w_country") === col("VixhC.hd_buy_potential"), "inner")
-    val auto8 = auto7.withColumn("ioatd", length(col("warehouse.w_street_name")) > 5)
-    val auto1 = auto8.join(auto0, col("warehouse.w_warehouse_sq_ft") === col("VixhC.hd_dep_count"), "right")
-    val auto3 = auto1.withColumn("vMWuU", length(col("warehouse.w_warehouse_name")) > 5)
-    val auto9 = auto6.join(auto3, col("warehouse.w_zip") === col("VixhC.hd_buy_potential"), "inner")
-    val auto10 = auto9.as("jCYyX")
-    auto10.explain(true)
-
+    fuzzer.global.State.finalDF = Some(sink)
   }
 }
-

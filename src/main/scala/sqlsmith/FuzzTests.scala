@@ -126,7 +126,7 @@ object FuzzTests {
         None
       }
     }
-    (keys, values).zipped.foreach { (k, v) =>
+    keys.lazyZip(values).foreach { (k, v) =>
 //      assert(!SQLConf.staticConfKeys.contains(k))
       conf.setConfString(k, v)
     }

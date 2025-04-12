@@ -168,7 +168,7 @@ object Graph2Code {
     s"$prefix${col.name}"
   }
 
-  def pickTwoColumns(stateView: Map[String, TableMetadata]): ((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata)) = {
+  def pickTwoColumns(stateView: Map[String, TableMetadata]): Option[((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata))] = {
 
     // Step 1: Flatten all columns and group by DataType -> Map[DataType, List[(TableMetadata, ColumnMetadata)]]
     val columnsByType: Map[DataType, Seq[(TableMetadata, ColumnMetadata)]] = stateView
@@ -197,7 +197,7 @@ object Graph2Code {
     // Step 3: Randomly pick a datatype from viable options
     if (viableTypes.isEmpty) {
 //      throw new RuntimeException("No two columns of the same type from different tables found")
-      return null
+      return None
     }
 
     val (_, candidates) = Random.shuffle(viableTypes).head
@@ -210,10 +210,10 @@ object Graph2Code {
     val col1 = Random.shuffle(chosenPair(0)._2).head
     val col2 = Random.shuffle(chosenPair(1)._2).head
 
-    (col1, col2)
+    Some((col1, col2))
   }
 
-  def pickMultiColumnsFromReachableSources(node: Node[DFOperator]): ((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata)) = {
+  def pickMultiColumnsFromReachableSources(node: Node[DFOperator]): Option[((TableMetadata, ColumnMetadata), (TableMetadata, ColumnMetadata))] = {
     pickTwoColumns(node.value.stateView)
   }
 
@@ -222,19 +222,33 @@ object Graph2Code {
                                      param: JsLookupResult,
                                      paramName: String,
                                      paramType: String
-                                   ): String = {
-
-    val pair = pickMultiColumnsFromReachableSources(node)
-    if (pair == null) {
-      return null
+                                   ): Option[String] = {
+    pickMultiColumnsFromReachableSources(node) match {
+      case Some(pair) =>
+        val ((table1, col1), (table2, col2)) = pair
+        val fullColName1 = constructFullColumnName(table1, col1)
+        val fullColName2 = constructFullColumnName(table2, col2)
+        val colExpr1 = s"""col("$fullColName1")"""
+        val colExpr2 = s"""col("$fullColName2")"""
+        val crossTableExpr = s"$colExpr1 === $colExpr2"
+        Some(crossTableExpr)
+      case None => None
     }
-    val ((table1, col1), (table2, col2)) = pair
-    val fullColName1 = constructFullColumnName(table1, col1)
-    val fullColName2 = constructFullColumnName(table2, col2)
-    val colExpr1 = s"""col("$fullColName1")"""
-    val colExpr2 = s"""col("$fullColName2")"""
-    val crossTableExpr = s"$colExpr1 === $colExpr2"
-    crossTableExpr
+  }
+
+  def pickColumnExpr(
+                            node: Node[DFOperator],
+                            param: JsLookupResult,
+                            paramName: String,
+                            paramType: String
+                          ): String = {
+    val (table, col) = pickRandomColumnFromReachableSources(node)
+    val fullColName = constructFullColumnName(table, col)
+    if (Random.nextFloat() < fuzzer.global.Config.probUDFInsert) {
+      s"""preloadedUDF(col("$fullColName"))"""
+    } else {
+      s"""col("$fullColName")"""
+    }
   }
 
   def generateSingleColumnExpression(
@@ -244,22 +258,35 @@ object Graph2Code {
                                       paramType: String
                                     ): String = {
 
+    val config = fuzzer.global.Config
+    val prob = config.probUDFInsert
     val (table, col) = pickRandomColumnFromReachableSources(node)
     val fullColName = constructFullColumnName(table, col)
     val colExpr = s"""col("$fullColName")"""
-    val intExpr = s"$colExpr > 5"
-    val floatExpr = s"$colExpr > 5.0"
-    val stringExpr = s"length($colExpr) > 5"
-    val boolExpr = s"!$colExpr"
 
-    col.dataType match {
-      case fuzzer.data.types.IntegerType => intExpr
-      case fuzzer.data.types.FloatType => floatExpr
-      case fuzzer.data.types.StringType => stringExpr
-      case fuzzer.data.types.BooleanType => boolExpr
-      case fuzzer.data.types.LongType => intExpr // TODO: Fix placeholder
-      case fuzzer.data.types.DecimalType => intExpr // TODO: Fix placeholder
-      case fuzzer.data.types.DateType => stringExpr // TODO: Fix placeholder
+    val op = config.logicalOperatorSet.toVector(Random.nextInt(config.logicalOperatorSet.size))
+
+    val intValue = config.randIntMin + Random.nextInt(config.randIntMax - config.randIntMin + 1)
+    val floatValue = config.randFloatMin + Random.nextFloat() * (config.randFloatMax - config.randFloatMin)
+
+    val intExpr = s"$colExpr $op $intValue"
+    val floatExpr = s"$colExpr $op $floatValue"
+    val stringExpr = s"length($colExpr) $op 5"
+    val boolExpr = s"!$colExpr"
+    val udfExpr = s"preloadedUDF($colExpr)"
+
+    if (Random.nextFloat() < prob) {
+      udfExpr
+    } else {
+      col.dataType match {
+        case fuzzer.data.types.IntegerType => intExpr
+        case fuzzer.data.types.FloatType => floatExpr
+        case fuzzer.data.types.StringType => stringExpr
+        case fuzzer.data.types.BooleanType => boolExpr
+        case fuzzer.data.types.LongType => intExpr
+        case fuzzer.data.types.DecimalType => floatExpr
+        case fuzzer.data.types.DateType => udfExpr
+      }
     }
   }
 
@@ -270,17 +297,20 @@ object Graph2Code {
                                 paramType: String
                               ): String = {
 
+    lazy val singleColExpr = generateSingleColumnExpression(node, param, paramName, paramType)
     if (node.isBinary) {
-      val expr = generateMultiColumnExpression(node, param, paramName, paramType)
-      if (expr != null) {
-        return expr
+      generateMultiColumnExpression(node, param, paramName, paramType) match {
+        case Some(expr) => expr
+        case None => singleColExpr
       }
-
+    } else {
+      singleColExpr
     }
-    generateSingleColumnExpression(node, param, paramName, paramType)
   }
 
   def generateRandomValue(node: Node[DFOperator], param: JsLookupResult, paramType: String, paramName: String): String = {
+
+    val maxListLength = fuzzer.global.Config.maxListLength
     // Try to get allowed values from the param JSON
     val allowedValues: Option[Seq[JsValue]] = (param \ "values").asOpt[Seq[JsValue]]
 
@@ -299,9 +329,12 @@ object Graph2Code {
           case "int" => Random.nextInt(100).toString
           case "bool" => Random.nextBoolean().toString
           case "str" => s""""${generateOrPickString(node, param, paramName, paramType)}""""
-          case "list" => s"""List("${Random.alphanumeric.take(5).mkString}")"""
           case "Column" => generateColumnExpression(node, param, paramName, paramType)
-          case "DataFrame" => s"df_${Random.nextInt(5)}"
+          case "List[str]" =>
+            s"List(${(0 until maxListLength).map(_ => generateOrPickString(node, param, paramName, paramType)).mkString(",")})"
+          case "Column*" => ""
+            s"${(0 until maxListLength).map(_ => pickColumnExpr(node, param, paramName, paramType)).mkString(",")}"
+          case "list" => s"""List("${Random.alphanumeric.take(5).mkString}")"""
           case _ => s""""${Random.alphanumeric.take(8).mkString}""""
         }
     }
@@ -309,7 +342,8 @@ object Graph2Code {
 
   def dag2Scala(spec: JsValue)(graph: Graph[DFOperator]): SourceCode = {
     val l = mutable.ListBuffer[String]()
-    val variablePrefix = "auto"
+    val variablePrefix = fuzzer.global.Config.intermediateVarPrefix
+    val finalVariableName = fuzzer.global.Config.finalVariableName
 
 
     graph.traverseTopological { node =>
@@ -320,10 +354,13 @@ object Graph2Code {
         case 1 => constructDFOCall(spec, node, node.parents.head.value.varName, null)
         case 2 => constructDFOCall(spec, node, node.parents.head.value.varName, node.parents.last.value.varName)
       }
-      val lhs = if(node.isSink) "" else s"val ${node.value.varName} = "
+      val lhs = if(node.isSink) s"val $finalVariableName = " else s"val ${node.value.varName} = "
       l += s"$lhs$call"
     }
+    l += s"$finalVariableName.explain(true)"
 
+    // Post-program state updates
+    l += s"fuzzer.global.State.finalDF = Some(${fuzzer.global.Config.finalVariableName})"
 
     SourceCode(src=l.mkString("\n"), ast=null)
   }
@@ -381,7 +418,7 @@ object Graph2Code {
 
     graph.transformNodes { node =>
       val opOpt = (node.getInDegree, node.getOutDegree) match {
-        case (_,0) => pickRandomAction(opMap)
+//        case (_,0) => pickRandomAction(opMap) // Better to delegate action choice to DFG2Source converter
         case (0,_) => pickRandomSource(opMap)
         case (1,_) => pickRandomUnaryOp(opMap)
         case (2,_) => pickRandomBinaryOp(opMap)

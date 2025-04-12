@@ -57,22 +57,54 @@
     },
     "returns": "DataFrame"
   },
-  "explain": {
-    "type": "action",
+  "filter": {
+    "type": "unary",
     "parameters": {
-      "extended": {
-        "type": "bool",
-        "required": true,
-        "default": false,
-        "values": [true]
-      },
-      "mode": {
-        "type": "string",
-        "required": false,
-        "default": "simple",
-        "enum": ["simple", "extended", "codegen", "cost", "formatted"]
+      "condition": {
+        "type": "Column",
+        "required": true
       }
     },
-    "returns": "None"
+    "returns": "DataFrame"
+  },
+  "select": {
+    "type": "unary",
+    "parameters": {
+      "cols": {
+        "type": "Column*",
+        "required": true
+      }
+    },
+    "returns": "DataFrame"
+  },
+  "orderBy": {
+    "type": "unary",
+    "parameters": {
+      "cols": {
+        "type": "Column*",
+        "required": true
+      },
+      "ascending": {
+        "type": "bool",
+        "required": false,
+        "default": true
+      }
+    },
+    "returns": "DataFrame"
+  },
+  "distinct": {
+    "type": "unary",
+    "parameters": {},
+    "returns": "DataFrame"
+  },
+  "limit": {
+    "type": "unary",
+    "parameters": {
+      "num": {
+        "type": "int",
+        "required": true
+      }
+    },
+    "returns": "DataFrame"
   }
 }
