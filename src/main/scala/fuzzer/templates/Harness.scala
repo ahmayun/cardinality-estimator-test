@@ -5,6 +5,15 @@ object Harness {
   val insertionMark = "[[INSERT]]"
   val resultMark = "[[RESULT]]"
 
+
+  val preloadedUDFDefinition =
+    """
+      |    val preloadedUDF = udf((s: Any) => {
+      |      val r = scala.util.Random.nextInt()
+      |      ComplexObject(r,r)
+      |    }).asNondeterministic()
+      |""".stripMargin
+
   val sparkProgramOptimizationsOn: String =
     s"""
       |import org.apache.spark.sql.SparkSession
@@ -12,14 +21,11 @@ object Harness {
       |import fuzzer.global.State.sparkOption
       |import fuzzer.templates.ComplexObject
       |
-      |object FuzzerGeneratedProgramHarness {
+      |object Optimized {
       |
       |  def main(args: Array[String]): Unit = {
       |    val spark = sparkOption.get
-      |    val preloadedUDF = udf((s: Any) => {
-      |      val r = scala.util.Random.nextInt()
-      |      ComplexObject(r,r)
-      |    }).asNondeterministic()
+      |$preloadedUDFDefinition
       |
       |$insertionMark
       |
@@ -27,7 +33,7 @@ object Harness {
       |  }
       |}
       |
-      |FuzzerGeneratedProgramHarness.main(Array())
+      |Optimized.main(Array())
       |/*
       |$resultMark
       |*/
@@ -41,15 +47,12 @@ object Harness {
       |import sqlsmith.FuzzTests.withoutOptimized
       |import fuzzer.templates.ComplexObject
       |
-      |object FuzzerGeneratedProgramHarness {
+      |object UnOptimized {
       |
       |  def main(args: Array[String]): Unit = {
       |    val spark = sparkOption.get
       |
-      |    val preloadedUDF = udf((s: Any) => {
-      |      val r = scala.util.Random.nextInt()
-      |      ComplexObject(r,r)
-      |    }).asNondeterministic()
+      |$preloadedUDFDefinition
       |
       |    val sparkOpt = spark.sessionState.optimizer
       |    val excludableRules = {
@@ -64,7 +67,7 @@ object Harness {
       |  }
       |}
       |
-      |FuzzerGeneratedProgramHarness.main(Array())
+      |UnOptimized.main(Array())
       |/*
       |$resultMark
       |*/

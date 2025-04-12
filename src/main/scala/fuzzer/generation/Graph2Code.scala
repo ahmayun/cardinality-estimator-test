@@ -275,7 +275,7 @@ object Graph2Code {
     val boolExpr = s"!$colExpr"
     val udfExpr = s"preloadedUDF($colExpr)"
 
-    if (Random.nextFloat() < prob) {
+    if (Random.nextFloat() < prob && !node.value.name.contains("filter")) {
       udfExpr
     } else {
       col.dataType match {

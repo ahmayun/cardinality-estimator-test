@@ -2,7 +2,7 @@ package fuzzer.core
 import fuzzer.data.tables.Examples.tpcdsTables
 import fuzzer.data.tables.{ColumnMetadata, TableMetadata}
 import fuzzer.oracle.OracleSystem
-import fuzzer.exceptions.ImpossibleDFGException
+import fuzzer.exceptions.{ImpossibleDFGException, MismatchException, Success}
 import fuzzer.generation.Graph2Code.{constructDFG, dag2Scala}
 import fuzzer.graph.{DAGParser, DFOperator, Graph}
 import fuzzer.templates.Harness
@@ -181,22 +181,26 @@ object MainFuzzer {
                   break
 
                 fuzzer.global.State.iteration += 1
-                println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration} DAG-BATCH: ${stats("dag-batch")}====")
                 try {
                   val selectedTables = Random.shuffle(tpcdsTables).take(dag.getSourceNodes.length).toList
                   val dfg = constructDFG(dag, specScala, selectedTables)
                   val generatedSource = dfg.generateCode(dag2Scala(specScala))
 
-                  val (result, fullSourceOpt, fullSourceUnOpt) = OracleSystem.check(generatedSource.toString)
+                  val (result, (optResult, fullSourceOpt), (unOptResult, fullSourceUnOpt)) = OracleSystem.check(generatedSource.toString)
                   val resultType = result.getClass.toString.split('.').last
-                  println(s"RESULT: $resultType")
-                  val stackTrace = result match {
-                    case _ : fuzzer.exceptions.Success => ""
-                    case _ => s"${result.getStackTrace.mkString("\n")}"
+
+                  result match {
+                    case _: Success =>
+                      println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
+                      println(s"RESULT: $result")
+                    case _: MismatchException =>
+                      println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
+                      println(s"RESULT: $result")
+                    case _ =>
                   }
 
-                  val fullResult = s"$result\n$stackTrace"
-                  val fullSourceWithResult = Harness.embedCode(fullSourceOpt, fullResult, Harness.resultMark)
+                  val combinedSourceWithResults = constructCombinedFileContents(result, optResult, unOptResult, fullSourceOpt, fullSourceUnOpt)
+
                   stats.updateWith(resultType) {
                     case Some(existing) => Some(existing + 1)
                     case None => Some(1)
@@ -212,8 +216,14 @@ object MainFuzzer {
 
                   // Write the fullSource to the file
                   val writer = new FileWriter(outFile)
-                  writer.write(fullSourceWithResult)
+                  writer.write(combinedSourceWithResults)
                   writer.close()
+
+                  if (stats("generated") % fuzzer.global.Config.updateLiveStatsAfter == 0) {
+                    val liveStatsWriter = new FileWriter(new File(outDir, "live-stats.txt"))
+                    liveStatsWriter.write(prettyPrintStats(stats))
+                    liveStatsWriter.close()
+                  }
 
                   stats("generated") += 1
                 } catch {
@@ -243,6 +253,35 @@ object MainFuzzer {
     val elapsedAfterGeneration = (System.currentTimeMillis() - startTime) / 1000
     println(s"Terminated after $elapsedAfterGeneration seconds.")
     println(prettyPrintStats(stats))
+  }
+
+  private def constructCombinedFileContents(result: Throwable, optResult: Throwable, unOptResult: Throwable, fullSourceOpt: String, fullSourceUnOpt: String): String = {
+    val optFileContents = constructFileContents(optResult, fullSourceOpt)
+    val unOptFileContents = constructFileContents(unOptResult, fullSourceUnOpt)
+    s"""
+      |$optFileContents
+      |
+      |$unOptFileContents
+      |
+      |/* ========== ORACLE RESULT ===================
+      |$result
+      |${decideStackTrace(result)}
+      |""".stripMargin
+  }
+
+  private def constructFileContents(result: Throwable, fullSourceOpt: String): String = {
+
+    val stackTrace = decideStackTrace(result)
+
+    val fullResult = s"$result\n$stackTrace"
+    Harness.embedCode(fullSourceOpt, fullResult, Harness.resultMark)
+  }
+
+  private def decideStackTrace(result: Throwable): String = {
+    result match {
+      case _ : fuzzer.exceptions.Success => ""
+      case _ => s"${result.getStackTrace.mkString("\n")}"
+    }
   }
 
 }
