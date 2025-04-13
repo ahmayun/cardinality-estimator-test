@@ -8,6 +8,7 @@
   "outExt": ".scala",
   "timeLimitSec": 10,
   "dagGenDir": "dag-gen/DAGs/DAGs",
+  "localTpcdsPath": "tpcds-data",
   "seed": 12345678,
   "maxStringLength": 5,
   "updateLiveStatsAfter": 10,

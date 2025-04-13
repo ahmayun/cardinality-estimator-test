@@ -1,5 +1,5 @@
 {
-  "spark.table": {
+  "spark.read.parquet": {
     "type": "source",
     "parameters": {
       "tableName": {

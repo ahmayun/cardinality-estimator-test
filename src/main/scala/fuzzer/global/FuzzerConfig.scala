@@ -13,6 +13,7 @@ case class FuzzerConfig(
                          outExt: String = ".scala",
                          timeLimitSec: Int = 10,
                          dagGenDir: String = "dag-gen/DAGs/DAGs",
+                         localTpcdsPath: String = "tpcds-data",
                          seed: Int = "ahmad35".hashCode,
                          maxStringLength: Int = 5,
                          updateLiveStatsAfter: Int = 10,

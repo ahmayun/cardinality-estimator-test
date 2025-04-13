@@ -104,7 +104,7 @@ object MainFuzzer {
     val sparkSession = SparkSession.builder()
       .appName("Fuzzer")
       .master(config.master)
-      .enableHiveSupport()
+//      .enableHiveSupport()
       .getOrCreate()
     sparkSession.sparkContext.setLogLevel("ERROR")
 
@@ -189,7 +189,7 @@ object MainFuzzer {
                       println(s"RESULT: $result")
                     case _ =>
                       println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
-                      println(s"RESULT: $result")
+                      println(s"RESULT: $resultType")
                   }
 
                   val combinedSourceWithResults = constructCombinedFileContents(result, optResult, unOptResult, fullSourceOpt, fullSourceUnOpt)
