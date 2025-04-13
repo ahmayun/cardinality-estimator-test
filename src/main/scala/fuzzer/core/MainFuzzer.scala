@@ -188,6 +188,8 @@ object MainFuzzer {
                       println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
                       println(s"RESULT: $result")
                     case _ =>
+                      println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
+                      println(s"RESULT: $result")
                   }
 
                   val combinedSourceWithResults = constructCombinedFileContents(result, optResult, unOptResult, fullSourceOpt, fullSourceUnOpt)

@@ -332,7 +332,7 @@ object Graph2Code {
           case "Column" => generateColumnExpression(node, param, paramName, paramType)
           case "List[str]" =>
             s"List(${(0 until maxListLength).map(_ => generateOrPickString(node, param, paramName, paramType)).mkString(",")})"
-          case "Column*" => ""
+          case "Column*" =>
             s"${(0 until maxListLength).map(_ => pickColumnExpr(node, param, paramName, paramType)).mkString(",")}"
           case "list" => s"""List("${Random.alphanumeric.take(5).mkString}")"""
           case _ => s""""${Random.alphanumeric.take(8).mkString}""""
