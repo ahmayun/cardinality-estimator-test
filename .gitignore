@@ -20,4 +20,5 @@ tpcds-data-for-main/
 tpcds-data/
 tpch-data-for-main/
 tpch-data/
+fuzzer-config.json
 
