@@ -152,7 +152,7 @@ object Graph2Code {
 
     if (isStateAltering) {
       // Generate random string (e.g. for creating a new column)
-      val gen = s"${Random.alphanumeric.take(fuzzer.global.Config.maxStringLength).mkString}"
+      val gen = s"${Random.alphanumeric.take(fuzzer.global.FuzzerConfig.config.maxStringLength).mkString}"
       updateSourceState(node, param, paramName, paramType, gen)
       propagateState(node)
       gen
@@ -244,7 +244,7 @@ object Graph2Code {
                           ): String = {
     val (table, col) = pickRandomColumnFromReachableSources(node)
     val fullColName = constructFullColumnName(table, col)
-    if (Random.nextFloat() < fuzzer.global.Config.probUDFInsert) {
+    if (Random.nextFloat() < fuzzer.global.FuzzerConfig.config.probUDFInsert) {
       s"""preloadedUDF(col("$fullColName"))"""
     } else {
       s"""col("$fullColName")"""
@@ -258,7 +258,7 @@ object Graph2Code {
                                       paramType: String
                                     ): String = {
 
-    val config = fuzzer.global.Config
+    val config = fuzzer.global.FuzzerConfig.config
     val prob = config.probUDFInsert
     val (table, col) = pickRandomColumnFromReachableSources(node)
     val fullColName = constructFullColumnName(table, col)
@@ -310,7 +310,7 @@ object Graph2Code {
 
   def generateRandomValue(node: Node[DFOperator], param: JsLookupResult, paramType: String, paramName: String): String = {
 
-    val maxListLength = fuzzer.global.Config.maxListLength
+    val maxListLength = fuzzer.global.FuzzerConfig.config.maxListLength
     // Try to get allowed values from the param JSON
     val allowedValues: Option[Seq[JsValue]] = (param \ "values").asOpt[Seq[JsValue]]
 
@@ -342,8 +342,8 @@ object Graph2Code {
 
   def dag2Scala(spec: JsValue)(graph: Graph[DFOperator]): SourceCode = {
     val l = mutable.ListBuffer[String]()
-    val variablePrefix = fuzzer.global.Config.intermediateVarPrefix
-    val finalVariableName = fuzzer.global.Config.finalVariableName
+    val variablePrefix = fuzzer.global.FuzzerConfig.config.intermediateVarPrefix
+    val finalVariableName = fuzzer.global.FuzzerConfig.config.finalVariableName
 
 
     graph.traverseTopological { node =>
@@ -360,7 +360,7 @@ object Graph2Code {
     l += s"$finalVariableName.explain(true)"
 
     // Post-program state updates
-    l += s"fuzzer.global.State.finalDF = Some(${fuzzer.global.Config.finalVariableName})"
+    l += s"fuzzer.global.State.finalDF = Some(${fuzzer.global.FuzzerConfig.config.finalVariableName})"
 
     SourceCode(src=l.mkString("\n"), ast=null)
   }

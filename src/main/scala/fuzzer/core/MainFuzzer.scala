@@ -4,6 +4,7 @@ import fuzzer.data.tables.{ColumnMetadata, TableMetadata}
 import fuzzer.oracle.OracleSystem
 import fuzzer.exceptions.{ImpossibleDFGException, MismatchException, Success}
 import fuzzer.generation.Graph2Code.{constructDFG, dag2Scala}
+import fuzzer.global.FuzzerConfig
 import fuzzer.graph.{DAGParser, DFOperator, Graph}
 import fuzzer.templates.Harness
 import org.apache.spark.sql.{AnalysisException, SparkSession}
@@ -86,21 +87,12 @@ object MainFuzzer {
 
   def main(args: Array[String]): Unit = {
     // Hard-coded table metadata for demonstration
-    Random.setSeed(fuzzer.global.Config.seed)
+    val config = if (!args.isEmpty) FuzzerConfig.fromJsonFile(args(0)) else FuzzerConfig.getDefault
+    Random.setSeed(config.seed)
 
-    // -----------------------------
-    // Configuration Parameters
-    // -----------------------------
-    val exitAfterNSuccesses = true
-    val N = 200
-    val d = 200            // Number of DAG YAML files to generate per iteration
-    val p = 10            // Number of DFGs to fill per DAG
-    val outDir = "./out" // Output directory for generated programs
-    val outExt = ".scala" // Extension of the output files
-    val timeLimitSec = 10
-    val dagGenDir = "dag-gen/DAGs/DAGs"
-    deleteDir(dagGenDir)
-    deleteDir(outDir)
+
+    deleteDir(config.dagGenDir)
+    deleteDir(config.outDir)
 
     val stats = mutable.Map[String, Int](
       "attempts" -> 0,
@@ -108,11 +100,10 @@ object MainFuzzer {
       "dag-batch" -> 0
     )
 
-    val master = if(args.isEmpty) "local[*]" else args(0)
 
     val sparkSession = SparkSession.builder()
       .appName("Fuzzer")
-      .master(master)
+      .master(config.master)
       .enableHiveSupport()
       .getOrCreate()
     sparkSession.sparkContext.setLogLevel("ERROR")
@@ -121,16 +112,16 @@ object MainFuzzer {
 
     val specScala = JsonReader.readJsonFile("specs/spark-scala-no-action-full.json")
 
-    new File(outDir).mkdirs()
+    new File(config.outDir).mkdirs()
 
     val startTime = System.currentTimeMillis()
 
     def stop: Boolean = {
       val elapsed = (System.currentTimeMillis() - startTime) / 1000
-      if (exitAfterNSuccesses) {
-        exitAfterNSuccesses && stats("generated") == N
+      if (config.exitAfterNSuccesses) {
+        config.exitAfterNSuccesses && stats("generated") == config.N
       } else {
-        elapsed >= timeLimitSec
+        elapsed >= config.timeLimitSec
       }
     }
 
@@ -143,7 +134,7 @@ object MainFuzzer {
         sys.exit(-1)
       }
 
-      val dagFolder = new File(dagGenDir)
+      val dagFolder = new File(config.dagGenDir)
       if (!dagFolder.exists() || !dagFolder.isDirectory) {
         println("Warning: 'DAGs' folder not found or not a directory. Exiting.")
         sys.exit(-1)
@@ -158,7 +149,7 @@ object MainFuzzer {
       val yamlFiles = dagFolder
         .listFiles()
         .filter(f => f.isFile && f.getName.startsWith("dag") && f.getName.endsWith(".yaml"))
-        .take(d)
+        .take(config.d)
 
       breakable {
         for (yamlFile <- yamlFiles) {
@@ -176,7 +167,7 @@ object MainFuzzer {
             }
 
             breakable {
-              for (i <- 1 to p) {
+              for (i <- 1 to config.p) {
                 if (stop)
                   break
 
@@ -207,11 +198,11 @@ object MainFuzzer {
                   }
 
                   // Create subdirectory inside outDir using the result value
-                  val resultSubDir = new File(outDir, resultType)
+                  val resultSubDir = new File(config.outDir, resultType)
                   resultSubDir.mkdirs() // Creates the directory if it doesn't exist
 
                   // Prepare output file in the result-named subdirectory
-                  val outFileName = s"g_${stats("generated")}-a_${stats("attempts")}-${dagName.stripSuffix(".yaml")}-dfg$i$outExt"
+                  val outFileName = s"g_${stats("generated")}-a_${stats("attempts")}-${dagName.stripSuffix(".yaml")}-dfg$i${config.outExt}"
                   val outFile = new File(resultSubDir, outFileName)
 
                   // Write the fullSource to the file
@@ -219,8 +210,8 @@ object MainFuzzer {
                   writer.write(combinedSourceWithResults)
                   writer.close()
 
-                  if (stats("generated") % fuzzer.global.Config.updateLiveStatsAfter == 0) {
-                    val liveStatsWriter = new FileWriter(new File(outDir, "live-stats.txt"))
+                  if (stats("generated") % config.updateLiveStatsAfter == 0) {
+                    val liveStatsWriter = new FileWriter(new File(config.outDir, "live-stats.txt"))
                     liveStatsWriter.write(prettyPrintStats(stats))
                     liveStatsWriter.close()
                   }

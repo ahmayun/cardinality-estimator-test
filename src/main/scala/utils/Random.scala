@@ -3,7 +3,7 @@ package utils
 import scala.util.Random
 
 object Random {
-  private var rng = new Random(fuzzer.global.Config.seed) // default seed
+  private var rng = new Random(fuzzer.global.FuzzerConfig.config.seed) // default seed
 
   def setSeed(seed: Long): Unit = {
     rng = new Random(seed)

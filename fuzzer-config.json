@@ -1,0 +1,23 @@
+{
+  "master": "local[*]",
+  "exitAfterNSuccesses": true,
+  "N": 200,
+  "d": 200,
+  "p": 10,
+  "outDir": "./out",
+  "outExt": ".scala",
+  "timeLimitSec": 10,
+  "dagGenDir": "dag-gen/DAGs/DAGs",
+  "seed": 12345678,
+  "maxStringLength": 5,
+  "updateLiveStatsAfter": 10,
+  "intermediateVarPrefix": "auto",
+  "finalVariableName": "sink",
+  "probUDFInsert": 0.1,
+  "maxListLength": 2,
+  "randIntMin": -50,
+  "randIntMax": 50,
+  "randFloatMin": -50.0,
+  "randFloatMax": 50.0,
+  "logicalOperatorSet": [">", "<", ">=", "<="]
+}
