@@ -363,7 +363,7 @@ object Graph2Code {
     l += s"$finalVariableName.explain(true)"
 
     // Post-program state updates
-    l += s"fuzzer.global.State.finalDF = Some(${fuzzer.global.FuzzerConfig.config.finalVariableName})"
+//    l += s"fuzzer.global.State.finalDF = Some(${fuzzer.global.FuzzerConfig.config.finalVariableName})"
 
     SourceCode(src=l.mkString("\n"), ast=null)
   }

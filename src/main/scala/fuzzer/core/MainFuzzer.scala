@@ -177,7 +177,7 @@ object MainFuzzer {
                   val dfg = constructDFG(dag, specScala, selectedTables)
                   val generatedSource = dfg.generateCode(dag2Scala(specScala))
 
-                  val (result, (optResult, fullSourceOpt), (unOptResult, fullSourceUnOpt)) = OracleSystem.check(generatedSource.toString)
+                  val (result, (optResult, fullSourceOpt), (unOptResult, fullSourceUnOpt)) = OracleSystem.checkOneGo(generatedSource.toString)
                   val resultType = result.getClass.toString.split('.').last
 
                   result match {

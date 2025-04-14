@@ -126,4 +126,38 @@ object OracleSystem {
 
     (compare, (resultOpt, fullSourceOpt), (resultUnOpt, fullSourceUnOpt))
   }
+
+  def checkOneGo(source: String): (Throwable, (Throwable, String), (Throwable, String)) = {
+    val (fullSourceOpt, fullSourceUnOpt) = createFullSourcesFromHarness(source)
+
+    val combined = fullSourceOpt + fullSourceUnOpt
+    val (result, stdOutOpt, stdErrOpt) = runWithSuppressOutput(combined)
+
+    val compare = result match {
+      case _: Success =>
+        (fuzzer.global.State.optRunException, fuzzer.global.State.unOptRunException) match {
+          case (Some(_: Success), Some(_: Success)) =>
+            compareRuns(fuzzer.global.State.optDF.get, fuzzer.global.State.unOptDF.get)
+          case (Some(a), Some(b)) if a.getClass == b.getClass =>
+            a
+          case _ =>
+            new MismatchException("Execution result mismatch between optimized and unoptimized versions.")
+        }
+      case e: Throwable =>
+        e
+    }
+
+    val optEx = fuzzer.global.State.optRunException.get
+    val unOptEx = fuzzer.global.State.unOptRunException.get
+
+    fuzzer.global.State.optDF = None
+    fuzzer.global.State.unOptDF = None
+    fuzzer.global.State.optRunException = None
+    fuzzer.global.State.unOptRunException = None
+    fuzzer.global.State.finalDF = None
+
+    (compare, (optEx, fullSourceOpt), (unOptEx, fullSourceUnOpt))
+  }
 }
+
+

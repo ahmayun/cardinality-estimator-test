@@ -5,6 +5,15 @@ object Harness {
   val insertionMark = "[[INSERT]]"
   val resultMark = "[[RESULT]]"
 
+  val imports =
+    """
+      |import org.apache.spark.sql.SparkSession
+      |import org.apache.spark.sql.functions._
+      |import fuzzer.global.State.sparkOption
+      |import sqlsmith.FuzzTests.withoutOptimized
+      |import fuzzer.templates.ComplexObject
+      |import fuzzer.exceptions._
+      |""".stripMargin
 
   val preloadedUDFDefinition =
     """
@@ -16,10 +25,7 @@ object Harness {
 
   val sparkProgramOptimizationsOn: String =
     s"""
-      |import org.apache.spark.sql.SparkSession
-      |import org.apache.spark.sql.functions._
-      |import fuzzer.global.State.sparkOption
-      |import fuzzer.templates.ComplexObject
+      |$imports
       |
       |object Optimized {
       |
@@ -29,11 +35,19 @@ object Harness {
       |
       |$insertionMark
       |
-      |
+      |    fuzzer.global.State.optDF = Some(sink)
       |  }
       |}
       |
-      |Optimized.main(Array())
+      |try {
+      |   Optimized.main(Array())
+      |} catch {
+      | case e =>
+      |    fuzzer.global.State.optRunException = Some(e)
+      |}
+      |
+      |if (fuzzer.global.State.optRunException.isEmpty)
+      |   fuzzer.global.State.optRunException = Some(new Success("Success"))
       |/*
       |$resultMark
       |*/
@@ -41,11 +55,7 @@ object Harness {
 
   val sparkProgramOptimizationsOff: String =
     s"""
-      |import org.apache.spark.sql.SparkSession
-      |import org.apache.spark.sql.functions._
-      |import fuzzer.global.State.sparkOption
-      |import sqlsmith.FuzzTests.withoutOptimized
-      |import fuzzer.templates.ComplexObject
+      |$imports
       |
       |object UnOptimized {
       |
@@ -63,11 +73,23 @@ object Harness {
       |    val excludedRules = excludableRules.mkString(",")
       |    withoutOptimized(excludedRules) {
       |$insertionMark
+      |
+      |    fuzzer.global.State.unOptDF = Some(sink)
       |    }
       |  }
       |}
       |
-      |UnOptimized.main(Array())
+      |
+      |try {
+      |   UnOptimized.main(Array())
+      |} catch {
+      | case e =>
+      |    fuzzer.global.State.unOptRunException = Some(e)
+      |}
+      |
+      |if (fuzzer.global.State.unOptRunException.isEmpty)
+      |   fuzzer.global.State.unOptRunException = Some(new Success("Success"))
+      |
       |/*
       |$resultMark
       |*/
