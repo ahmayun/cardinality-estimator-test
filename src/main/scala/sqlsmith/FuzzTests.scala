@@ -283,17 +283,29 @@ object FuzzTests {
     sizeOfExpression
   )
 
-  def setupSpark(master: String): SparkSession = {
-    val spark = SparkSession.builder()
-      .appName("FuzzTest")
-//      .config("spark.sql.cbo.enabled", "true")
-//      .config("spark.sql.cbo.joinReorder.enabled", "true")
-//      .config("spark.sql.statistics.size.autoUpdate.enabled", "true")
-//      .config("spark.sql.statistics.histogram.enabled", "true")
-      .master(master)
-      .enableHiveSupport()
-      .getOrCreate()
+  def setupSpark(master: String, arguments: FuzzerArguments): SparkSession = {
+    val spark = if(arguments.hive) {
+      SparkSession.builder()
+        .appName("FuzzTest")
+        .master(master)
+        .enableHiveSupport()
+        .getOrCreate()
+    } else {
+      SparkSession.builder()
+        .appName("FuzzTest")
+        .master(master)
+        .getOrCreate()
+    }
     spark.sparkContext.setLogLevel("ERROR")
+
+    if(!arguments.hive) {
+      if (arguments.tpcdsDataPath.isEmpty) {
+        sys.error("Hive disabled and --tpcds-path <path> not provided!")
+      }
+      println(s"Hive disabled, loading from tpcds data from path ${arguments.tpcdsDataPath}...")
+      TpcdsTablesLoader.loadAll(spark, arguments.tpcdsDataPath)
+      println("loaded successfully")
+    }
     spark
   }
 
@@ -520,6 +532,7 @@ object FuzzTests {
   def main(args: Array[String]): Unit = {
 
     // EXAMPLE ARGS: local[*] --output-location target/fuzz-tests-output --max-stmts 100
+    // ON CLUSTER: local[*] --output-location target/fuzz-tests-output --max-stmts 100 --no-hive --tpcds-path tpcds-data/
     val master = args(0)
     val arguments = new FuzzerArguments(args.tail)
     val maxStmts = arguments.maxStmts.toLong
@@ -531,7 +544,7 @@ object FuzzTests {
     deleteDir(outputDir.getAbsolutePath)
     outputDir.mkdirs()
 
-    val spark = setupSpark(master)
+    val spark = setupSpark(master, arguments)
 
     val sparkOpt = spark.sessionState.optimizer
     val excludableRules = {

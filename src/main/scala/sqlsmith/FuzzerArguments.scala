@@ -24,6 +24,8 @@ class FuzzerArguments(val args: Array[String]) {
   var maxStmts = "10"
   var loggingExceptionsEnabled = false
   var seed = "0"
+  var hive = true
+  var tpcdsDataPath = ""
 
   parseArgs(args.toList)
   validateArguments()
@@ -43,6 +45,14 @@ class FuzzerArguments(val args: Array[String]) {
 
         case ("--logging-exceptions") :: tail =>
           loggingExceptionsEnabled = true
+          args = tail
+
+        case ("--no-hive") :: tail =>
+          hive = false
+          args = tail
+
+        case ("--tpcds-path") :: value :: tail =>
+          tpcdsDataPath = value
           args = tail
 
         case ("--seed") :: value :: tail =>
