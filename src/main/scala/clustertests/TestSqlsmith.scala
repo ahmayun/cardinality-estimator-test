@@ -29,8 +29,8 @@ object TestSqlsmith {
       .withColumn("random_str", expr("random_int").cast("string"))
 
     df.createOrReplaceTempView("dummy")
-
-    spark.sql("CREATE TABLE dummy USING parquet AS SELECT * FROM dummy")
+    spark.sql("CREATE DATABASE IF NOT EXISTS main")
+    spark.sql("CREATE TABLE main.dummy USING parquet AS SELECT * FROM dummy")
 
     lazy val sqlSmithApi = SQLSmithLoader.loadApi()
     val targetTables = gatherTargetTables(spark)
