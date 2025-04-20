@@ -26,7 +26,7 @@ object TestSqlsmith {
     val numRows = 100
     val df = spark.range(numRows)
       .withColumn("random_int", (rand() * 100).cast("int"))
-      .withColumn("random_str", expr("random_int").cast("str"))
+      .withColumn("random_str", expr("random_int").cast("string"))
 
     df.createOrReplaceTempView("main.dummy")
 
