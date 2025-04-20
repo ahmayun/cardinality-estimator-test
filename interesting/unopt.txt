@@ -1,0 +1,18 @@
+Join RightOuter, (sm_ship_mode_sk#4301709 = i_class_id#4301724)
+:- Project [i_brand#4301562, i_units#4301572]
+:  +- Join Inner, (sm_ship_mode_sk#4301542 = i_manufact_id#4301567)
+:     :- GlobalLimit 51
+:     :  +- LocalLimit 51
+:     :     +- Project [sm_ship_mode_sk#4301542, sm_ship_mode_id#4301543, sm_type#4301544, sm_code#4301545, sm_carrier#4301546, sm_contract#4301547]
+:     :        +- Sort [sm_ship_mode_id#4301543 ASC NULLS FIRST, _nondeterministic#4301599 ASC NULLS FIRST], true
+:     :           +- Project [sm_ship_mode_sk#4301542, sm_ship_mode_id#4301543, sm_type#4301544, sm_code#4301545, sm_carrier#4301546, sm_contract#4301547, UDF(sm_ship_mode_sk#4301542) AS _nondeterministic#4301599]
+:     :              +- Relation [sm_ship_mode_sk#4301542,sm_ship_mode_id#4301543,sm_type#4301544,sm_code#4301545,sm_carrier#4301546,sm_contract#4301547] parquet
+:     +- Relation [i_item_sk#4301554,i_item_id#4301555,i_rec_start_date#4301556,i_rec_end_date#4301557,i_item_desc#4301558,i_current_price#4301559,i_wholesale_cost#4301560,i_brand_id#4301561,i_brand#4301562,i_class_id#4301563,i_class#4301564,i_category_id#4301565,i_category#4301566,i_manufact_id#4301567,i_manufact#4301568,i_size#4301569,i_formulation#4301570,i_color#4301571,i_units#4301572,i_container#4301573,i_manager_id#4301574,i_product_name#4301575] parquet
++- Join Inner, (sm_carrier#4301713 = i_brand#4301723)
+   :- Project [sm_ship_mode_sk#4301709, sm_carrier#4301713]
+   :  +- Project [sm_ship_mode_sk#4301709, sm_ship_mode_id#4301710, sm_type#4301711, sm_code#4301712, sm_carrier#4301713, sm_contract#4301714]
+   :     +- Sort [sm_ship_mode_id#4301710 ASC NULLS FIRST, _nondeterministic#4301599 ASC NULLS FIRST], true
+   :        +- Project [sm_ship_mode_sk#4301709, sm_ship_mode_id#4301710, sm_type#4301711, sm_code#4301712, sm_carrier#4301713, sm_contract#4301714, UDF(sm_ship_mode_sk#4301709) AS _nondeterministic#4301599]
+   :           +- Relation [sm_ship_mode_sk#4301709,sm_ship_mode_id#4301710,sm_type#4301711,sm_code#4301712,sm_carrier#4301713,sm_contract#4301714] parquet
+   +- Relation [i_item_sk#4301715,i_item_id#4301716,i_rec_start_date#4301717,i_rec_end_date#4301718,i_item_desc#4301719,i_current_price#4301720,i_wholesale_cost#4301721,i_brand_id#4301722,i_brand#4301723,i_class_id#4301724,i_class#4301725,i_category_id#4301726,i_category#4301727,i_manufact_id#4301728,i_manufact#4301729,i_size#4301730,i_formulation#4301731,i_color#4301732,i_units#4301733,i_container#4301734,i_manager_id#4301735,i_product_name#4301736] parquet
+

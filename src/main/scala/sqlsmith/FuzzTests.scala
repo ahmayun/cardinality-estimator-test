@@ -17,27 +17,31 @@
 
 package sqlsmith
 
-import java.io.File
+import java.io.{File, FileWriter, PrintWriter}
 import java.nio.charset.StandardCharsets
 import java.sql.{Connection, DriverManager, Statement}
 import java.util.UUID
 import scala.collection.mutable
 import scala.util.control.NonFatal
 import com.google.common.io.Files
+import fuzzer.core.CampaignStats
+import fuzzer.core.MainFuzzer.{constructCombinedFileContents, deleteDir, prettyPrintStats, writeLiveStats}
+import fuzzer.exceptions.{MismatchException, Success}
+import fuzzer.global.FuzzerConfig
+import fuzzer.oracle.OracleSystem
 import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted, SparkListenerTaskEnd}
 import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.internal.{SQLConf, StaticSQLConf}
 import org.apache.spark.sql.types._
 import sqlsmith.loader.SQLSmithLoader
 import sqlsmith.loader.Utils
-
-import java.io.PrintWriter
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalog.Table
 import org.apache.spark.sql.catalyst.analysis.UnresolvedRelation
 import org.apache.spark.sql.catalyst.expressions.Expression
 import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
 import org.apache.spark.sql.catalyst.plans.logical._
+import org.apache.spark.sql.catalyst.rules.Rule.coverage
 import org.apache.spark.sql.functions.expr
 //import java.nio.file.Files
 
@@ -358,6 +362,7 @@ object FuzzTests {
                          numStmtGenerated: Long,
                          metrics: Array[String],
                          estCount: BigInt,
+                         plan: String,
                          actualCount: Long,
                          startTime: Long,
                          endTime: Long,
@@ -408,6 +413,7 @@ object FuzzTests {
                       resultsDir: String,
                       queryStr: String,
                       numStmtGenerated: Long,
+                      plans: (String, String),
                       counts: (Long, Long),
                       estCounts: (BigInt, BigInt),
                       startTimes: (Long, Long),
@@ -419,6 +425,7 @@ object FuzzTests {
     val (startTimeOpt, startTimeUnOpt) = startTimes
     val (endTimeOpt, endTimeUnOpt) = endTimes
     val (durationOpt, durationUnOpt) = ((endTimeOpt-startTimeOpt) / 1e9, (endTimeUnOpt-startTimeUnOpt) / 1e9)
+    val (planOpt, planUnOpt) = plans
     val (countOpt, countUnOpt) = counts
     val (estCountOpt, estCountUnOpt) = estCounts
     val (cpuTimeOpt, cpuTimeUnOpt) = cpuTimes
@@ -431,6 +438,7 @@ object FuzzTests {
       numStmtGenerated,
       Array(),
       estCountOpt,
+      planOpt,
       countOpt,
       startTimeOpt,
       endTimeOpt,
@@ -445,6 +453,7 @@ object FuzzTests {
       numStmtGenerated,
       Array(),
       estCountUnOpt,
+      planUnOpt,
       countUnOpt,
       startTimeUnOpt,
       endTimeUnOpt,
@@ -488,17 +497,39 @@ object FuzzTests {
       f
     }
   }
+
+
+  def prettyPrintStats(stats: CampaignStats): String = {
+    val statsMap = stats.getMap
+    val generated = stats.getGenerated
+    val successful = statsMap.getOrElse("Success", "0").toInt + statsMap.getOrElse("MismatchException", "0").toInt
+    val validityRate = (successful.toFloat / generated.toFloat) * 100
+
+    val builder = new StringBuilder
+    builder.append("=== STATS ===\n")
+    builder.append("----- Details -----\n")
+    statsMap.foreach { case (k, v) => builder.append(s"$k = $v\n") }
+    builder.append("------ Summary -----\n")
+    builder.append(f"Exiting after DFGs generated == $generated\n")
+    builder.append(s"Validity Rate: ${validityRate}%\n")
+    builder.append("=============\n")
+
+    builder.toString()
+  }
+
   def main(args: Array[String]): Unit = {
+
+    // EXAMPLE ARGS: local[*] --output-location target/fuzz-tests-output --max-stmts 100
     val master = args(0)
     val arguments = new FuzzerArguments(args.tail)
     val maxStmts = arguments.maxStmts.toLong
-    val isInfinite = maxStmts == 0
+    val liveStatsAfter = 200
     val seed = arguments.seed.toInt
+    val timeLimitSeconds = 86400
     val outputDir = new File(arguments.outputLocation)
-    if (!outputDir.exists()) {
-      outputDir.mkdir()
-    }
-    val resultsDir = arguments.outputLocation
+
+    deleteDir(outputDir.getAbsolutePath)
+    outputDir.mkdirs()
 
     val spark = setupSpark(master)
 
@@ -528,118 +559,136 @@ object FuzzTests {
     val sqlSmithSchema = sqlSmithApi.schemaInit(catalog, seed)
 
     var numStmtGenerated: Long = 0
-    val errStore = mutable.Map[String, Long]()
+    var optCov: Set[String] = Set()
+    var unOptCov: Set[String] = Set()
 
-    def dumpTestingStats(): Unit = debugPrint({
-      val numErrors = errStore.values.sum
-      val numValidStmts = numStmtGenerated - numErrors
-      val numValidTestRatio = (numValidStmts + 0.0) / numStmtGenerated
-      val errStats = errStore.toSeq.sortBy(_._2).reverse.map { case (e, n) => s"# of $e: $n" }
-      s"""Fuzz testing statistics:
-         |  valid test ratio: $numValidTestRatio ($numValidStmts/$numStmtGenerated)
-         |  ${errStats.mkString("\n  ")}
-       """.stripMargin
-    })
+    val startTime = System.currentTimeMillis()
 
-    Runtime.getRuntime.addShutdownHook(new Thread() {
-      override def run(): Unit = dumpTestingStats()
-    })
+    val stats: CampaignStats = new CampaignStats()
+    val liveStatsDir = new File(outputDir, "live-stats")
+    liveStatsDir.mkdirs()
 
-    // ========= LISTENERS ========================
-
-    class CpuTimeListener extends SparkListener {
-      var cpuTime: Long = 0
-      var peakMemory: Long = 0
-
-      override def onStageCompleted(stageCompleted: SparkListenerStageCompleted): Unit = {
-        val stageInfo = stageCompleted.stageInfo
-        val taskMetrics = stageInfo.taskMetrics
-        val executorCpuTime = taskMetrics.executorCpuTime
-        val peakMem = taskMetrics.peakExecutionMemory
-        val status = stageInfo.failureReason match {
-          case None => "Success"
-          case Some(_) => "Failed"
-        }
-        cpuTime += executorCpuTime
-        peakMemory = math.max(peakMem, peakMemory)
-//        println(s"Stage ${stageInfo.stageId} [${status}] - CPU time: ${executorCpuTime}, Peak Mem: ${peakMem} (globalPeak: ${peakMemory})")
-      }
+    def getElapsedTimeSeconds: Long = {
+      (System.currentTimeMillis() - startTime)/1000
     }
-    // ============================================
 
-    while (isInfinite || numStmtGenerated < maxStmts) {
+    var cumuCoverage: Set[String] = Set()
+
+    while (getElapsedTimeSeconds < timeLimitSeconds) {
       val queryStr = generateSqlSmithQuery(sqlSmithSchema)
       numStmtGenerated += 1
 
-      if (numStmtGenerated % 1000 == 0) {
-        dumpTestingStats()
-      }
+      val (result, optDF, unOptDF) = try {
 
-      var status = "ERR_OTHER"
-
-      try {
-        // warm up
-        spark.sql(queryStr).count()
-        spark.catalog.clearCache()
-        spark.sqlContext.clearCache()
-
-
-
-        val (countOpt, estCountOpt, startTimeOpt, endTimeOpt, cpuTimeOpt, peakMemOpt) = withOptimized {
-          val optListener = new CpuTimeListener()
-          spark.sparkContext.addSparkListener(optListener)
-          val st = System.nanoTime()
-          val ct = spark.sql(queryStr).count()
-          val et = System.nanoTime()
-          val estCount = getEstimatedCount(spark, queryStr)
-          val cpuTime = optListener.cpuTime
-          val peakMem = optListener.peakMemory
-          val ret = (ct, estCount, st, et, cpuTime, peakMem)
-          spark.sparkContext.removeSparkListener(optListener)
-          ret
+        val dfOpt = withOptimized {
+          coverage.clear()
+          val df = spark.sql(queryStr)
+          df.explain(true)
+          optCov = coverage.toSet
+          df
         }
 
-        val (countUnOpt, estCountUnOpt, startTimeUnOpt, endTimeUnOpt, cpuTimeUnOpt, peakMemUnOpt) = withoutOptimized(excludedRules) {
-          val UnOptListener = new CpuTimeListener()
-          spark.sparkContext.addSparkListener(UnOptListener)
-          val st = System.nanoTime()
-          val ct = spark.sql(queryStr).count()
-          val et = System.nanoTime()
-          val estCount = getEstimatedCount(spark, queryStr)
-          val cpuTime = UnOptListener.cpuTime
-          val peakMem = UnOptListener.peakMemory
-          val ret = (ct, estCount, st, et, cpuTime, peakMem)
-          spark.sparkContext.removeSparkListener(UnOptListener)
-          ret
+        val dfUnOpt = withoutOptimized(excludedRules) {
+          coverage.clear()
+          val df = spark.sql(queryStr)
+          df.explain(true)
+          unOptCov = coverage.toSet
+          df
         }
 
 
-        compareAndWrite(
-          fail=false,
-          resultsDir,
-          queryStr,
-          numStmtGenerated,
-          (countOpt, countUnOpt),
-          (estCountOpt, estCountUnOpt),
-          (startTimeOpt, startTimeUnOpt),
-          (endTimeOpt, endTimeUnOpt),
-          (cpuTimeOpt, cpuTimeUnOpt),
-          (peakMemOpt, peakMemUnOpt)
-        )
-
+        (OracleSystem.compareRuns(dfOpt, dfUnOpt), dfOpt, dfUnOpt)
       } catch {
-        case NonFatal(e) =>
-          status = determinErrorType(e)
-          val exceptionName = e.getClass.getSimpleName
-          val curVal = errStore.getOrElseUpdate(exceptionName, 0)
-          errStore.update(exceptionName, curVal + 1)
-          writeQueryToFile(s"${queryStr}\n${makeDivider("ERROR")}\n$e", s"${numStmtGenerated}", s"$resultsDir/queries/$status")
+        case NonFatal(e) => (e, null, null)
         case e =>
           sqlSmithApi.free(sqlSmithSchema)
           throw new RuntimeException(s"Fuzz testing stopped because: $e")
       }
+
+      cumuCoverage = cumuCoverage.union(optCov.union(unOptCov))
+      stats.setCumulativeCoverageIfChanged(cumuCoverage.size,stats.getGenerated,System.currentTimeMillis()-startTime)
+      val ruleBranchesCovered = coverage.toSet.size
+      val resultType = result.getClass.toString.split('.').last
+
+      result match {
+        case _: Success =>
+          println(s"==== FUZZER ITERATION ${stats.getGenerated}=====")
+          println(s"RESULT: $result")
+          println(s"$ruleBranchesCovered")
+        case _: MismatchException =>
+          println(s"==== FUZZER ITERATION ${stats.getGenerated}====")
+          println(s"RESULT: $result")
+          println(s"$ruleBranchesCovered")
+        case _ =>
+          println(s"==== FUZZER ITERATION ${stats.getGenerated}====")
+          println(s"RESULT: $resultType")
+      }
+
+
+      stats.updateWith(resultType) {
+        case Some(existing) => Some((existing.toInt + 1).toString)
+        case None => Some("1")
+      }
+
+      if(resultType != "ParseException") {
+
+        // Create subdirectory inside outDir using the result value
+        val resultSubDir = new File(outputDir, resultType)
+        resultSubDir.mkdirs() // Creates the directory if it doesn't exist
+
+        // Prepare output file in the result-named subdirectory
+        val outFileName = s"g_${stats.getGenerated}-a_${stats.getAttempts}"
+        val outFile = new File(resultSubDir, outFileName)
+
+        // Write the fullSource to the file
+        val writer = new FileWriter(outFile)
+        writer.write(
+          s"""
+             |$queryStr
+             |/*
+             |===== UnOptimized Plan =====
+             |${if(unOptDF != null) unOptDF.queryExecution.optimizedPlan else "null"}
+             |===== Optimized Plan =======
+             |${if(optDF != null) optDF.queryExecution.optimizedPlan else "null"}
+             |
+             |
+             |Optimizer Branch Coverage: ${ruleBranchesCovered}
+             |*/
+             |""".stripMargin)
+        writer.close()
+      }
+
+      stats.setGenerated(stats.getGenerated+1)
+
+      if (stats.getGenerated % liveStatsAfter == 0) {
+        writeLiveStats(liveStatsDir, stats, startTime)
+      }
+
+      if (optDF != null) {
+        optDF.unpersist(false) // avoid disk spill
+      }
+      if (unOptDF != null) {
+        unOptDF.unpersist(false)
+      }
+      System.gc()
+
     }
 
+    writeLiveStats(liveStatsDir, stats, startTime)
+    println(prettyPrintStats(stats))
+
     sqlSmithApi.free(sqlSmithSchema)
+  }
+
+  def writeLiveStats(outDir: File, stats: CampaignStats, campaignStartTime: Long): Unit = {
+    val currentTime = System.currentTimeMillis()
+    val elapsedSeconds = (currentTime - campaignStartTime) / 1000
+    val liveStatsDir =s"${outDir}/live-stats"
+    new File(liveStatsDir).mkdirs()
+    val liveStatsFile = new File(liveStatsDir, s"live-stats-${stats.getGenerated}-${elapsedSeconds}s.txt")
+    val liveStatsWriter = new FileWriter(liveStatsFile)
+    stats.setElapsedSeconds(elapsedSeconds)
+    liveStatsWriter.write(prettyPrintStats(stats))
+    liveStatsWriter.close()
   }
 }

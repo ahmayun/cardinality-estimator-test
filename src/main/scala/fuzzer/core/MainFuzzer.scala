@@ -11,7 +11,7 @@ import org.apache.spark.sql.{AnalysisException, SparkSession}
 import org.yaml.snakeyaml.Yaml
 import play.api.libs.json.JsValue
 import utils.json.JsonReader
-
+import org.apache.spark.sql.catalyst.rules.Rule.{coverage, sentinelHits}
 import scala.sys.process._
 import utils.Random
 
@@ -62,15 +62,17 @@ object MainFuzzer {
   }
 
 
-  private def prettyPrintStats(stats: mutable.Map[String, Int]): String = {
-    val generated = stats("generated")
-    val attempts = stats("attempts")
-    val successful = stats.getOrElse("Success", 0)
+  def prettyPrintStats(stats: CampaignStats): String = {
+    val statsMap = stats.getMap
+    val generated = stats.getGenerated
+    val attempts = stats.getAttempts
+    // this is the number of inputs that actually reached the optimizer
+    val successful = statsMap.getOrElse("Success", "0").toInt + statsMap.getOrElse("MismatchException", "0").toInt
 
     val builder = new StringBuilder
     builder.append("=== STATS ===\n")
     builder.append("----- Details -----\n")
-    stats.foreach { case (k, v) => builder.append(s"$k = $v\n") }
+    statsMap.foreach { case (k, v) => builder.append(s"$k = $v\n") }
     builder.append("------ Summary -----\n")
     builder.append(f"Exiting after DFGs generated == $generated\n")
     val tpDag2Dfg = (generated.toFloat / attempts.toFloat) * 100
@@ -94,11 +96,7 @@ object MainFuzzer {
     deleteDir(config.dagGenDir)
     deleteDir(config.outDir)
 
-    val stats = mutable.Map[String, Int](
-      "attempts" -> 0,
-      "generated" -> 0,
-      "dag-batch" -> 0
-    )
+    val stats: CampaignStats = new CampaignStats()
 
 
     val sparkSession = SparkSession.builder()
@@ -119,7 +117,7 @@ object MainFuzzer {
     def stop: Boolean = {
       val elapsed = (System.currentTimeMillis() - startTime) / 1000
       if (config.exitAfterNSuccesses) {
-        config.exitAfterNSuccesses && stats("generated") == config.N
+        config.exitAfterNSuccesses && stats.getGenerated == config.N
       } else {
         elapsed >= config.timeLimitSec
       }
@@ -127,7 +125,7 @@ object MainFuzzer {
 
     def generateDAGs: File = {
       val generateCmd = s"./dag-gen/venv/bin/python dag-gen/run_generator.py -c ${genTempConfigWithNewSeed("dag-gen/sample_config/dfg-config.yaml")}" // dag-gen/sample_config/dfg-config.yaml
-      stats("dag-batch") += 1
+      stats.setDagBatch(stats.getDagBatch+1)
       val exitCode = generateCmd.!
       if (exitCode != 0) {
         println(s"Warning: DAG generation command failed with exit code $exitCode")
@@ -142,6 +140,7 @@ object MainFuzzer {
       dagFolder
     }
 
+    var cumuCoverage: Set[String] = Set()
     // Main fuzzer loop
     while (!stop) {
 
@@ -172,21 +171,28 @@ object MainFuzzer {
                   break
 
                 fuzzer.global.State.iteration += 1
+                stats.setIteration(fuzzer.global.State.iteration)
                 try {
                   val selectedTables = Random.shuffle(tpcdsTables).take(dag.getSourceNodes.length).toList
                   val dfg = constructDFG(dag, specScala, selectedTables)
                   val generatedSource = dfg.generateCode(dag2Scala(specScala))
 
+                  coverage.clear()
                   val (result, (optResult, fullSourceOpt), (unOptResult, fullSourceUnOpt)) = OracleSystem.checkOneGo(generatedSource.toString)
+                  cumuCoverage = cumuCoverage.union(coverage.toSet)
+                  stats.setCumulativeCoverageIfChanged(cumuCoverage.size,fuzzer.global.State.iteration,System.currentTimeMillis()-startTime)
+                  val ruleBranchesCovered = coverage.toSet.size
                   val resultType = result.getClass.toString.split('.').last
 
                   result match {
                     case _: Success =>
-                      println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
+                      println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration} GENERATED: ${stats.getGenerated}====")
                       println(s"RESULT: $result")
+                      println(s"$ruleBranchesCovered")
                     case _: MismatchException =>
                       println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
                       println(s"RESULT: $result")
+                      println(s"$ruleBranchesCovered")
                     case _ =>
                       println(s"==== FUZZER ITERATION ${fuzzer.global.State.iteration}====")
                       println(s"RESULT: $resultType")
@@ -195,8 +201,8 @@ object MainFuzzer {
                   val combinedSourceWithResults = constructCombinedFileContents(result, optResult, unOptResult, fullSourceOpt, fullSourceUnOpt)
 
                   stats.updateWith(resultType) {
-                    case Some(existing) => Some(existing + 1)
-                    case None => Some(1)
+                    case Some(existing) => Some((existing.toInt + 1).toString)
+                    case None => Some("1")
                   }
 
                   // Create subdirectory inside outDir using the result value
@@ -204,21 +210,19 @@ object MainFuzzer {
                   resultSubDir.mkdirs() // Creates the directory if it doesn't exist
 
                   // Prepare output file in the result-named subdirectory
-                  val outFileName = s"g_${stats("generated")}-a_${stats("attempts")}-${dagName.stripSuffix(".yaml")}-dfg$i${config.outExt}"
+                  val outFileName = s"g_${stats.getGenerated}-a_${stats.getAttempts}-${dagName.stripSuffix(".yaml")}-dfg$i${config.outExt}"
                   val outFile = new File(resultSubDir, outFileName)
 
                   // Write the fullSource to the file
                   val writer = new FileWriter(outFile)
-                  writer.write(combinedSourceWithResults)
+                  writer.write(combinedSourceWithResults+s"\n\n//Optimizer Branch Coverage: ${ruleBranchesCovered}")
                   writer.close()
 
-                  if (stats("generated") % config.updateLiveStatsAfter == 0) {
-                    val liveStatsWriter = new FileWriter(new File(config.outDir, "live-stats.txt"))
-                    liveStatsWriter.write(prettyPrintStats(stats))
-                    liveStatsWriter.close()
+                  if (stats.getGenerated % config.updateLiveStatsAfter == 0) {
+                    writeLiveStats(config, stats, startTime)
                   }
 
-                  stats("generated") += 1
+                  stats.setGenerated(stats.getGenerated+1)
                 } catch {
                   case ex: Exception =>
                     println("==========")
@@ -227,16 +231,16 @@ object MainFuzzer {
                     println(ex.getStackTrace.mkString("\t", "\n\t", ""))
                     println("==========")
                 } finally {
-                  stats("attempts") += 1
+                  stats.setAttempts(stats.getAttempts+1)
                 }
               }
             }
           } catch {
             case ex: ImpossibleDFGException =>
-              stats("attempts") += 1
+              stats.setAttempts(stats.getAttempts+1)
               println(s"DFG construction or codegen failed for $dagName. Reason: ${ex.getMessage}")
             case ex: Exception =>
-              stats("attempts") += 1
+              stats.setAttempts(stats.getAttempts+1)
               println(s"Failed to parse DAG file: $dagName. Reason: ${ex.getMessage}")
           }
         }
@@ -246,6 +250,18 @@ object MainFuzzer {
     val elapsedAfterGeneration = (System.currentTimeMillis() - startTime) / 1000
     println(s"Terminated after $elapsedAfterGeneration seconds.")
     println(prettyPrintStats(stats))
+  }
+
+  private def writeLiveStats(config: FuzzerConfig, stats: CampaignStats, campaignStartTime: Long): Unit = {
+    val currentTime = System.currentTimeMillis()
+    val elapsedSeconds = (currentTime - campaignStartTime) / 1000
+    val liveStatsDir =s"${config.outDir}/live-stats"
+    new File(liveStatsDir).mkdirs()
+    val liveStatsFile = new File(liveStatsDir, s"live-stats-${fuzzer.global.State.iteration}-${elapsedSeconds}s.txt")
+    val liveStatsWriter = new FileWriter(liveStatsFile)
+    stats.setElapsedSeconds(elapsedSeconds)
+    liveStatsWriter.write(prettyPrintStats(stats))
+    liveStatsWriter.close()
   }
 
   private def constructCombinedFileContents(result: Throwable, optResult: Throwable, unOptResult: Throwable, fullSourceOpt: String, fullSourceUnOpt: String): String = {

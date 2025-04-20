@@ -85,15 +85,35 @@ object Graph2Code {
     sources(Random.nextInt(sources.length))
   }
 
-  def getAllColumns(node: Node[DFOperator]): Seq[(TableMetadata, ColumnMetadata)] = {
+  def getAllColumns(node: Node[DFOperator], preferUnique: Boolean = true): Seq[(TableMetadata, ColumnMetadata)] = {
     val tablesColPairs = node.value.stateView.values.toSeq.flatMap { t =>
       t.columns.map(c => (t, c))
     }
     tablesColPairs
+//    if (preferUnique) {
+//      val sourcesToPickFrom = node.getReachableFromOnce
+////      println("Preferring Unique")
+////      println(s"${sourcesToPickFrom.size}/${node.getReachableSources.size}")
+//      if (sourcesToPickFrom.isEmpty) {
+//        tablesColPairs
+//      } else {
+//        val sourceTableNames = sourcesToPickFrom.map(_.value.state.originalIdentifier)
+////        println(s"Tables to pick from ${sourceTableNames}")
+//        val fil = tablesColPairs.filter { case (t, _) =>
+//          val origName = t.originalIdentifier
+////          println(s"Checking if $origName in $sourceTableNames")
+//          sourceTableNames.contains(origName)
+//        }
+//        println(s"filtered from ${tablesColPairs.size} => ${fil.size} for node ${node.value.name}")
+//        if(fil.nonEmpty) fil else tablesColPairs
+//      }
+//    } else {
+//      tablesColPairs
+//    }
   }
 
-  def pickRandomColumnFromReachableSources(node: Node[DFOperator]): (TableMetadata, ColumnMetadata) = {
-    val tablesColPairs = getAllColumns(node).filter {
+  def pickRandomColumnFromReachableSources(node: Node[DFOperator], preferUnique: Boolean=true): (TableMetadata, ColumnMetadata) = {
+    val tablesColPairs = getAllColumns(node, preferUnique).filter {
       case (_, col) =>
         col.metadata.get("gen-iteration") match {
           case None => true
@@ -389,12 +409,13 @@ object Graph2Code {
     }
   }
 
-  def pickRandomUnaryOp(opMap: Map[String, Seq[String]]): Option[String] = {
+  def pickRandomUnaryOp(opMap: Map[String, Seq[String]], node: Node[DFOperator]): Option[String] = {
     opMap.get("unary") match {
       case Some(ops) =>
         val idx = Random.nextInt(ops.size)
         ops.lift(idx)
-      case None => None
+      case None =>
+        throw new RuntimeException("Abstract DFG construction failed: No unary operators in spec to choose from!")
     }
   }
 
@@ -423,7 +444,7 @@ object Graph2Code {
       val opOpt = (node.getInDegree, node.getOutDegree) match {
 //        case (_,0) => pickRandomAction(opMap) // Better to delegate action choice to DFG2Source converter
         case (0,_) => pickRandomSource(opMap)
-        case (1,_) => pickRandomUnaryOp(opMap)
+        case (1,_) => pickRandomUnaryOp(opMap, node)
         case (2,_) => pickRandomBinaryOp(opMap)
         case (in, _) => throw new ImpossibleDFGException(s"Impossible DFG provided, a node has in-degree=$in")
       }
@@ -435,7 +456,7 @@ object Graph2Code {
 
   def initializeStateViews(graph: Graph[DFOperator]): Unit = {
     // Step 1: compute reachability from sources if not already done
-    graph.computeReachabilityFromSources()
+//    graph.computeReachabilityFromSources()
 
     // Step 2: for each node in the graph
     for (node <- graph.nodes) {
@@ -481,6 +502,7 @@ object Graph2Code {
   }
 
   def constructDFG(dag: Graph[DFOperator], apiSpec: JsValue, tables: List[TableMetadata]): Graph[DFOperator] = {
+
     val dfg = fillOperators(dag, apiSpec)
     dfg.computeReachabilityFromSources()
     val zipped = dfg.getSourceNodes.sortBy(_.value.id).zip(tables)

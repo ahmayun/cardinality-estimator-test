@@ -22,3 +22,4 @@ tpch-data-for-main/
 tpch-data/
 fuzzer-config.json
 
+venv-graphs/

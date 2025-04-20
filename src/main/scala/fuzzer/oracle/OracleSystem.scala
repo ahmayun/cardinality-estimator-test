@@ -22,6 +22,23 @@ object OracleSystem {
     df
   }
 
+  private def runRaw(source: String): (Throwable, String, String) = {
+    val toolbox = currentMirror.mkToolBox()
+
+    val throwable = try {
+      toolbox.eval(toolbox.parse(source))
+      new Success("Success")
+    } catch {
+      case e: InvocationTargetException =>
+        e.getCause
+      case e: Exception =>
+        new RuntimeException("Dynamic program invocation failed in OracleSystem.runWithSuppressOutput()", e)
+    }
+
+
+    (throwable, "", "")
+  }
+
   private def runWithSuppressOutput(source: String): (Throwable, String, String) = {
 //    println(s"SOURCE:\n$source")
     val toolbox = currentMirror.mkToolBox()
@@ -94,7 +111,7 @@ object OracleSystem {
       new Success(s"Success: Opt: $optCount - $unOptCount : UnOpt.")
   }
 
-  private def compareRuns(optDF: DataFrame, unOptDF: DataFrame): Throwable = {
+  def compareRuns(optDF: DataFrame, unOptDF: DataFrame): Throwable = {
 //    val mapOpt = mutable.Map[String, mutable.Map[Int, Int]]()
 //    val mapUnOpt = mutable.Map[String, mutable.Map[Int, Int]]()
 
@@ -131,7 +148,7 @@ object OracleSystem {
     val (fullSourceOpt, fullSourceUnOpt) = createFullSourcesFromHarness(source)
 
     val combined = fullSourceOpt + fullSourceUnOpt
-    val (result, stdOutOpt, stdErrOpt) = runWithSuppressOutput(combined)
+    val (result, stdOutOpt, stdErrOpt) = runRaw(combined)
 
     val compare = result match {
       case _: Success =>
@@ -158,6 +175,7 @@ object OracleSystem {
 
     (compare, (optEx, fullSourceOpt), (unOptEx, fullSourceUnOpt))
   }
+
 }
 
 

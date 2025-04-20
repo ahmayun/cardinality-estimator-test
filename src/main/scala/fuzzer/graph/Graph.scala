@@ -71,6 +71,26 @@ case class Graph[T](
     }
   }
 
+  def computeReachableCounts(): Unit = {
+    val graph = this
+    val sources = graph.getSourceNodes
+
+    // Initialize: each source has 1 path to itself
+    for (source <- sources) {
+      source.reachablePathCount(source) = 1
+    }
+
+    // Traverse in topological order and propagate counts
+    for (node <- this.topoSortedNodes) {
+      for (child <- node.children) {
+        for ((source, count) <- node.reachablePathCount) {
+          child.reachablePathCount(source) =
+            child.reachablePathCount.getOrElse(source, 0) + count
+        }
+      }
+    }
+  }
+
   def traverseTopological(visit: Node[T] => Unit): Unit = this.topoSortedNodes.foreach(visit)
   def transformNodes(visit: Node[T] => T): Graph[T] = {
     val newNodesMap = nodesMap.map { case (id, node) =>

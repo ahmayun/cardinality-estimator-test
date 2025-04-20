@@ -6,6 +6,8 @@ case class TableMetadata(
                           private val _metadata: Map[String, String] = Map.empty // Extra info (e.g. source, owner)
                         ) {
   private var tableName: String = _identifier
+  private var _originalIdentifier: String = _identifier
+
   def columnNames: Seq[String] = _columns.map(_.name)
 
   def keyColumns: Seq[ColumnMetadata] = _columns.filter(_.isKey)
@@ -14,12 +16,18 @@ case class TableMetadata(
 
   def nonKeyColumns: Seq[ColumnMetadata] = _columns.filterNot(_.isKey)
   def identifier: String = tableName
+  def originalIdentifier: String = _originalIdentifier
+  def setOriginalIdentifier(v: String): Unit = {
+    _originalIdentifier = v
+  }
   def setIdentifier(v: String): Unit = {
     tableName = v
   }
 
   def copy(): TableMetadata = {
-    TableMetadata(identifier, columns, metadata)
+    val n = TableMetadata(identifier, columns, metadata)
+    n.setOriginalIdentifier(this.originalIdentifier)
+    n
   }
 
 }
