@@ -13,6 +13,7 @@ object TestSqlsmith {
   def setupSpark(master: String): SparkSession = {
     val spark = SparkSession.builder()
       .appName("Test SQLSmith")
+      .config("spark.driver.bindAddress", "127.0.0.1")
       .master(master)
       .getOrCreate()
     spark.sparkContext.setLogLevel("ERROR")
