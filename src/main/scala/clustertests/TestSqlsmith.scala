@@ -23,6 +23,7 @@ object TestSqlsmith {
     println("Target tables:")
     targetTables.foreach(t => println(t.name))
     println("----")
+    Class.forName("org.sqlite.JDBC")
     val catalog = dumpSparkCatalog(spark, targetTables)
     val sqlSmithSchema = sqlSmithApi.schemaInit(catalog, 0)
 
