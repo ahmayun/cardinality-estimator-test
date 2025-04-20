@@ -22,6 +22,7 @@ object TestSqlsmith {
     val targetTables = gatherTargetTables(spark)
     println("Target tables:")
     targetTables.foreach(t => println(t.name))
+    println("----")
     val catalog = dumpSparkCatalog(spark, targetTables)
     val sqlSmithSchema = sqlSmithApi.schemaInit(catalog, 0)
 
