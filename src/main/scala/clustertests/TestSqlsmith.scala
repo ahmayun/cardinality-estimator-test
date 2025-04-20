@@ -28,7 +28,7 @@ object TestSqlsmith {
       .withColumn("random_int", (rand() * 100).cast("int"))
       .withColumn("random_str", expr("random_int").cast("string"))
 
-    df.createOrReplaceTempView("main.dummy")
+    df.createOrReplaceTempView("dummy")
 
     lazy val sqlSmithApi = SQLSmithLoader.loadApi()
     val targetTables = gatherTargetTables(spark)
