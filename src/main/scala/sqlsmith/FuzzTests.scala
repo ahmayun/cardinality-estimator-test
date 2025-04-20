@@ -63,7 +63,7 @@ object FuzzTests {
     s"============================${title}========================================"
   }
 
-  private def dumpSparkCatalog(spark: SparkSession, tables: Seq[Table]): String = {
+  def dumpSparkCatalog(spark: SparkSession, tables: Seq[Table]): String = {
     val dbFile = new File(Utils.createTempDir(), s"dumped-spark-tables-${UUID.randomUUID}.db")
     val conninfo = s"jdbc:sqlite:${dbFile.getAbsolutePath}"
 
