@@ -30,6 +30,8 @@ object TestSqlsmith {
 
     df.createOrReplaceTempView("dummy")
 
+    spark.sql("CREATE TABLE dummy USING parquet AS SELECT * FROM dummy")
+
     lazy val sqlSmithApi = SQLSmithLoader.loadApi()
     val targetTables = gatherTargetTables(spark)
     println("Target tables:")
