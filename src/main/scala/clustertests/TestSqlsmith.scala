@@ -3,6 +3,10 @@ package clustertests
 import org.apache.spark.sql.SparkSession
 import sqlsmith.FuzzTests.{dumpSparkCatalog, gatherTargetTables, generateSqlSmithQuery, sqlSmithApi}
 import sqlsmith.loader.SQLSmithLoader
+import org.apache.spark.sql.functions._
+import org.apache.spark.sql.types._
+
+import scala.util.Random
 
 object TestSqlsmith {
 
@@ -18,6 +22,14 @@ object TestSqlsmith {
   def main(args: Array[String]): Unit = {
     val master = if(args.isEmpty) "local[*]" else args(0)
     val spark = setupSpark(master)
+
+    val numRows = 100
+    val df = spark.range(numRows)
+      .withColumn("random_int", (rand() * 100).cast("int"))
+      .withColumn("random_str", expr("substring(md5(rand()), 1, 5)"))
+
+    df.createOrReplaceTempView("main.dummy")
+
     lazy val sqlSmithApi = SQLSmithLoader.loadApi()
     val targetTables = gatherTargetTables(spark)
     println("Target tables:")
