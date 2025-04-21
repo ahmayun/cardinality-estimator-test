@@ -293,6 +293,8 @@ object FuzzTests {
     } else {
       SparkSession.builder()
         .appName("FuzzTest")
+        .config("spark.driver.bindAddress", "127.0.0.1")
+        .config("spark.ui.enabled", "false")
         .master(master)
         .getOrCreate()
     }
@@ -527,10 +529,9 @@ object FuzzTests {
     // ON CLUSTER: local[*] --output-location target/fuzz-tests-output --max-stmts 100 --no-hive --tpcds-path tpcds-data/
     val master = args(0)
     val arguments = new FuzzerArguments(args.tail)
-    val maxStmts = arguments.maxStmts.toLong
     val liveStatsAfter = 200
     val seed = arguments.seed.toInt
-    val timeLimitSeconds = 86400
+    val timeLimitSeconds = arguments.timeLimitSeconds.toInt
     val outputDir = new File(arguments.outputLocation)
 
     deleteDir(outputDir.getAbsolutePath)
@@ -620,7 +621,7 @@ object FuzzTests {
       }
 
       cumuCoverage = cumuCoverage.union(optCov.union(unOptCov))
-      stats.setCumulativeCoverageIfChanged(cumuCoverage.size,stats.getGenerated,System.currentTimeMillis()-startTime)
+      stats.setCumulativeCoverageIfChanged(cumuCoverage,stats.getGenerated,System.currentTimeMillis()-startTime)
       val ruleBranchesCovered = coverage.toSet.size
       val resultType = result.getClass.toString.split('.').last
 
