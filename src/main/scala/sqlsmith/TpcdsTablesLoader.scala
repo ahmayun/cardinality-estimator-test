@@ -1,10 +1,14 @@
 package sqlsmith
 
+import fuzzer.core.MainFuzzer.deleteDir
 import org.apache.spark.sql.SparkSession
 
 object TpcdsTablesLoader {
 
   def loadAll(spark: SparkSession, tpcdsDataPath: String, dbName: String = "main"): Unit = {
+
+
+    deleteDir(s"spark-warehouse/$dbName.db")
 
     // 1. Make sure "main" database exists
     spark.sql(s"CREATE DATABASE IF NOT EXISTS $dbName")
