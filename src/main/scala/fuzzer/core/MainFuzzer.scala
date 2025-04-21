@@ -103,7 +103,8 @@ object MainFuzzer {
     val sparkSession = SparkSession.builder()
       .appName("Fuzzer")
       .master(config.master)
-//      .enableHiveSupport()
+      .config("spark.driver.bindAddress", "127.0.0.1")
+      .config("spark.ui.enabled", "false")
       .getOrCreate()
     sparkSession.sparkContext.setLogLevel("ERROR")
 
