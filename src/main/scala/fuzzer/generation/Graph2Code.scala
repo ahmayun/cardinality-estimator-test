@@ -44,7 +44,7 @@ object Graph2Code {
     val tpcdsTablesPath = fuzzer.global.FuzzerConfig.config.localTpcdsPath
     val tableName = fuzzer.global.State.src2TableMap(node.id).identifier
     opName match {
-      case "spark.table" => s"""$opName("tpcds.$tableName")"""
+      case "spark.table" => s"""$opName("tpcds.$tableName").as("$tableName")"""
       case "spark.read.parquet" => s"""$opName("$tpcdsTablesPath/$tableName").as("$tableName")"""
       case _ => s"$opName(${args.mkString(", ")})"
     }

@@ -108,7 +108,9 @@ object MainFuzzer {
       .getOrCreate()
     sparkSession.sparkContext.setLogLevel("ERROR")
 
+    println("Loading tpcds datasets")
     TpcdsTablesLoader.loadAll(sparkSession, config.localTpcdsPath, dbName = "tpcds")
+    println("Loaded tpcds datasets successfully!")
 
     fuzzer.global.State.sparkOption = Some(sparkSession)
 
