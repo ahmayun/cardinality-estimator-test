@@ -293,6 +293,8 @@ object FuzzTests {
     } else {
       SparkSession.builder()
         .appName("FuzzTest")
+        .config("spark.driver.bindAddress", "127.0.0.1")
+        .config("spark.ui.enabled", "false")
         .master(master)
         .getOrCreate()
     }

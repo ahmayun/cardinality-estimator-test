@@ -94,7 +94,6 @@ object MainFuzzer {
     val config = if (!args.isEmpty) FuzzerConfig.fromJsonFile(args(0)) else FuzzerConfig.getDefault
     Random.setSeed(config.seed)
 
-
     deleteDir(config.dagGenDir)
     deleteDir(config.outDir)
 
