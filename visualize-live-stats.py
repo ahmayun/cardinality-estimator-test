@@ -1,6 +1,7 @@
 import os
 import sys
 import matplotlib.pyplot as plt
+import time
 
 def parse_details(filepath):
     details = {}
@@ -60,14 +61,21 @@ def main():
     if logx:
         plt.xscale('log')
     if xs1 and ys1:
-        plt.plot(xs1, ys1, label="ours")
+        plt.plot(xs1, ys1, label=get_parent_dir_name(dir_path1))
     if xs2 and ys2:
-        plt.plot(xs2, ys2, label="sqlsmith")
+        plt.plot(xs2, ys2, label=get_parent_dir_name(dir_path2))
     plt.xlabel(x_key)
     plt.ylabel(y_key)
     plt.title(f"{y_key} vs {x_key}")
     plt.grid(True)
     plt.legend()
+
+    os.makedirs('graphs', exist_ok=True)
+    timestamp = int(time.time())
+    save_path = os.path.join('graphs', f'graph_{timestamp}.png')
+    plt.savefig(save_path)
+    print(f"Graph saved to {save_path}")
+
     plt.show()
 
 if __name__ == "__main__":
