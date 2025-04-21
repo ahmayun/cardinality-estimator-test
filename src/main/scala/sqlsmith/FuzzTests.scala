@@ -580,6 +580,7 @@ object FuzzTests {
     val startTime = System.currentTimeMillis()
 
     val stats: CampaignStats = new CampaignStats()
+    stats.setSeed(arguments.seed.toInt)
     val liveStatsDir = new File(outputDir, "live-stats")
     liveStatsDir.mkdirs()
 

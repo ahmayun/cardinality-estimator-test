@@ -98,6 +98,7 @@ object MainFuzzer {
     deleteDir(config.outDir)
 
     val stats: CampaignStats = new CampaignStats()
+    stats.setSeed(config.seed)
 
 
     val sparkSession = SparkSession.builder()

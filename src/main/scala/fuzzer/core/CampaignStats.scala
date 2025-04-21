@@ -8,7 +8,8 @@ class CampaignStats {
     "generated" -> "0",
     "dag-batch" -> "0",
     "elapsed-seconds" -> "0",
-    "covered-rules" -> ""
+    "covered-rules" -> "",
+    "seed" -> ""
   )
 
   def getMap: mutable.Map[String, String] = stats
@@ -27,6 +28,11 @@ class CampaignStats {
   def setDagBatch(v: Int): Unit = {
     stats("dag-batch") = v.toString
   }
+
+  def setSeed(v: Int): Unit = {
+    stats("seed") = v.toString
+  }
+
   def setElapsedSeconds(v: Long): Unit = {
     stats("elapsed-seconds") = v.toString
   }
