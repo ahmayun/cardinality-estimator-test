@@ -298,14 +298,6 @@ object FuzzTests {
     }
     spark.sparkContext.setLogLevel("ERROR")
 
-    if(!arguments.hive) {
-      if (arguments.tpcdsDataPath.isEmpty) {
-        sys.error("Hive disabled and --tpcds-path <path> not provided!")
-      }
-      println(s"Hive disabled, loading from tpcds data from path ${arguments.tpcdsDataPath}...")
-      TpcdsTablesLoader.loadAll(spark, arguments.tpcdsDataPath)
-      println("loaded successfully")
-    }
     spark
   }
 
@@ -562,6 +554,15 @@ object FuzzTests {
 
 
     setupEnv()
+
+    if(!arguments.hive) {
+      if (arguments.tpcdsDataPath.isEmpty) {
+        sys.error("Hive disabled and --tpcds-path <path> not provided!")
+      }
+      println(s"Hive disabled, loading from tpcds data from path ${arguments.tpcdsDataPath}...")
+      TpcdsTablesLoader.loadAll(spark, arguments.tpcdsDataPath)
+      println("loaded successfully")
+    }
 
     val targetTables = gatherTargetTables(spark)
 

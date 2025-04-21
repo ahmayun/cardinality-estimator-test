@@ -12,6 +12,8 @@ import org.yaml.snakeyaml.Yaml
 import play.api.libs.json.JsValue
 import utils.json.JsonReader
 import org.apache.spark.sql.catalyst.rules.Rule.{coverage, sentinelHits}
+import sqlsmith.TpcdsTablesLoader
+
 import scala.sys.process._
 import utils.Random
 
@@ -105,6 +107,8 @@ object MainFuzzer {
 //      .enableHiveSupport()
       .getOrCreate()
     sparkSession.sparkContext.setLogLevel("ERROR")
+
+    TpcdsTablesLoader.loadAll(sparkSession, config.localTpcdsPath, dbName = "tpcds")
 
     fuzzer.global.State.sparkOption = Some(sparkSession)
 

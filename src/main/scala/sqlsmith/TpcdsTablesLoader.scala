@@ -4,10 +4,10 @@ import org.apache.spark.sql.SparkSession
 
 object TpcdsTablesLoader {
 
-  def loadAll(spark: SparkSession, tpcdsDataPath: String): Unit = {
+  def loadAll(spark: SparkSession, tpcdsDataPath: String, dbName: String = "main"): Unit = {
 
     // 1. Make sure "main" database exists
-    spark.sql("CREATE DATABASE IF NOT EXISTS main")
+    spark.sql(s"CREATE DATABASE IF NOT EXISTS $dbName")
 
     // 2. List of all your table names
     val tableNames = Seq(
@@ -44,7 +44,7 @@ object TpcdsTablesLoader {
 
     // 4. Promote each temp view to a managed table inside "main"
     tableNames.foreach { tableName =>
-      spark.sql(s"CREATE TABLE main.$tableName USING parquet AS SELECT * FROM $tableName")
+      spark.sql(s"CREATE TABLE $dbName.$tableName USING parquet AS SELECT * FROM $tableName")
     }
 
   }
