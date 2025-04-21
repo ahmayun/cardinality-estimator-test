@@ -529,10 +529,9 @@ object FuzzTests {
     // ON CLUSTER: local[*] --output-location target/fuzz-tests-output --max-stmts 100 --no-hive --tpcds-path tpcds-data/
     val master = args(0)
     val arguments = new FuzzerArguments(args.tail)
-    val maxStmts = arguments.maxStmts.toLong
     val liveStatsAfter = 200
     val seed = arguments.seed.toInt
-    val timeLimitSeconds = 86400
+    val timeLimitSeconds = arguments.timeLimitSeconds.toInt
     val outputDir = new File(arguments.outputLocation)
 
     deleteDir(outputDir.getAbsolutePath)

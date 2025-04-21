@@ -21,7 +21,7 @@ import scala.util.Try
 
 class FuzzerArguments(val args: Array[String]) {
   var outputLocation: String = null
-  var maxStmts = "10"
+  var timeLimitSeconds = "86400"
   var loggingExceptionsEnabled = false
   var seed = "0"
   var hive = true
@@ -39,8 +39,8 @@ class FuzzerArguments(val args: Array[String]) {
           outputLocation = value
           args = tail
 
-        case ("--max-stmts") :: value :: tail =>
-          maxStmts = value
+        case ("--duration") :: value :: tail =>
+          timeLimitSeconds = value
           args = tail
 
         case ("--logging-exceptions") :: tail =>
@@ -93,9 +93,9 @@ class FuzzerArguments(val args: Array[String]) {
       // scalastyle:on println
       printUsageAndExit(-1)
     }
-    if (Try(maxStmts.toLong).getOrElse(-1L) < 0) {
+    if (Try(timeLimitSeconds.toLong).getOrElse(-1L) < 0) {
       // scalastyle:off println
-      System.err.println("Number of max statements must be greater than or equal to 0")
+      System.err.println("Seconds should be greater than or equal to 0")
       // scalastyle:on println
       printUsageAndExit(-1)
     }
