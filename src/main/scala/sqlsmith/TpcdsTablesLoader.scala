@@ -43,11 +43,13 @@ object TpcdsTablesLoader {
 
     // 3. Read each Parquet file, create temp view
     tableNames.foreach { tableName =>
+      println(s"reading table $tableName...")
       spark.read.parquet(s"$tpcdsDataPath/$tableName").createOrReplaceTempView(tableName)
     }
 
     // 4. Promote each temp view to a managed table inside "main"
     tableNames.foreach { tableName =>
+      println(s"Creating table in sparksql $tableName...")
       spark.sql(s"CREATE TABLE $dbName.$tableName USING parquet AS SELECT * FROM $tableName")
     }
 
