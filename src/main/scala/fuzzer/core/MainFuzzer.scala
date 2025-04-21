@@ -185,7 +185,7 @@ object MainFuzzer {
                   coverage.clear()
                   val (result, (optResult, fullSourceOpt), (unOptResult, fullSourceUnOpt)) = OracleSystem.checkOneGo(generatedSource.toString)
                   cumuCoverage = cumuCoverage.union(coverage.toSet)
-                  stats.setCumulativeCoverageIfChanged(cumuCoverage.size,fuzzer.global.State.iteration,System.currentTimeMillis()-startTime)
+                  stats.setCumulativeCoverageIfChanged(cumuCoverage,fuzzer.global.State.iteration,(System.currentTimeMillis()-startTime)/1000)
                   val ruleBranchesCovered = coverage.toSet.size
                   val resultType = result.getClass.toString.split('.').last
 

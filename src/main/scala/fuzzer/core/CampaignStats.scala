@@ -7,7 +7,8 @@ class CampaignStats {
     "attempts" -> "0",
     "generated" -> "0",
     "dag-batch" -> "0",
-    "elapsed-seconds" -> "0"
+    "elapsed-seconds" -> "0",
+    "covered-rules" -> ""
   )
 
   def getMap: mutable.Map[String, String] = stats
@@ -15,6 +16,7 @@ class CampaignStats {
   def getGenerated: Int = stats("generated").toInt
   def getDagBatch: Int = stats("dag-batch").toInt
   def getElapsedSeconds: Long = stats("elapsed-seconds").toLong
+  def getCoveredRules: Array[String] = stats("covered-rules").split(',')
 
   def setAttempts(v: Int): Unit = {
     stats("attempts") = v.toString
@@ -29,16 +31,22 @@ class CampaignStats {
     stats("elapsed-seconds") = v.toString
   }
 
+  def setCoveredRules(v: Set[String]): Unit = {
+    stats("covered-rules") = v.mkString(",")
+  }
+
   def updateWith(key: String)(remappingFunc: Option[String] => Option[String]): Option[String] = {
     stats.updateWith(key)(remappingFunc)
   }
 
-  def setCumulativeCoverageIfChanged(size: Int, iter: Long, elapsed: Long): Unit = {
+  def setCumulativeCoverageIfChanged(cov: Set[String], iter: Long, elapsedSeconds: Long): Unit = {
+    val size = cov.size
     val existing = stats.get("cumulative-coverage")
     if (existing.isEmpty || existing.get != size.toString) {
       stats("cumulative-coverage") = size.toString
       stats("last-coverage-update-iter") = iter.toString
-      stats("last-coverage-update-elapsed") = elapsed.toString
+      stats("last-coverage-update-elapsed") = elapsedSeconds.toString
+      setCoveredRules(cov)
     }
   }
 

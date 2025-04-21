@@ -622,7 +622,7 @@ object FuzzTests {
       }
 
       cumuCoverage = cumuCoverage.union(optCov.union(unOptCov))
-      stats.setCumulativeCoverageIfChanged(cumuCoverage.size,stats.getGenerated,System.currentTimeMillis()-startTime)
+      stats.setCumulativeCoverageIfChanged(cumuCoverage,stats.getGenerated,System.currentTimeMillis()-startTime)
       val ruleBranchesCovered = coverage.toSet.size
       val resultType = result.getClass.toString.split('.').last
 
