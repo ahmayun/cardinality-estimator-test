@@ -109,9 +109,9 @@ object RunSQLancerScala {
   def main(args: Array[String]): Unit = {
 
     master = "local[*]"
-//    arguments = // new FuzzerArguments(args.tail)
-    seed = 0// arguments.seed.toInt
-    timeLimitSeconds = 15 // arguments.timeLimitSeconds.toLong
+    arguments = new FuzzerArguments(args.tail)
+    seed = arguments.seed.toInt
+    timeLimitSeconds = arguments.timeLimitSeconds.toLong
     outputDir = new File("target/sqlancer") // new File(arguments.outputLocation)
     liveStatsDir = new File(outputDir, "live-stats")
     deleteDir(outputDir.getAbsolutePath)
