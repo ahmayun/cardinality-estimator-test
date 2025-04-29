@@ -109,7 +109,7 @@ object RunSQLancerScala {
   def main(args: Array[String]): Unit = {
 
     master = "local[*]"
-    arguments = new FuzzerArguments(args.tail)
+    arguments = new FuzzerArguments(args)
     seed = arguments.seed.toInt
     timeLimitSeconds = arguments.timeLimitSeconds.toLong
     outputDir = new File("target/sqlancer") // new File(arguments.outputLocation)
