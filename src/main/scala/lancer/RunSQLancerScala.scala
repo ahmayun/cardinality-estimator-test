@@ -108,6 +108,7 @@ object RunSQLancerScala {
 
   def main(args: Array[String]): Unit = {
 
+    Class.forName("org.sqlite.JDBC")
     master = "local[*]"
     arguments = new FuzzerArguments(args)
     seed = arguments.seed.toInt
