@@ -113,7 +113,7 @@ object RunSQLancerScala {
     arguments = new FuzzerArguments(args)
     seed = arguments.seed.toInt
     timeLimitSeconds = arguments.timeLimitSeconds.toLong
-    outputDir = new File("target/sqlancer") // new File(arguments.outputLocation)
+    outputDir = new File(arguments.outputLocation)
     liveStatsDir = new File(outputDir, "live-stats")
     deleteDir(outputDir.getAbsolutePath)
     outputDir.mkdirs()
