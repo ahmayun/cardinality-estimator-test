@@ -20,8 +20,8 @@ package sqlsmith
 import scala.util.Try
 
 class FuzzerArguments(val args: Array[String]) {
-  var outputLocation: String = null
-  var timeLimitSeconds = "86400"
+  var outputLocation: String = "target/fuzzerargsdefaultout"
+  var timeLimitSeconds = "15"
   var maxStmts = "100"
   var loggingExceptionsEnabled = false
   var seed = "0"

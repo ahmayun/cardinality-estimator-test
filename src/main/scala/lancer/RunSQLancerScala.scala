@@ -36,13 +36,16 @@ object RunSQLancerScala {
 
     val spark = this.spark
     import spark.implicits._
+    import scala.util.Random
 
-    // Create vt0: equivalent to FTS5 table (c0 UNINDEXED)
-    val vt0Schema = StructType(Seq(
-      StructField("c0", StringType, nullable = true)
-    ))
+    // Helper random generator
+    def randomString(length: Int): String =
+      Random.alphanumeric.take(length).mkString
 
-    // Initialize vt0 with dummy data (based on your inserts)
+    def randomDoubleString(): String =
+      (Random.nextDouble() * 1000).toString
+
+    // ==================== vt0 ====================
     val vt0Data = Seq(
       (null: String),
       ("1535245655"),
@@ -59,15 +62,9 @@ object RunSQLancerScala {
       (null: String)
     ).toDF("c0")
 
-    // Register vt0 as a temporary view
     vt0Data.createOrReplaceTempView("vt0")
 
-    // Create t1: equivalent to TEMP table (c0 BLOB CHECK (constant))
-    val t1Schema = StructType(Seq(
-      StructField("c0", StringType, nullable = true)  // using StringType to mimic flexible blob/numeric/text in SQLite
-    ))
-
-    // Initialize t1 with dummy data (based on your inserts)
+    // ==================== t1 ====================
     val t1Data = Seq(
       ("n厗"),
       ("躆2"),
@@ -88,23 +85,51 @@ object RunSQLancerScala {
       ("x''")
     ).toDF("c0")
 
-    // Register t1 as a temporary view
     t1Data.createOrReplaceTempView("t1")
 
-    // Create view v0 similar to the complex one you had
+    // ==================== v0 ====================
     spark.sql("""
-  CREATE OR REPLACE TEMP VIEW v0 AS
-  SELECT
-    RANK() OVER (ORDER BY vt0.c0) AS c0,
-    LOWER(AVG(CAST(vt0.c0 AS DOUBLE)) OVER ()) AS c1,
-    CASE
-      WHEN NOT (vt0.c0 IS NULL OR t1.c0 IS NULL) THEN 1
-      ELSE 0
-    END AS c2
-  FROM vt0
-  CROSS JOIN t1
-""")
+    CREATE OR REPLACE TEMP VIEW v0 AS
+    SELECT
+      RANK() OVER (ORDER BY vt0.c0) AS c0,
+      LOWER(AVG(CAST(vt0.c0 AS DOUBLE)) OVER ()) AS c1,
+      CASE
+        WHEN NOT (vt0.c0 IS NULL OR t1.c0 IS NULL) THEN 1
+        ELSE 0
+      END AS c2
+    FROM vt0
+    CROSS JOIN t1
+  """)
+
+    // ==================== vt1 ====================
+    val vt1Data = (1 to 15).map { _ =>
+      (randomString(5), Random.nextInt(1000))
+    }.toDF("c0", "c1") // Second column to add variety
+
+    vt1Data.createOrReplaceTempView("vt1")
+
+    // ==================== rt0 ====================
+    val rt0Data = (1 to 10).map { _ =>
+      (randomDoubleString(), randomString(8))
+    }.toDF("r0", "r1")
+
+    rt0Data.createOrReplaceTempView("rt0")
+
+    // ==================== Optional: v1 (view joining vt1 and rt0) ====================
+    spark.sql("""
+    CREATE OR REPLACE TEMP VIEW v1 AS
+    SELECT
+      vt1.c0 AS vt1_c0,
+      vt1.c1 AS vt1_c1,
+      rt0.r0 AS rt0_r0,
+      rt0.r1 AS rt0_r1
+    FROM vt1
+    CROSS JOIN rt0
+  """)
+
+    println("Database setup complete: vt0, t1, v0, vt1, rt0, and v1 are available.")
   }
+
 
   def main(args: Array[String]): Unit = {
 
