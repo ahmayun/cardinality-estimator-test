@@ -6,10 +6,11 @@ import scala.reflect.runtime.currentMirror
 import scala.tools.reflect.ToolBox
 import fuzzer.exceptions._
 import fuzzer.templates.Harness
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
 import org.apache.spark.sql.execution.QueryExecution
 import pipelines.local.ComparePlans.countTotalNodes
+
 import scala.util.matching.Regex
 import scala.collection.mutable
 
@@ -38,6 +39,17 @@ object OracleSystem {
 
     (throwable, "", "")
   }
+
+  private def runRawSqlancerQuery(spark: SparkSession, query: String): (Throwable, Option[DataFrame]) = {
+    try {
+      val df = spark.sql(query)
+      df.explain(true)
+      (new Success("Success"), Some(df))
+    } catch {
+      case e: Exception => (e, None)
+    }
+  }
+
 
   private def runWithSuppressOutput(source: String): (Throwable, String, String) = {
 //    println(s"SOURCE:\n$source")
@@ -142,6 +154,19 @@ object OracleSystem {
     }
 
     (compare, (resultOpt, fullSourceOpt), (resultUnOpt, fullSourceUnOpt))
+  }
+
+  def checkSqlancer(spark: SparkSession, optQuery: String, unoptQuery: String): (Throwable, (Throwable, String), (Throwable, String)) = {
+    val (resultOpt, optDF) = runRawSqlancerQuery(spark, optQuery)
+    val (resultUnOpt, unOptDF) = runRawSqlancerQuery(spark, unoptQuery)
+
+    val compare = (resultOpt, resultUnOpt) match {
+      case (_: Success, _: Success) => compareRuns(optDF.get, unOptDF.get)
+      case (a, b) if a.getClass == b.getClass => a
+      case _ => new MismatchException("Execution result mismatch between optimized and unoptimized versions")
+    }
+
+    (compare, (resultOpt, optQuery), (resultUnOpt, unoptQuery))
   }
 
   def checkOneGo(source: String): (Throwable, (Throwable, String), (Throwable, String)) = {

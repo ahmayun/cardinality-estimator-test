@@ -1,5 +1,0 @@
-package sqlancer
-
-object RunSqlancer {
-
-}
