@@ -150,7 +150,7 @@ object OracleSystem {
     val compare = (resultOpt, resultUnOpt) match {
       case (_: Success, _: Success) => compareRuns(optDF.get, unOptDF.get)
       case (a, b) if a.getClass == b.getClass => a
-      case _ => new MismatchException("Execution result mismatch between optimized and unoptimized versions")
+      case (a, b) => new MismatchException(s"Execution result mismatch between optimized and unoptimized versions: Opt: $a | UnOpt: $b")
     }
 
     (compare, (resultOpt, fullSourceOpt), (resultUnOpt, fullSourceUnOpt))
@@ -163,7 +163,7 @@ object OracleSystem {
     val compare = (resultOpt, resultUnOpt) match {
       case (_: Success, _: Success) => compareRuns(optDF.get, unOptDF.get)
       case (a, b) if a.getClass == b.getClass => a
-      case _ => new MismatchException("Execution result mismatch between optimized and unoptimized versions")
+      case (a, b) => new MismatchException(s"Execution result mismatch between optimized and unoptimized versions: Opt: $a | UnOpt: $b")
     }
 
     (compare, (resultOpt, optQuery), (resultUnOpt, unoptQuery))

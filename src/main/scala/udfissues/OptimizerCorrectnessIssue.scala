@@ -25,17 +25,19 @@ object OptimizerCorrectnessIssue {
     val ndUDF = udf((s: Int) => {
       val r = scala.util.Random.nextInt()
       //both values should be the same
+
       CustomStruct(r,r)
     }).asNondeterministic()
 
     val df1 = spark.range(5).select(ndUDF($"id"))
-    val df2 = spark.range(5).select(ndUDF($"id").withField("c", lit(7)))
+    val df2 = spark.range(5)
+      .select(ndUDF($"id").as("referral").withField("redeemed", lit(false)))
 
 
     println("==================")
-    df1.collect().foreach(println)
+    df1.foreach(println)
     println("--------------------")
-    df2.collect().foreach(println)
+    df2.foreach(println)
 
     println("==================")
 
