@@ -506,7 +506,7 @@ object FlinkFuzzTests {
   def prettyPrintStats(stats: CampaignStats): String = {
     val statsMap = stats.getMap
     val generated = stats.getGenerated
-    val fuzzerExceptions = stats.getMap("FuzzerException").toInt
+    val fuzzerExceptions = stats.getMap.getOrElse("FuzzerException", "0").toInt
     val successful = statsMap.getOrElse("Success", "0").toInt + statsMap.getOrElse("MismatchException", "0").toInt
     val validityRate = (successful.toFloat / (generated.toFloat-fuzzerExceptions)) * 100
 
