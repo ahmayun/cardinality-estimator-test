@@ -17,24 +17,10 @@
 
 package sqlsmith
 
-import java.io.{File, FileWriter, PrintWriter}
-import java.nio.charset.StandardCharsets
-import java.sql.{Connection, DriverManager, Statement}
-import java.util.UUID
-import scala.collection.mutable
-import scala.util.control.NonFatal
-import com.google.common.io.Files
 import fuzzer.core.CampaignStats
-import fuzzer.core.MainFuzzer.{constructCombinedFileContents, deleteDir, prettyPrintStats, writeLiveStats}
-import fuzzer.exceptions.{MismatchException, Success}
-import fuzzer.global.FuzzerConfig
+import fuzzer.core.MainFuzzer.deleteDir
+import fuzzer.exceptions.{FuzzerException, MismatchException, ParserException, Success, TableException, ValidationException}
 import fuzzer.oracle.OracleSystem
-import org.apache.spark.scheduler.{SparkListener, SparkListenerStageCompleted, SparkListenerTaskEnd}
-import org.apache.spark.sql.{DataFrame, SparkSession}
-import org.apache.spark.sql.internal.{SQLConf, StaticSQLConf}
-import org.apache.spark.sql.types._
-import sqlsmith.loader.SQLSmithLoader
-import sqlsmith.loader.Utils
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalog.Table
 import org.apache.spark.sql.catalyst.analysis.UnresolvedRelation
@@ -43,6 +29,18 @@ import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
 import org.apache.spark.sql.catalyst.plans.logical._
 import org.apache.spark.sql.catalyst.rules.Rule.coverage
 import org.apache.spark.sql.functions.expr
+import org.apache.spark.sql.internal.SQLConf
+import org.apache.spark.sql.types._
+import play.api.libs.json.{JsArray, JsBoolean, JsNull, JsNumber, JsObject, JsString, JsValue, Json}
+import sqlsmith.loader.{SQLSmithLoader, Utils}
+import utils.network.HttpUtils
+
+import java.net.http.HttpClient
+import java.io.{File, FileWriter, PrintWriter}
+import java.sql.{Connection, DriverManager, Statement}
+import java.time.Duration
+import java.util.UUID
+import scala.util.control.NonFatal
 //import java.nio.file.Files
 
 
@@ -51,7 +49,7 @@ object FuzzTests {
   private lazy val sqlSmithApi = SQLSmithLoader.loadApi()
 
   // Loads the SQLite JDBC driver
-//  Class.forName("org.sqlite.JDBC")
+  //  Class.forName("org.sqlite.JDBC")
 
   private def debugPrint(s: String): Unit = {
     // scalastyle:off println
@@ -131,7 +129,7 @@ object FuzzTests {
       }
     }
     keys.lazyZip(values).foreach { (k, v) =>
-//      assert(!SQLConf.staticConfKeys.contains(k))
+      //      assert(!SQLConf.staticConfKeys.contains(k))
       conf.setConfString(k, v)
     }
     try f finally {
@@ -245,9 +243,9 @@ object FuzzTests {
 
     // Traverse expressions to find and process scalar subqueries
     val scalarSubqueryCounts = harvestSubqueries(plan)
-//    plan.expressions.foreach{ expr =>
-//      println(s"Expr:\n${expr}")
-//    }
+    //    plan.expressions.foreach{ expr =>
+    //      println(s"Expr:\n${expr}")
+    //    }
     val currentCount = plan match {
       case project: Project => project.projectList.size
       case _ => 0
@@ -319,15 +317,15 @@ object FuzzTests {
   def generateSqlSmithQuery(sqlSmithSchema: Long): String = {
     try{
       sqlSmithApi.getSQLFuzz(sqlSmithSchema)
-//      "select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk"
+      //      "select count(*) from main.customer inner join main.web_sales on ws_ship_customer_sk == c_customer_sk"
     } catch {
       case e: Throwable =>
         sqlSmithApi.free(sqlSmithSchema)
         System.err.println(
           s"""
-            |"Failed to generate query!"
-            |$e
-            |""".stripMargin
+             |"Failed to generate query!"
+             |$e
+             |""".stripMargin
         )
         sys.exit(-1)
     }
@@ -473,16 +471,16 @@ object FuzzTests {
 
       val combinedStats =
         s"""
-          |${makeDivider("Optimized Run Stats")}
-          |$optStats
-          |${makeDivider("Unoptimized Run Stats")}
-          |$unOptStats
-          |${makeDivider("Difference")}
-          |(peakMemOpt - peakMemUnOpt): $diffPeakMem
-          |(cpuTimeOpt - cpuTimeUnOpt): $diffCpuTime
-          |${makeDivider("Query")}
-          |$queryStr
-          |""".stripMargin
+           |${makeDivider("Optimized Run Stats")}
+           |$optStats
+           |${makeDivider("Unoptimized Run Stats")}
+           |$unOptStats
+           |${makeDivider("Difference")}
+           |(peakMemOpt - peakMemUnOpt): $diffPeakMem
+           |(cpuTimeOpt - cpuTimeUnOpt): $diffCpuTime
+           |${makeDivider("Query")}
+           |$queryStr
+           |""".stripMargin
       writeQueryToFile(combinedStats, s"${numStmtGenerated}", s"$resultsDir/opt-discrepancies/")
     }
   }
@@ -508,8 +506,9 @@ object FuzzTests {
   def prettyPrintStats(stats: CampaignStats): String = {
     val statsMap = stats.getMap
     val generated = stats.getGenerated
+    val fuzzerExceptions = stats.getMap.getOrElse("FuzzerException", "0").toInt
     val successful = statsMap.getOrElse("Success", "0").toInt + statsMap.getOrElse("MismatchException", "0").toInt
-    val validityRate = (successful.toFloat / generated.toFloat) * 100
+    val validityRate = (successful.toFloat / (generated.toFloat-fuzzerExceptions)) * 100
 
     val builder = new StringBuilder
     builder.append("=== STATS ===\n")
@@ -517,28 +516,254 @@ object FuzzTests {
     statsMap.foreach { case (k, v) => builder.append(s"$k = $v\n") }
     builder.append("------ Summary -----\n")
     builder.append(f"Exiting after DFGs generated == $generated\n")
-    builder.append(s"Validity Rate: ${validityRate}%\n")
+    builder.append(s"Validity Rate: ${validityRate}% [$successful / ($generated-$fuzzerExceptions)]\n")
     builder.append("=============\n")
 
     builder.toString()
   }
 
-  def main(args: Array[String]): Unit = {
+  // Query execution result container
+  case class QueryExecutionResult(
+                                   result: Throwable,
+                                   optimizedPlan: Option[String],
+                                   unoptimizedPlan: Option[String],
+                                   optimizedCoverage: Set[String],
+                                   unoptimizedCoverage: Set[String],
+                                   coverageCount: Int
+                                 )
 
-    // EXAMPLE ARGS: local[*] --output-location target/fuzz-tests-output --max-stmts 100
-    // ON CLUSTER: local[*] --output-location target/fuzz-tests-output --max-stmts 100 --no-hive --tpcds-path tpcds-data/
+  // Abstract query executor trait
+  trait QueryExecutor {
+    def execute(query: String): QueryExecutionResult
+    def cleanup(): Unit
+  }
+
+  // Spark implementation of QueryExecutor
+  class SparkQueryExecutor(
+                            spark: SparkSession,
+                            excludedRules: String
+                          ) extends QueryExecutor {
+
+    override def execute(query: String): QueryExecutionResult = {
+      try {
+        var optCov: Set[String] = Set()
+        var unOptCov: Set[String] = Set()
+
+        val dfOpt = withOptimized {
+          coverage.clear()
+          val df = spark.sql(query)
+          df.explain(true)
+          optCov = coverage.toSet
+          df
+        }
+
+        val dfUnOpt = withoutOptimized(excludedRules) {
+          coverage.clear()
+          val df = spark.sql(query)
+          df.explain(true)
+          unOptCov = coverage.toSet
+          df
+        }
+
+        val result = OracleSystem.compareRuns(dfOpt, dfUnOpt)
+        val optPlan = Option(dfOpt).map(_.queryExecution.optimizedPlan.toString)
+        val unOptPlan = Option(dfUnOpt).map(_.queryExecution.optimizedPlan.toString)
+
+        // Cleanup dataframes
+        if (dfOpt != null) dfOpt.unpersist(false)
+        if (dfUnOpt != null) dfUnOpt.unpersist(false)
+
+        QueryExecutionResult(
+          result = result,
+          optimizedPlan = optPlan,
+          unoptimizedPlan = unOptPlan,
+          optimizedCoverage = optCov,
+          unoptimizedCoverage = unOptCov,
+          coverageCount = coverage.toSet.size
+        )
+      } catch {
+        case NonFatal(e) =>
+          QueryExecutionResult(e, None, None, Set(), Set(), 0)
+        case e =>
+          throw new RuntimeException(s"Fuzz testing stopped because: $e")
+      }
+    }
+
+    override def cleanup(): Unit = {
+      System.gc()
+    }
+  }
+
+  // Example: Remote API executor
+  class PyFlinkQueryExecutor(serverHost: String, serverPort: Int) extends QueryExecutor {
+
+    // Create HTTP client and request
+    val client: HttpClient = HttpClient.newBuilder()
+      .connectTimeout(Duration.ofSeconds(120))
+      .build()
+
+    loadData()
+
+    private def parseResponse(responseBody: String): Option[JsValue] = {
+      if (responseBody.nonEmpty) {
+        Some(Json.parse(responseBody))
+      } else {
+        None
+      }
+    }
+
+    private def jsValueToScala(jsValue: JsValue): Any = {
+      jsValue match {
+        case JsNull => null
+        case JsBoolean(b) => b
+        case JsNumber(n) => if (n.isValidInt) n.toInt else n.toDouble
+        case JsString(s) => s
+        case arr: JsArray => arr.value.map(jsValueToScala).toList
+        case obj: JsObject => obj.value.map { case (k, v) => k -> jsValueToScala(v) }.toMap
+      }
+    }
+
+    private def loadData(): Unit = {
+      // Create JSON request
+      val request = Json.obj(
+        "message_type" -> "load_data",
+        "catalog_name" -> "main"
+      )
+
+      val response = HttpUtils.postJson(client, request, serverHost, serverPort, timeoutSeconds = 120)
+
+      val body = Json.parse(response.body())
+      val success = (body \ "success").asOpt[Boolean]
+      success match {
+        case Some(true) =>
+        case _ => throw new Exception("PyFlink server failed to load data!")
+      }
+    }
+
+    private def jsonToMap(json: JsValue): Map[String, Any] = {
+      json.as[Map[String, JsValue]].map { case (key, value) =>
+        key -> jsValueToScala(value)
+      }
+    }
+    private def createException(errorName: String, errorMessage: String, is_same: Boolean): Throwable = {
+
+      errorName.trim() match {
+        case _ if !is_same => new MismatchException(errorMessage)
+        case "MismatchException" => new MismatchException(errorMessage)
+        case "ValidationException" => new ValidationException(errorMessage)
+        case "RuntimeException" => new RuntimeException(errorMessage)
+        case "TableException" => new TableException(errorMessage)
+        case "SqlParserException" => new ParserException(errorMessage)
+        case "Success" => new Success("Generated query hit the optimizer")
+        case _ => new Exception(errorMessage)
+      }
+    }
+
+    private def mapToExecutionResult(responseMap: Map[String, Any]): QueryExecutionResult = {
+      val same_output = responseMap("success").asInstanceOf[Boolean]
+      val errorName = responseMap("error_name").asInstanceOf[String]
+      val errorMessage = responseMap("error_message").asInstanceOf[String]
+      val finalProgram = responseMap.getOrElse("final_program", "").asInstanceOf[String]
+      val sourceWithResults = s"$finalProgram\n// RESULT: $errorName: $errorMessage"
+      val result = createException(errorName, errorMessage, same_output)
+      QueryExecutionResult(result, Some(sourceWithResults), None, Set(), Set(), 0)
+
+    }
+
+    override def execute(codeString: String): QueryExecutionResult = {
+
+      // Create JSON request
+      val jsonRequest = Json.obj(
+        "message_type" -> "execute_code",
+        "code" -> codeString,
+        "code_type" -> "sql"
+      )
+
+      try {
+
+        val response = HttpUtils.postJson(client, jsonRequest, serverHost, serverPort)
+
+        println(s"HTTP Response Status: ${response.statusCode()}")
+        val responseBody = response.body()
+
+        val responseJsonOpt = parseResponse(responseBody)
+
+        val responseJson = responseJsonOpt match {
+          case None => throw new Exception("response could not be parsed")
+          case Some(responseJson) => responseJson
+        }
+
+        val responseMap = jsonToMap(responseJson)
+        //    println(prettyPrintMap(responseMap))
+
+        mapToExecutionResult(responseMap)
+      } catch {
+        case NonFatal(e) =>
+          QueryExecutionResult(new FuzzerException(e), None, None, Set(), Set(), 0)
+        case e =>
+          throw new RuntimeException(s"Fuzz testing stopped because: $e")
+      }
+
+    }
+
+    override def cleanup(): Unit = {
+      // Cleanup resources if needed
+    }
+
+  }
+
+  // Main function - now executor-agnostic
+  def main(args: Array[String]): Unit = {
     val master = args(0)
     val arguments = new FuzzerArguments(args.tail)
-    val liveStatsAfter = 200
-    val seed = arguments.seed.toInt
-    val timeLimitSeconds = arguments.timeLimitSeconds.toInt
-    val outputDir = new File(arguments.outputLocation)
+    val outputDir = prepareOutputDirectory(arguments.outputLocation)
 
-    deleteDir(outputDir.getAbsolutePath)
-    outputDir.mkdirs()
-
+    // Setup phase (can be made pluggable too)
     val spark = setupSpark(master, arguments)
+    val excludedRules = getExcludedRules(spark)
+    setupEnv()
+    loadDataIfNeeded(spark, arguments)
 
+    val targetTables = gatherTargetTables(spark)
+    validateTables(targetTables)
+
+    val catalog = dumpSparkCatalog(spark, targetTables)
+    val sqlSmithSchema = sqlSmithApi.schemaInit(catalog, arguments.seed.toInt)
+
+    val stats = initializeStats(arguments, outputDir)
+
+    // Create executor (can swap implementations here)
+    val executor: QueryExecutor = new SparkQueryExecutor(spark, excludedRules)
+//    val executor: QueryExecutor = new PyFlinkQueryExecutor("localhost", 8888)
+
+    try {
+      runFuzzingCampaign(
+        executor,
+        sqlSmithSchema,
+        outputDir,
+        stats,
+        arguments.timeLimitSeconds.toInt
+      )
+    } finally {
+      sqlSmithApi.free(sqlSmithSchema)
+    }
+
+    println(prettyPrintStats(stats))
+  }
+
+  private def prepareOutputDirectory(location: String): File = {
+    val baseDir = new File(location)
+    baseDir.mkdirs()
+
+    // Create timestamped subdirectory
+    val timestamp = new java.text.SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new java.util.Date())
+    val timestampedDir = new File(baseDir, timestamp)
+    timestampedDir.mkdirs()
+
+    timestampedDir
+  }
+
+  private def getExcludedRules(spark: SparkSession): String = {
     val sparkOpt = spark.sessionState.optimizer
     val excludableRules = {
       val defaultRules = sparkOpt.defaultBatches.flatMap(_.rules.map(_.ruleName)).toSet
@@ -547,16 +772,14 @@ object FuzzTests {
         s"""
            |excludedRules(${rules.size}):
            |  ${rules.mkString("\n  ")}
-         """.stripMargin)
+       """.stripMargin)
       rules
     }
+    excludableRules.mkString(",")
+  }
 
-    val excludedRules = excludableRules.mkString(",")
-
-
-    setupEnv()
-
-    if(!arguments.hive) {
+  private def loadDataIfNeeded(spark: SparkSession, arguments: FuzzerArguments): Unit = {
+    if (!arguments.hive) {
       if (arguments.tpcdsDataPath.isEmpty) {
         sys.error("Hive disabled and --tpcds-path <path> not provided!")
       }
@@ -564,136 +787,167 @@ object FuzzTests {
       TpcdsTablesLoader.loadAll(spark, arguments.tpcdsDataPath)
       println("loaded successfully")
     }
+  }
 
-    val targetTables = gatherTargetTables(spark)
+  private def validateTables(tables: Seq[Table]): Unit = {
+    if (tables.isEmpty) {
+      throw new RuntimeException("No tables found")
+    }
+  }
 
-    if (targetTables.isEmpty)
-      throw new RuntimeException({"No tables found"})
-
-    val catalog = dumpSparkCatalog(spark, targetTables)
-    val sqlSmithSchema = sqlSmithApi.schemaInit(catalog, seed)
-
-    var numStmtGenerated: Long = 0
-    var optCov: Set[String] = Set()
-    var unOptCov: Set[String] = Set()
-
-    val startTime = System.currentTimeMillis()
-
-    val stats: CampaignStats = new CampaignStats()
+  private def initializeStats(arguments: FuzzerArguments, outputDir: File): CampaignStats = {
+    val stats = new CampaignStats()
     stats.setSeed(arguments.seed.toInt)
     val liveStatsDir = new File(outputDir, "live-stats")
     liveStatsDir.mkdirs()
+    stats
+  }
+
+  // Now executor-agnostic - works with any QueryExecutor implementation
+  private def runFuzzingCampaign(
+                                  executor: QueryExecutor,
+                                  sqlSmithSchema: Long,
+                                  outputDir: File,
+                                  stats: CampaignStats,
+                                  timeLimitSeconds: Int
+                                ): Unit = {
+    val liveStatsAfter = 200
+    val startTime = System.currentTimeMillis()
+    val liveStatsDir = new File(outputDir, "live-stats")
+    var cumuCoverage: Set[String] = Set()
 
     def getElapsedTimeSeconds: Long = {
-      (System.currentTimeMillis() - startTime)/1000
+      (System.currentTimeMillis() - startTime) / 1000
     }
-
-    var cumuCoverage: Set[String] = Set()
 
     while (getElapsedTimeSeconds < timeLimitSeconds) {
       val queryStr = generateSqlSmithQuery(sqlSmithSchema)
-      numStmtGenerated += 1
 
-      val (result, optDF, unOptDF) = try {
+      // Execute query through the pluggable executor
+      val executionResult = executor.execute(queryStr)
 
-        val dfOpt = withOptimized {
-          coverage.clear()
-          val df = spark.sql(queryStr)
-          df.explain(true)
-          optCov = coverage.toSet
-          df
-        }
+      cumuCoverage = updateCoverage(
+        cumuCoverage,
+        executionResult.optimizedCoverage,
+        executionResult.unoptimizedCoverage,
+        stats,
+        startTime
+      )
 
-        val dfUnOpt = withoutOptimized(excludedRules) {
-          coverage.clear()
-          val df = spark.sql(queryStr)
-          df.explain(true)
-          unOptCov = coverage.toSet
-          df
-        }
+      val resultType = classifyResult(executionResult.result)
 
+      logIterationResult(stats, executionResult.result, resultType, executionResult.coverageCount)
+      updateStatsCounter(stats, resultType)
 
-        (OracleSystem.compareRuns(dfOpt, dfUnOpt), dfOpt, dfUnOpt)
-      } catch {
-        case NonFatal(e) => (e, null, null)
-        case e =>
-          sqlSmithApi.free(sqlSmithSchema)
-          throw new RuntimeException(s"Fuzz testing stopped because: $e")
+      if (resultType != "ParseException") {
+        writeQueryArtifact(
+          outputDir,
+          stats,
+          queryStr,
+          executionResult.optimizedPlan,
+          executionResult.unoptimizedPlan,
+          executionResult.coverageCount,
+          resultType,
+          executionResult.result
+        )
       }
 
-      cumuCoverage = cumuCoverage.union(optCov.union(unOptCov))
-      stats.setCumulativeCoverageIfChanged(cumuCoverage,stats.getGenerated,System.currentTimeMillis()-startTime)
-      val ruleBranchesCovered = coverage.toSet.size
-      val resultType = result.getClass.toString.split('.').last
-
-      result match {
-        case _: Success =>
-          println(s"==== FUZZER ITERATION ${stats.getGenerated}=====")
-          println(s"RESULT: $result")
-          println(s"$ruleBranchesCovered")
-        case _: MismatchException =>
-          println(s"==== FUZZER ITERATION ${stats.getGenerated}====")
-          println(s"RESULT: $result")
-          println(s"$ruleBranchesCovered")
-        case _ =>
-          println(s"==== FUZZER ITERATION ${stats.getGenerated}====")
-          println(s"RESULT: $resultType")
-      }
-
-
-      stats.updateWith(resultType) {
-        case Some(existing) => Some((existing.toInt + 1).toString)
-        case None => Some("1")
-      }
-
-      if(resultType != "ParseException") {
-
-        // Create subdirectory inside outDir using the result value
-        val resultSubDir = new File(outputDir, resultType)
-        resultSubDir.mkdirs() // Creates the directory if it doesn't exist
-
-        // Prepare output file in the result-named subdirectory
-        val outFileName = s"g_${stats.getGenerated}-a_${stats.getAttempts}"
-        val outFile = new File(resultSubDir, outFileName)
-
-        // Write the fullSource to the file
-        val writer = new FileWriter(outFile)
-        writer.write(
-          s"""
-             |$queryStr
-             |/*
-             |===== UnOptimized Plan =====
-             |${if(unOptDF != null) unOptDF.queryExecution.optimizedPlan else "null"}
-             |===== Optimized Plan =======
-             |${if(optDF != null) optDF.queryExecution.optimizedPlan else "null"}
-             |
-             |
-             |Optimizer Branch Coverage: ${ruleBranchesCovered}
-             |*/
-             |""".stripMargin)
-        writer.close()
-      }
-
-      stats.setGenerated(stats.getGenerated+1)
+      stats.setGenerated(stats.getGenerated + 1)
 
       if (stats.getGenerated % liveStatsAfter == 0) {
         writeLiveStats(liveStatsDir, stats, startTime)
       }
 
-      if (optDF != null) {
-        optDF.unpersist(false) // avoid disk spill
-      }
-      if (unOptDF != null) {
-        unOptDF.unpersist(false)
-      }
-      System.gc()
-
+      executor.cleanup()
     }
 
     writeLiveStats(liveStatsDir, stats, startTime)
-    println(prettyPrintStats(stats))
+  }
 
-    sqlSmithApi.free(sqlSmithSchema)
+  private def updateCoverage(
+                              cumuCoverage: Set[String],
+                              optCov: Set[String],
+                              unOptCov: Set[String],
+                              stats: CampaignStats,
+                              startTime: Long
+                            ): Set[String] = {
+    val updated = cumuCoverage.union(optCov.union(unOptCov))
+    stats.setCumulativeCoverageIfChanged(
+      updated,
+      stats.getGenerated,
+      System.currentTimeMillis() - startTime
+    )
+    updated
+  }
+
+  private def classifyResult(result: Throwable): String = {
+    result.getClass.toString.split('.').last
+  }
+
+  private def logIterationResult(
+                                  stats: CampaignStats,
+                                  result: Throwable,
+                                  resultType: String,
+                                  ruleBranchesCovered: Int
+                                ): Unit = {
+    result match {
+      case _: Success =>
+        println(s"==== FUZZER ITERATION ${stats.getGenerated}=====")
+        println(s"RESULT: $result")
+        println(s"$ruleBranchesCovered")
+      case _: MismatchException =>
+        println(s"==== FUZZER ITERATION ${stats.getGenerated}====")
+        println(s"RESULT: $result")
+        println(s"$ruleBranchesCovered")
+      case _ =>
+        println(s"==== FUZZER ITERATION ${stats.getGenerated}====")
+        println(s"RESULT: $resultType")
+    }
+  }
+
+  private def updateStatsCounter(stats: CampaignStats, resultType: String): Unit = {
+    stats.updateWith(resultType) {
+      case Some(existing) => Some((existing.toInt + 1).toString)
+      case None => Some("1")
+    }
+  }
+
+  private def writeQueryArtifact(
+                                  outputDir: File,
+                                  stats: CampaignStats,
+                                  queryStr: String,
+                                  optimizedPlan: Option[String],
+                                  unoptimizedPlan: Option[String],
+                                  ruleBranchesCovered: Int,
+                                  resultType: String,
+                                  result: Throwable
+                                ): Unit = {
+    // Extract exception name from the result object
+    val exceptionName = resultType
+
+    val resultSubDir = new File(outputDir, exceptionName)
+    resultSubDir.mkdirs()
+
+    val outFileName = s"g_${stats.getGenerated}-a_${stats.getAttempts}"
+    val outFile = new File(resultSubDir, outFileName)
+
+    val writer = new FileWriter(outFile)
+    writer.write(
+      s"""
+         |$queryStr
+         |/*
+         |===== UnOptimized Plan =====
+         |${unoptimizedPlan.getOrElse("null")}
+         |===== Optimized Plan =======
+         |${optimizedPlan.getOrElse("null")}
+         |
+         |RESULT:
+         |    NAME: $resultType
+         |    DETAILS: ${result.getMessage}
+         |Optimizer Branch Coverage: ${ruleBranchesCovered}
+         |*/
+         |""".stripMargin)
+    writer.close()
   }
 
   def writeLiveStats(outDir: File, stats: CampaignStats, campaignStartTime: Long): Unit = {
