@@ -26,7 +26,7 @@ import org.apache.spark.sql.catalyst.analysis.UnresolvedRelation
 import org.apache.spark.sql.catalyst.expressions.Expression
 import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
 import org.apache.spark.sql.catalyst.plans.logical._
-import org.apache.spark.sql.catalyst.rules.Rule.coverage
+//import org.apache.spark.sql.catalyst.rules.Rule.coverage
 import org.apache.spark.sql.functions.expr
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types._
@@ -44,6 +44,7 @@ import scala.util.control.NonFatal
 
 
 object PolarsFuzzTests {
+  val coverage = scala.collection.mutable.ListBuffer[_root_.scala.Predef.String]()
 
   private lazy val sqlSmithApi = SQLSmithLoader.loadApi()
 

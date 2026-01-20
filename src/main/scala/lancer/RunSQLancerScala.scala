@@ -6,7 +6,7 @@ import fuzzer.exceptions.{MismatchException, Success}
 import fuzzer.global.FuzzerConfig
 import fuzzer.oracle.OracleSystem
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.catalyst.rules.Rule.coverage
+//import org.apache.spark.sql.catalyst.rules.Rule.coverage
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import sqlsmith.FuzzTests.{setupSpark, writeLiveStats}
 import sqlsmith.FuzzerArguments
@@ -14,6 +14,7 @@ import sqlsmith.FuzzerArguments
 import java.io.{File, FileWriter}
 
 object RunSQLancerScala {
+  val coverage = scala.collection.mutable.ListBuffer[_root_.scala.Predef.String]()
   var spark: SparkSession = SparkSession.builder()
     .appName("FuzzTest")
     .config("spark.driver.bindAddress", "127.0.0.1")
