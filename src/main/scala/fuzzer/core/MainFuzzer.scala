@@ -11,7 +11,7 @@ import org.apache.spark.sql.{AnalysisException, SparkSession}
 import org.yaml.snakeyaml.Yaml
 import play.api.libs.json.JsValue
 import utils.json.JsonReader
-import org.apache.spark.sql.catalyst.rules.Rule.{coverage, sentinelHits}
+//import org.apache.spark.sql.catalyst.rules.Rule.{coverage, sentinelHits}
 import sqlsmith.TpcdsTablesLoader
 
 import scala.sys.process._
@@ -24,6 +24,7 @@ import scala.util.control.Breaks.{break, breakable}
 
 
 object MainFuzzer {
+  val coverage = scala.collection.mutable.ListBuffer[_root_.scala.Predef.String]()
   def deleteDir(path: String): Unit = {
     val cmd = s"rm -rf ${path}"
     val exitCode = cmd.!

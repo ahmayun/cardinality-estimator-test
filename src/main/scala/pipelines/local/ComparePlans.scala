@@ -2,7 +2,7 @@ package pipelines.local
 
 import org.apache.spark.sql.SparkSession
 import org.apache.spark.sql.catalyst.plans.logical.LogicalPlan
-import org.apache.spark.sql.catalyst.rules.Rule.{coverage, sentinelHits}
+//import org.apache.spark.sql.catalyst.rules.Rule.{coverage, sentinelHits}
 import org.apache.spark.sql.execution.debug._
 import transform.Transformer._
 
@@ -12,7 +12,8 @@ import scala.collection.mutable
 import scala.io.Source
 
 object ComparePlans {
-
+  val sentinelHits = _root_.scala.collection.mutable.ListBuffer[_root_.scala.Predef.String]()
+  val coverage = _root_.scala.collection.mutable.ListBuffer[_root_.scala.Predef.String]()
   class MutationSummary {
     private val m: mutable.Map[String, mutable.ListBuffer[String]] = mutable.Map()
 
