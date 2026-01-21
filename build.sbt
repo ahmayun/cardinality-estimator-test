@@ -16,7 +16,9 @@ libraryDependencies ++= Seq(
   "org.yaml" % "snakeyaml" % "2.2",
   "org.scala-lang" % "scala-compiler" % scalaVersion.value,
   "com.typesafe.play" %% "play-json" % "2.9.4",
-//  "org.apache.spark" %% "spark-sql" % "3.5.0" % "provided"
+  "org.apache.logging.log4j" % "log4j-core" % "2.20.0",
+  "org.apache.logging.log4j" % "log4j-api" % "2.20.0",
+  "org.apache.logging.log4j" % "log4j-slf4j2-impl" % "2.20.0"
 
   //  "org.scalameta" %% "trees" % "4.7.1"
 //  "org.scalameta" %% "semanticdb" % "4.7.1"
