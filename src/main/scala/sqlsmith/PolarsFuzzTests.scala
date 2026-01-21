@@ -296,7 +296,7 @@ object PolarsFuzzTests {
         .master(master)
         .getOrCreate()
     }
-    spark.sparkContext.setLogLevel("ERROR")
+//    spark.sparkContext.setLogLevel("ERROR")
 
     spark
   }
