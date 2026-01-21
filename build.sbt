@@ -18,8 +18,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.9.4",
   "org.apache.logging.log4j" % "log4j-core" % "2.20.0",
   "org.apache.logging.log4j" % "log4j-api" % "2.20.0",
-  "org.apache.logging.log4j" % "log4j-slf4j2-impl" % "2.20.0"
-
+  "org.apache.logging.log4j" % "log4j-slf4j2-impl" % "2.20.0",
+  "org.apache.hadoop" % "hadoop-client" % "3.3.4",
+  "org.apache.hadoop" % "hadoop-common" % "3.3.4"
   //  "org.scalameta" %% "trees" % "4.7.1"
 //  "org.scalameta" %% "semanticdb" % "4.7.1"
 
